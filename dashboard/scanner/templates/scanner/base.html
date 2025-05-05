@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}System Vulnerability Assessment Tool{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #343a40;
+            color: white;
+        }
+        .sidebar a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+        .sidebar a:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar a.active {
+            color: white;
+            background-color: #007bff;
+        }
+        .content {
+            padding: 20px;
+        }
+        .device-card {
+            transition: transform 0.2s;
+        }
+        .device-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .result-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'scanner:index' %}">
+                <i class="fas fa-shield-alt me-2"></i>System Vulnerability Assessment Tool
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'scanner:add_target' %}">
+                            <i class="fas fa-plus me-1"></i>Add Target
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'scanner:scan_network' %}"
+                           onclick="event.preventDefault(); document.getElementById('scan-network-form').submit();">
+                            <i class="fas fa-search me-1"></i>Scan Network
+                        </a>
+                        <form id="scan-network-form" action="{% url 'scanner:scan_network' %}" method="post" style="display: none;">
+                            {% csrf_token %}
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 px-0 sidebar">
+                <div class="py-4 px-3 mb-4">
+                    <div class="text-center">
+                        <h5>Navigation</h5>
+                    </div>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="{% url 'scanner:index' %}" class="nav-link {% if request.path == '/scanner/' %}active{% endif %}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'scanner:os_info' %}" class="nav-link {% if '/os-info/' in request.path %}active{% endif %}">
+                            <i class="fas fa-desktop me-2"></i>OS Information
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'scanner:network_info' %}" class="nav-link {% if '/network-info/' in request.path %}active{% endif %}">
+                            <i class="fas fa-network-wired me-2"></i>Network Information
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 content">
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Page Title -->
+                <h2 class="mb-4">{% block page_title %}{{ page_title|default:"Dashboard" }}{% endblock %}</h2>
+
+                <!-- Main Content -->
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* Additional styles for command execution */
+        .command-status {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        .command-info {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            color: #6c757d;
+        }
+        .retry-button {
+            margin-top: 10px;
+        }
+
+        /* Styles for HTML reports */
+        .html-report {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        .html-report iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+    </style>
+
+    <script>
+        // Function to send a command to a target
+        function sendCommand(targetId, commandCode, commandName) {
+            // Get the result container
+            const resultContainer = document.getElementById('result-container');
+            if (!resultContainer) return;
+
+            // Determine if this is a complex command that might take longer
+            const isComplexCommand = [4, 5, 6].includes(commandCode);
+            const timeoutMessage = isComplexCommand ?
+                "This command may take up to 2 minutes to complete. Please be patient." :
+                "This command should complete within 30-60 seconds.";
+
+            // Show enhanced loading indicator with progress bar
+            resultContainer.innerHTML = `
+                <div class="command-status bg-light p-3">
+                    <h5><i class="fas fa-cog fa-spin me-2"></i>Running ${commandName}</h5>
+                    <div class="command-info mb-2">${timeoutMessage}</div>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div id="command-progress" class="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            Connecting...
+                        </div>
+                    </div>
+                    <div id="status-message">Establishing connection to target...</div>
+                </div>
+                <div id="command-result"></div>
+            `;
+
+            // Start progress animation
+            let progressBar = document.getElementById('command-progress');
+            let statusMessage = document.getElementById('status-message');
+            let commandResult = document.getElementById('command-result');
+
+            // Simulate connection progress
+            setTimeout(() => {
+                progressBar.style.width = '15%';
+                progressBar.setAttribute('aria-valuenow', '15');
+                progressBar.textContent = 'Connected';
+                statusMessage.textContent = 'Connected to target. Sending command...';
+            }, 500);
+
+            setTimeout(() => {
+                progressBar.style.width = '30%';
+                progressBar.setAttribute('aria-valuenow', '30');
+                statusMessage.textContent = 'Command sent. Waiting for response...';
+            }, 1000);
+
+            // For complex commands, show a more realistic progress indication
+            if (isComplexCommand) {
+                setTimeout(() => {
+                    progressBar.style.width = '45%';
+                    progressBar.setAttribute('aria-valuenow', '45');
+                    statusMessage.textContent = 'Processing command on target system...';
+                }, 5000);
+
+                setTimeout(() => {
+                    progressBar.style.width = '60%';
+                    progressBar.setAttribute('aria-valuenow', '60');
+                    statusMessage.textContent = 'Collecting data from target...';
+                }, 15000);
+            }
+
+            // Send the command
+            fetch(`/scanner/target/${targetId}/command/${commandCode}/`, {
+                // Add a longer timeout for the fetch request
+                signal: AbortSignal.timeout(isComplexCommand ? 180000 : 90000) // 3 minutes or 1.5 minutes
+            })
+            .then(response => {
+                // Update progress
+                progressBar.style.width = '80%';
+                progressBar.setAttribute('aria-valuenow', '80');
+                statusMessage.textContent = 'Response received. Processing data...';
+
+                return response.json();
+            })
+            .then(data => {
+                // Complete progress
+                progressBar.style.width = '100%';
+                progressBar.setAttribute('aria-valuenow', '100');
+                progressBar.classList.remove('progress-bar-animated');
+
+                if (data.status === 'success') {
+                    statusMessage.textContent = 'Command completed successfully!';
+                    progressBar.classList.remove('progress-bar-striped');
+                    progressBar.classList.add('bg-success');
+
+                    try {
+                        // Check if the result is HTML content
+                        if (data.result_data.trim().startsWith('<!DOCTYPE html>') ||
+                            data.result_data.trim().startsWith('<html>')) {
+                            // It's a full HTML document, create an iframe to display it properly
+                            const iframeContainer = document.createElement('div');
+                            iframeContainer.className = 'html-report';
+
+                            // Create a blob URL for the HTML content
+                            const blob = new Blob([data.result_data], {type: 'text/html'});
+                            const url = URL.createObjectURL(blob);
+
+                            // Create an iframe and set its source to the blob URL
+                            const iframe = document.createElement('iframe');
+                            iframe.src = url;
+
+                            // Add the iframe to the container
+                            iframeContainer.appendChild(iframe);
+                            commandResult.innerHTML = '';
+                            commandResult.appendChild(iframeContainer);
+                        } else if (data.result_data.trim().startsWith('<') &&
+                                  (data.result_data.includes('<table') ||
+                                   data.result_data.includes('<div') ||
+                                   data.result_data.includes('<pre'))) {
+                            // It's HTML fragment content, render it directly using jQuery's parseHTML
+                            const parsedHtml = $.parseHTML(data.result_data);
+                            $(commandResult).empty().append(parsedHtml);
+
+                            // Log the HTML content for debugging
+                            console.log("HTML content:", data.result_data.substring(0, 200) + "...");
+
+                            // Add a small delay to allow the DOM to update, then apply Bootstrap styling to tables
+                            setTimeout(() => {
+                                // Add Bootstrap classes to any tables that don't have them
+                                $(commandResult).find('table:not(.table)').addClass('table table-striped table-hover');
+
+                                // Make sure all tables are responsive
+                                $(commandResult).find('table').each(function() {
+                                    if (!$(this).parent().hasClass('table-responsive')) {
+                                        $(this).wrap('<div class="table-responsive"></div>');
+                                    }
+                                });
+                            }, 100);
+                        } else {
+                            // It's plain text, wrap in pre tags
+                            commandResult.innerHTML = `<pre style="white-space: pre-wrap; word-wrap: break-word; max-height: 500px; overflow-y: auto;">${data.result_data}</pre>`;
+                        }
+                    } catch (e) {
+                        console.error("Error rendering HTML content:", e);
+                        // Fallback to displaying as text if there's an error
+                        commandResult.innerHTML = `<pre style="white-space: pre-wrap; word-wrap: break-word; max-height: 500px; overflow-y: auto;">${data.result_data}</pre>`;
+                    }
+                } else {
+                    statusMessage.textContent = 'Command failed.';
+                    progressBar.classList.remove('progress-bar-striped');
+                    progressBar.classList.add('bg-danger');
+                    commandResult.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+
+                    // Add retry button
+                    commandResult.innerHTML += `
+                        <button class="btn btn-warning retry-button" onclick="sendCommand(${targetId}, ${commandCode}, '${commandName}')">
+                            <i class="fas fa-redo me-1"></i>Retry Command
+                        </button>
+                    `;
+                }
+            })
+            .catch(error => {
+                // Error handling
+                progressBar.style.width = '100%';
+                progressBar.setAttribute('aria-valuenow', '100');
+                progressBar.classList.remove('progress-bar-striped', 'progress-bar-animated');
+                progressBar.classList.add('bg-danger');
+
+                statusMessage.textContent = 'Connection error or timeout.';
+                commandResult.innerHTML = `
+                    <div class="alert alert-danger">
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>The connection to the target may have timed out. This can happen if:</p>
+                        <ul>
+                            <li>The agent is not running on the target system</li>
+                            <li>The command is taking too long to complete</li>
+                            <li>There are network connectivity issues</li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-warning retry-button" onclick="sendCommand(${targetId}, ${commandCode}, '${commandName}')">
+                        <i class="fas fa-redo me-1"></i>Retry Command
+                    </button>
+                `;
+            });
+        }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

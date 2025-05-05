@@ -1,0 +1,184 @@
+{% extends 'scanner/base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-server me-2"></i>Target: {{ target.ip_address }}</h5>
+                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="fas fa-trash me-1"></i>Delete Target
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Target Information</h5>
+                        <table class="table">
+                            <tr>
+                                <th>IP Address:</th>
+                                <td>{{ target.ip_address }}</td>
+                            </tr>
+                            <tr>
+                                <th>Hostname:</th>
+                                <td>{{ target.hostname|default:"Unknown" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Description:</th>
+                                <td>{{ target.description|default:"No description" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Last Scan:</th>
+                                <td>{{ target.last_scan|default:"Never"|date:"Y-m-d H:i" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Added:</th>
+                                <td>{{ target.created_at|date:"Y-m-d H:i" }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Quick Actions</h5>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" onclick="sendCommand({{ target.id }}, 1, 'Basic OS Info')">
+                                <i class="fas fa-info-circle me-2"></i>Basic OS Info
+                            </button>
+                            <button class="btn btn-success" onclick="sendCommand({{ target.id }}, 3, 'Network Scan')">
+                                <i class="fas fa-search me-2"></i>Network Scan
+                            </button>
+                            <button class="btn btn-warning" onclick="sendCommand({{ target.id }}, 5, 'Full OS Report')">
+                                <i class="fas fa-file-alt me-2"></i>Full OS Report
+                            </button>
+                            <button class="btn btn-info" onclick="sendCommand({{ target.id }}, 6, 'Full Network Report')">
+                                <i class="fas fa-network-wired me-2"></i>Full Network Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Scan Results</h5>
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Results</h6>
+                            </div>
+                            <div class="card-body result-container" id="result-container">
+                                {% if scan_results %}
+                                    <div class="mb-3">
+                                        <select class="form-select" id="result-selector">
+                                            <option value="">Select a previous scan result</option>
+                                            {% for result in scan_results %}
+                                                <option value="{{ result.id }}">
+                                                    {{ result.scan_type }} - {{ result.scan_time|date:"Y-m-d H:i" }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div id="selected-result">
+                                        <div class="alert alert-info">
+                                            Select a previous scan result or run a new scan.
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-info">
+                                        No scan results available. Run a scan to see results.
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete target {{ target.ip_address }}?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{% url 'scanner:delete_target' target.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Handle result selection
+        $('#result-selector').change(function() {
+            const resultId = $(this).val();
+            if (resultId) {
+                // Show loading indicator
+                $('#selected-result').html('<div class="text-center"><div class="spinner-border" role="status"></div><p>Loading result...</p></div>');
+
+                // Fetch the result
+                fetch(`/scanner/result/${resultId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        try {
+                            // Create a temporary div to parse the HTML content
+                            const tempDiv = document.createElement('div');
+
+                            // Check if the result data is HTML content
+                            if (data.result_data.trim().startsWith('<') &&
+                                (data.result_data.includes('<table') ||
+                                 data.result_data.includes('<div') ||
+                                 data.result_data.includes('<pre'))) {
+                                // It's HTML content, render it directly
+                                // Use jQuery's parseHTML to safely parse the HTML
+                                const parsedHtml = $.parseHTML(data.result_data);
+                                $('#selected-result').empty().append(parsedHtml);
+
+                                // Log the HTML content for debugging
+                                console.log("HTML content:", data.result_data.substring(0, 200) + "...");
+                            } else {
+                                // It's plain text, wrap in pre tags
+                                $('#selected-result').html(`<pre style="white-space: pre-wrap; word-wrap: break-word; max-height: 500px; overflow-y: auto;">${data.result_data}</pre>`);
+                            }
+
+                            // Add a small delay to allow the DOM to update, then apply Bootstrap styling to tables
+                            setTimeout(() => {
+                                // Add Bootstrap classes to any tables that don't have them
+                                $('#selected-result table:not(.table)').addClass('table table-striped table-hover');
+
+                                // Make sure all tables are responsive
+                                $('#selected-result table').each(function() {
+                                    if (!$(this).parent().hasClass('table-responsive')) {
+                                        $(this).wrap('<div class="table-responsive"></div>');
+                                    }
+                                });
+                            }, 100);
+                        } catch (e) {
+                            console.error("Error rendering HTML content:", e);
+                            // Fallback to displaying as text if there's an error
+                            $('#selected-result').html(`<pre style="white-space: pre-wrap; word-wrap: break-word; max-height: 500px; overflow-y: auto;">${data.result_data}</pre>`);
+                        }
+                    })
+                    .catch(error => {
+                        $('#selected-result').html(`<div class="alert alert-danger">Error: ${error.message}</div>`);
+                    });
+            } else {
+                $('#selected-result').html('<div class="alert alert-info">Select a previous scan result or run a new scan.</div>');
+            }
+        });
+    });
+</script>
+{% endblock %}

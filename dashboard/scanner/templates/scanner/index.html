@@ -1,0 +1,178 @@
+{% extends 'scanner/base.html' %}
+
+{% block content %}
+<div class="row">
+    <!-- Target Systems -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-server me-2"></i>Target Systems</h5>
+            </div>
+            <div class="card-body">
+                {% if targets %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Hostname</th>
+                                    <th>Last Scan</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for target in targets %}
+                                <tr>
+                                    <td>{{ target.ip_address }}</td>
+                                    <td>{{ target.hostname|default:"Unknown" }}</td>
+                                    <td>{{ target.last_scan|default:"Never"|date:"Y-m-d H:i" }}</td>
+                                    <td>
+                                        <a href="{% url 'scanner:target_detail' target.id %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ target.id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        
+                                        <!-- Delete Modal -->
+                                        <div class="modal fade" id="deleteModal{{ target.id }}" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Confirm Deletion</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you sure you want to delete target {{ target.ip_address }}?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <form action="{% url 'scanner:delete_target' target.id %}" method="post">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        No target systems added yet. 
+                        <a href="{% url 'scanner:add_target' %}" class="alert-link">Add a target</a> to get started.
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'scanner:add_target' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Add Target
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Network Devices -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-network-wired me-2"></i>Network Devices</h5>
+            </div>
+            <div class="card-body">
+                {% if devices %}
+                    <div class="row">
+                        {% for device in devices %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card device-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ device.ip_address }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ device.vendor|default:"Unknown Vendor" }}</h6>
+                                    <p class="card-text">
+                                        <small>MAC: {{ device.mac_address }}</small><br>
+                                        <small>Last seen: {{ device.last_seen|date:"Y-m-d H:i" }}</small>
+                                    </p>
+                                    {% if not device.ip_address in target_ips %}
+                                    <form action="{% url 'scanner:add_target' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="ip_address" value="{{ device.ip_address }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">Add as Target</button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        No network devices discovered yet. 
+                        <a href="{% url 'scanner:scan_network' %}" 
+                           onclick="event.preventDefault(); document.getElementById('scan-network-form').submit();" 
+                           class="alert-link">Scan the network</a> to discover devices.
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <form action="{% url 'scanner:scan_network' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-search me-1"></i>Scan Network
+                    </button>
+                </form>
+                <a href="{% url 'scanner:network_info' %}" class="btn btn-outline-secondary float-end">
+                    <i class="fas fa-list me-1"></i>View All
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card text-center h-100">
+                            <div class="card-body">
+                                <i class="fas fa-desktop fa-3x mb-3 text-primary"></i>
+                                <h5 class="card-title">OS Information</h5>
+                                <p class="card-text">View detailed operating system information for target systems.</p>
+                                <a href="{% url 'scanner:os_info' %}" class="btn btn-primary">Go to OS Info</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card text-center h-100">
+                            <div class="card-body">
+                                <i class="fas fa-network-wired fa-3x mb-3 text-success"></i>
+                                <h5 class="card-title">Network Information</h5>
+                                <p class="card-text">View network information and discovered devices.</p>
+                                <a href="{% url 'scanner:network_info' %}" class="btn btn-success">Go to Network Info</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card text-center h-100">
+                            <div class="card-body">
+                                <i class="fas fa-plus fa-3x mb-3 text-danger"></i>
+                                <h5 class="card-title">Add Target</h5>
+                                <p class="card-text">Add a new target system to scan and monitor.</p>
+                                <a href="{% url 'scanner:add_target' %}" class="btn btn-danger">Add Target</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

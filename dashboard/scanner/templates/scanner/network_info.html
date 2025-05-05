@@ -1,0 +1,240 @@
+{% extends 'scanner/base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-network-wired me-2"></i>Network Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Network Devices</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <form action="{% url 'scanner:scan_network' %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-search me-1"></i>Scan Network
+                                        </button>
+                                    </form>
+                                </div>
+
+                                {% if devices %}
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>IP Address</th>
+                                                    <th>MAC Address</th>
+                                                    <th>Vendor</th>
+                                                    <th>Last Seen</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for device in devices %}
+                                                <tr>
+                                                    <td>{{ device.ip_address }}</td>
+                                                    <td>{{ device.mac_address }}</td>
+                                                    <td>{{ device.vendor|default:"Unknown" }}</td>
+                                                    <td>{{ device.last_seen|date:"Y-m-d H:i" }}</td>
+                                                    <td>
+                                                        {% if device.ip_address in target_ips %}
+                                                            <span class="badge bg-success">Target</span>
+                                                        {% else %}
+                                                            <form action="{% url 'scanner:add_target' %}" method="post" class="d-inline">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="ip_address" value="{{ device.ip_address }}">
+                                                                <button type="submit" class="btn btn-sm btn-outline-primary">Add as Target</button>
+                                                            </form>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-info">
+                                        No network devices discovered yet. Click "Scan Network" to discover devices.
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Target Systems</h5>
+                            </div>
+                            <div class="card-body">
+                                {% if targets %}
+                                    <div class="list-group">
+                                        {% for target in targets %}
+                                            <a href="#" class="list-group-item list-group-item-action target-item"
+                                               data-target-id="{{ target.id }}" data-target-ip="{{ target.ip_address }}">
+                                                <div class="d-flex w-100 justify-content-between">
+                                                    <h6 class="mb-1">{{ target.ip_address }}</h6>
+                                                    <small>{{ target.last_scan|default:"Never scanned"|date:"Y-m-d H:i" }}</small>
+                                                </div>
+                                                <small>{{ target.hostname|default:"Unknown hostname" }}</small>
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-info">
+                                        No target systems added yet.
+                                        <a href="{% url 'scanner:add_target' %}" class="alert-link">Add a target</a> to get started.
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Available Commands</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group command-list" style="display: none;">
+                                    <!-- Basic Network Commands -->
+                                    <div class="list-group-item list-group-item-info">Basic Network Commands</div>
+
+                                    <button class="list-group-item list-group-item-action command-item"
+                                            data-command-code="3" data-command-name="Network Scan">
+                                        <i class="fas fa-search me-2"></i>Network Scan
+                                    </button>
+
+                                    <button class="list-group-item list-group-item-action command-item"
+                                            data-command-code="6" data-command-name="Full Network Info">
+                                        <i class="fas fa-file-alt me-2"></i>Full Network Report
+                                    </button>
+
+                                    <!-- Network Discovery -->
+                                    <div class="list-group-item list-group-item-info">Network Discovery</div>
+
+                                    <button class="list-group-item list-group-item-action command-item"
+                                            data-command-code="48" data-command-name="ARP Scan">
+                                        <i class="fas fa-network-wired me-2"></i>ARP Scan
+                                    </button>
+
+                                    <button class="list-group-item list-group-item-action command-item"
+                                            data-command-code="49" data-command-name="DNS Cache">
+                                        <i class="fas fa-server me-2"></i>DNS Cache
+                                    </button>
+
+                                    <button class="list-group-item list-group-item-action command-item"
+                                            data-command-code="50" data-command-name="Windows Network Profile">
+                                        <i class="fas fa-project-diagram me-2"></i>Network Profile
+                                    </button>
+
+                                    <!-- Network Services -->
+                                    <div class="list-group-item list-group-item-info">Network Services</div>
+
+                                    <button class="list-group-item list-group-item-action command-item"
+                                            data-command-code="51" data-command-name="Network Shares">
+                                        <i class="fas fa-share-alt me-2"></i>Network Shares
+                                    </button>
+
+                                    <button class="list-group-item list-group-item-action command-item"
+                                            data-command-code="53" data-command-name="TCP/UDP Connections">
+                                        <i class="fas fa-plug me-2"></i>TCP/UDP Connections
+                                    </button>
+
+                                    <button class="list-group-item list-group-item-action command-item"
+                                            data-command-code="52" data-command-name="RPC Service Check">
+                                        <i class="fas fa-cogs me-2"></i>RPC Services
+                                    </button>
+
+                                    <!-- Port Scanning -->
+                                    <div class="list-group-item list-group-item-info">Port Scanning</div>
+
+                                    <button class="list-group-item list-group-item-action command-item"
+                                            data-command-code="54" data-command-name="Port Scanner">
+                                        <i class="fas fa-door-open me-2"></i>Port Scanner
+                                    </button>
+
+                                    <button class="list-group-item list-group-item-action command-item"
+                                            data-command-code="55" data-command-name="Banner Grabber">
+                                        <i class="fas fa-flag me-2"></i>Banner Grabber
+                                    </button>
+                                </div>
+                                <div class="alert alert-info select-target-message">
+                                    Please select a target system first.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0 result-title">Results</h5>
+                            </div>
+                            <div class="card-body result-container" id="result-container">
+                                <div class="alert alert-info">
+                                    Select a target and command to view results.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        let selectedTargetId = null;
+        let selectedTargetIp = null;
+
+        // Handle target selection
+        $('.target-item').click(function(e) {
+            e.preventDefault();
+
+            // Update selected target
+            selectedTargetId = $(this).data('target-id');
+            selectedTargetIp = $(this).data('target-ip');
+
+            // Update UI
+            $('.target-item').removeClass('active');
+            $(this).addClass('active');
+
+            // Show commands
+            $('.command-list').show();
+            $('.select-target-message').hide();
+
+            // Update result title
+            $('.result-title').text(`Results for ${selectedTargetIp}`);
+
+            // Clear results
+            $('#result-container').html('<div class="alert alert-info">Select a command to run.</div>');
+        });
+
+        // Handle command selection
+        $('.command-item').click(function() {
+            if (selectedTargetId) {
+                const commandCode = $(this).data('command-code');
+                const commandName = $(this).data('command-name');
+
+                // Update UI
+                $('.command-item').removeClass('active');
+                $(this).addClass('active');
+
+                // Send command
+                sendCommand(selectedTargetId, commandCode, commandName);
+            }
+        });
+    });
+</script>
+{% endblock %}
