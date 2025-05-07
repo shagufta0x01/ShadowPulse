@@ -1,85 +1,418 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}System Vulnerability Assessment Tool{% endblock %}</title>
+    <title>{% block title %}Rex - Security Assessment Tool{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #1a1d29;      /* Dark background */
+            --secondary-color: #242736;    /* Slightly lighter background */
+            --accent-color: #8a56ff;       /* Purple accent */
+            --success-color: #00d09c;      /* Green */
+            --warning-color: #ff9f43;      /* Orange */
+            --danger-color: #ff5e5e;       /* Red */
+            --info-color: #00b8d9;         /* Blue */
+            --light-color: #2e3446;        /* Light background for cards */
+            --dark-color: #151823;         /* Darker background */
+            --text-color: #ffffff;         /* Light text */
+            --text-secondary: #a3aed0;     /* Secondary text */
+            --border-radius: 12px;         /* Rounded corners */
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); /* Shadow */
+            --card-bg: #1b1f2e;            /* Card background */
+            --sidebar-bg: #111319;         /* Sidebar background */
+            --chart-color1: #ff5e5e;       /* Chart color 1 */
+            --chart-color2: #8a56ff;       /* Chart color 2 */
+            --chart-color3: #00d09c;       /* Chart color 3 */
+            --chart-color4: #00b8d9;       /* Chart color 4 */
+        }
+
+        body {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            font-family: 'Inter', 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .navbar {
+            background-color: var(--dark-color) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
         .sidebar {
             min-height: calc(100vh - 56px);
-            background-color: #343a40;
-            color: white;
+            background-color: var(--sidebar-bg);
+            color: var(--text-color);
+            box-shadow: var(--box-shadow);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
+
         .sidebar a {
-            color: rgba(255, 255, 255, 0.8);
+            color: var(--text-secondary);
             text-decoration: none;
-            padding: 10px 15px;
-            display: block;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            border-radius: var(--border-radius);
+            margin: 8px 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
+
+        .sidebar a i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
         .sidebar a:hover {
+            background-color: rgba(138, 86, 255, 0.1);
+            color: var(--accent-color);
+        }
+
+        .sidebar a.active {
+            background-color: var(--accent-color);
             color: white;
+            box-shadow: 0 4px 10px rgba(138, 86, 255, 0.4);
+        }
+
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            background-color: var(--card-bg);
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 15px 20px;
+        }
+
+        .btn {
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            padding: 0.5rem 1.25rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #9d6fff;
+            border-color: #9d6fff;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #0fdcaa;
+            border-color: #0fdcaa;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #ff7575;
+            border-color: #ff7575;
+        }
+
+        .btn-info {
+            background-color: var(--info-color);
+            border-color: var(--info-color);
+        }
+
+        .btn-info:hover {
+            background-color: #22c5e5;
+            border-color: #22c5e5;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+        }
+
+        .btn-warning:hover {
+            background-color: #ffad60;
+            border-color: #ffad60;
+        }
+
+        .bg-primary {
+            background-color: var(--accent-color) !important;
+        }
+
+        .bg-success {
+            background-color: var(--success-color) !important;
+        }
+
+        .bg-danger {
+            background-color: var(--danger-color) !important;
+        }
+
+        .bg-info {
+            background-color: var(--info-color) !important;
+        }
+
+        .bg-warning {
+            background-color: var(--warning-color) !important;
+        }
+
+        .bg-dark {
+            background-color: var(--dark-color) !important;
+        }
+
+        .table {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            color: var(--text-color);
+            background-color: transparent;
+        }
+
+        .table thead th {
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-color);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+
+        .table tbody td {
+            border-color: rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(138, 86, 255, 0.05);
+        }
+
+        .progress {
+            height: 10px;
+            border-radius: 5px;
             background-color: rgba(255, 255, 255, 0.1);
         }
-        .sidebar a.active {
-            color: white;
-            background-color: #007bff;
+
+        .alert {
+            border-radius: var(--border-radius);
+            border: none;
+            background-color: var(--light-color);
+            color: var(--text-color);
         }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+            border-radius: 10px;
+        }
+        /* Custom styles for content area */
         .content {
-            padding: 20px;
+            padding: 25px;
         }
+
+        .page-title {
+            color: var(--text-color);
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
         .device-card {
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
         }
+
         .device-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
+
         pre {
-            background-color: #f8f9fa;
+            background-color: var(--light-color);
             padding: 15px;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             white-space: pre-wrap;
             max-height: 500px;
             overflow-y: auto;
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
+
         .result-container {
             max-height: 600px;
             overflow-y: auto;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+        }
+
+        /* Stat cards */
+        .stat-card {
+            border-radius: var(--border-radius);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stat-card .stat-icon {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 2.5rem;
+            opacity: 0.2;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        /* Chart containers */
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* Risk score gauge */
+        .risk-score {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .risk-score .score-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .risk-score .score-label {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'scanner:index' %}">
-                <i class="fas fa-shield-alt me-2"></i>System Vulnerability Assessment Tool
+                <span style="color: var(--accent-color); font-weight: 700;">Rex</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'scanner:add_target' %}">
+                <div class="ms-auto d-flex align-items-center">
+                    <!-- Search Bar -->
+                    <div class="position-relative me-3 d-none d-lg-block">
+                        <input type="text" class="form-control bg-dark border-0 text-white" placeholder="Search Here" style="border-radius: 20px; padding-left: 40px; width: 300px;">
+                        <i class="fas fa-search position-absolute" style="left: 15px; top: 10px; color: #a3aed0;"></i>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <!-- Action Buttons -->
+                    <div class="d-flex me-3">
+                        <a class="btn btn-sm btn-outline-light me-2" href="{% url 'scanner:add_target' %}" style="border-radius: 20px;">
                             <i class="fas fa-plus me-1"></i>Add Target
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'scanner:scan_network' %}"
-                           onclick="event.preventDefault(); document.getElementById('scan-network-form').submit();">
+                        <a class="btn btn-sm btn-outline-light" href="{% url 'scanner:scan_network' %}"
+                           onclick="event.preventDefault(); document.getElementById('scan-network-form').submit();"
+                           style="border-radius: 20px;">
                             <i class="fas fa-search me-1"></i>Scan Network
                         </a>
                         <form id="scan-network-form" action="{% url 'scanner:scan_network' %}" method="post" style="display: none;">
                             {% csrf_token %}
                         </form>
-                    </li>
-                </ul>
+                    </div>
+
+                    <!-- Notification Icon -->
+                    <div class="me-3 position-relative">
+                        <a href="#" class="text-white">
+                            <i class="fas fa-bell fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                3
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div class="dropdown">
+                        <a class="dropdown-toggle d-flex align-items-center text-decoration-none text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="rounded-circle bg-accent d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; background-color: var(--accent-color);">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="background-color: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);">
+                            <li><a class="dropdown-item text-white" href="{% url 'password_change' %}"><i class="fas fa-key me-2"></i>Change Password</a></li>
+                            <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></li>
+                            <li>
+                                <a class="dropdown-item text-white" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a class="btn btn-sm btn-primary" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>
@@ -88,36 +421,106 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-md-2 px-0 sidebar">
-                <div class="py-4 px-3 mb-4">
-                    <div class="text-center">
-                        <h5>Navigation</h5>
+                <div class="py-4 px-3 mb-2">
+                    <div class="text-center mb-4">
+                        <img src="https://via.placeholder.com/80" alt="Logo" class="rounded-circle mb-3" style="background-color: var(--accent-color);">
+                    </div>
+
+                    <!-- Welcome Message -->
+                    <div class="text-center mb-4">
+                        <p class="mb-0" style="color: var(--text-secondary);">Welcome!</p>
+                        <h6 class="mb-0">{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</h6>
+                        <p class="small text-muted">Security is a process, not a product.</p>
                     </div>
                 </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="{% url 'scanner:index' %}" class="nav-link {% if request.path == '/scanner/' %}active{% endif %}">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'scanner:os_info' %}" class="nav-link {% if '/os-info/' in request.path %}active{% endif %}">
-                            <i class="fas fa-desktop me-2"></i>OS Information
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'scanner:network_info' %}" class="nav-link {% if '/network-info/' in request.path %}active{% endif %}">
-                            <i class="fas fa-network-wired me-2"></i>Network Information
-                        </a>
-                    </li>
-                </ul>
+
+                <!-- Navigation Categories -->
+                <div class="px-3 mb-4">
+                    <h6 class="text-uppercase mb-3" style="color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 1px;">General</h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{% url 'scanner:index' %}" class="nav-link {% if request.path == '/scanner/' %}active{% endif %}">
+                                <i class="fas fa-chart-pie"></i>Overview
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-file-alt"></i>Files
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="px-3 mb-4">
+                    <h6 class="text-uppercase mb-3" style="color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 1px;">Reports</h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{% url 'scanner:os_info' %}" class="nav-link {% if '/os-info/' in request.path %}active{% endif %}">
+                                <i class="fas fa-exclamation-triangle"></i>OS Info
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'scanner:network_info' %}" class="nav-link {% if '/network-info/' in request.path %}active{% endif %}">
+                                <i class="fas fa-network-wired"></i>Network Information
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'scanner:processes' %}" class="nav-link {% if '/processes/' in request.path %}active{% endif %}">
+                                <i class="fas fa-tasks"></i>Running Processes
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="px-3 mb-4">
+                    <h6 class="text-uppercase mb-3" style="color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 1px;">Settings</h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-question-circle"></i>Help & Support
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-cog"></i>Settings
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Upgrade Banner -->
+                <div class="px-3 mt-auto">
+                    <div class="p-3 rounded" style="background-color: rgba(138, 86, 255, 0.1); border: 1px solid rgba(138, 86, 255, 0.2);">
+                        <div class="text-center mb-2">
+                            <img src="https://via.placeholder.com/40" alt="Upgrade" class="mb-2">
+                            <p class="small mb-2">Additional features to enhance your security.</p>
+                            <a href="#" class="btn btn-sm btn-primary w-100">Upgrade <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logout Button -->
+                <div class="px-3 py-3 mt-4">
+                    <a href="{% url 'logout' %}" class="btn btn-outline-light w-100">
+                        <i class="fas fa-sign-out-alt me-2"></i>Log Out
+                    </a>
+                </div>
             </div>
 
             <!-- Main Content -->
             <div class="col-md-10 content">
+                <!-- Welcome Banner -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 class="mb-1">Welcome! {% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</h4>
+                        <p class="text-muted mb-0">Security is a process, not a product.</p>
+                    </div>
+                </div>
+
                 <!-- Messages -->
                 {% if messages %}
                     {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: var(--light-color); color: var(--text-color);">
                             {{ message }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
@@ -125,7 +528,7 @@
                 {% endif %}
 
                 <!-- Page Title -->
-                <h2 class="mb-4">{% block page_title %}{{ page_title|default:"Dashboard" }}{% endblock %}</h2>
+                <h2 class="page-title">{% block page_title %}{{ page_title|default:"Dashboard" }}{% endblock %}</h2>
 
                 <!-- Main Content -->
                 {% block content %}{% endblock %}
@@ -137,6 +540,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Chart.js and plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+    <script>
+        // Register the annotation plugin
+        Chart.register(ChartAnnotation);
+    </script>
+    <!-- Data Persistence -->
+    <script src="{% static 'js/data-persistence.js' %}"></script>
 
     <style>
         /* Additional styles for command execution */

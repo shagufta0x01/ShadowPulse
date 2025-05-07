@@ -2,13 +2,21 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+import logging
+import html
+
+# Get a logger for this file
+logger = logging.getLogger('scanner')
 import socket
 import struct
 import sys
 import os
 import zlib
 import time
+import json
 from .utils import format_command_output
+from .memory_protection import MemoryProtectionCheck
 
 # Add the project root directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -24,6 +32,7 @@ OS_INFO_SECTIONS = [
     {"id": "environment_variables", "name": "Environment Variables", "category": "System Information"},
     {"id": "user_folders", "name": "User Folders", "category": "System Information"},
     {"id": "file_version", "name": "File Version", "category": "System Information"},
+    {"id": "running_processes", "name": "Running Processes", "category": "System Information"},
 
     # Software & Updates
     {"id": "installed_software", "name": "Installed Software", "category": "Software & Updates"},
@@ -67,6 +76,7 @@ def build_request_header(version, req_id, cmd_code, payload_len):
 from proto.host.network_utils import arp_scan
 from .models import Target, ScanResult, NetworkDevice
 
+@login_required
 def index(request):
     """Dashboard home page"""
     targets = Target.objects.filter(is_active=True).order_by('-last_scan')
@@ -75,14 +85,84 @@ def index(request):
     # Get list of target IPs for template
     target_ips = [target.ip_address for target in targets]
 
+    # Get scan results for statistics
+    scan_results = ScanResult.objects.all().order_by('-scan_time')
+
+    # Calculate statistics for charts
+    scan_types = {}
+    scan_dates = {}
+    target_scan_counts = {}
+
+    # Process scan results for charts
+    for result in scan_results:
+        # Count by scan type
+        scan_type = result.scan_type
+        if scan_type in scan_types:
+            scan_types[scan_type] += 1
+        else:
+            scan_types[scan_type] = 1
+
+        # Count by date (for timeline)
+        scan_date = result.scan_time.date().isoformat()
+        if scan_date in scan_dates:
+            scan_dates[scan_date] += 1
+        else:
+            scan_dates[scan_date] = 1
+
+        # Count by target
+        target_name = f"{result.target.ip_address}"
+        if target_name in target_scan_counts:
+            target_scan_counts[target_name] += 1
+        else:
+            target_scan_counts[target_name] = 1
+
+    # Prepare data for charts
+    scan_type_labels = list(scan_types.keys())
+    scan_type_data = list(scan_types.values())
+
+    # Sort dates for timeline chart
+    sorted_dates = sorted(scan_dates.keys())
+    timeline_labels = sorted_dates
+    timeline_data = [scan_dates[date] for date in sorted_dates]
+
+    # Prepare target scan count data
+    target_labels = list(target_scan_counts.keys())
+    target_data = list(target_scan_counts.values())
+
+    # Count devices by vendor
+    vendor_counts = {}
+    for device in devices:
+        vendor = device.vendor or "Unknown"
+        if vendor in vendor_counts:
+            vendor_counts[vendor] += 1
+        else:
+            vendor_counts[vendor] = 1
+
+    vendor_labels = list(vendor_counts.keys())
+    vendor_data = list(vendor_counts.values())
+
     context = {
         'targets': targets,
         'devices': devices,
         'target_ips': target_ips,
-        'page_title': 'Dashboard'
+        'page_title': 'Dashboard',
+        # Chart data
+        'scan_type_labels': scan_type_labels,
+        'scan_type_data': scan_type_data,
+        'timeline_labels': timeline_labels,
+        'timeline_data': timeline_data,
+        'target_labels': target_labels,
+        'target_data': target_data,
+        'vendor_labels': vendor_labels,
+        'vendor_data': vendor_data,
+        # Summary statistics
+        'total_targets': targets.count(),
+        'total_devices': devices.count(),
+        'total_scans': scan_results.count()
     }
     return render(request, 'scanner/index.html', context)
 
+@login_required
 def os_info(request):
     """OS Information page"""
     targets = Target.objects.filter(is_active=True).order_by('-last_scan')
@@ -103,6 +183,7 @@ def os_info(request):
     }
     return render(request, 'scanner/os_info.html', context)
 
+@login_required
 def get_os_info_section(request, target_id, section_id):
     """Get a specific section of OS info from a target"""
     target = get_object_or_404(Target, pk=target_id)
@@ -245,8 +326,38 @@ def get_os_info_section(request, target_id, section_id):
 
         messages.success(request, f'Successfully retrieved {section_name} from {target.ip_address}')
 
-        # Format the result data for professional display
-        formatted_data = format_command_output(result_data, section_name)
+        # Special handling for firewall rules section
+        if section_id == 'firewall_rules':
+            # Check if the result data is already HTML
+            if result_data.strip().startswith('<div class="firewall-rules-container">'):
+                formatted_data = result_data
+            else:
+                # Create a simple HTML table for firewall rules
+                formatted_data = """
+                <div class="firewall-rules-container">
+                    <div class="mb-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            <strong>Firewall Information</strong>: Showing simplified firewall rules. For detailed rules, run with elevated privileges.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Windows Firewall Rules</h5>
+                                </div>
+                                <div class="card-body">
+                                    <pre style="white-space: pre-wrap; word-wrap: break-word; max-height: 500px; overflow-y: auto;">""" + html.escape(result_data) + """</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                """
+        else:
+            # Format the result data for professional display
+            formatted_data = format_command_output(result_data, section_name)
 
         # Return the result
         return JsonResponse({
@@ -284,6 +395,413 @@ def get_os_info_section(request, target_id, section_id):
             'message': error_msg
         }, status=500)
 
+@login_required
+def processes(request):
+    """Running Processes page"""
+    targets = Target.objects.filter(is_active=True).order_by('-last_scan')
+
+    # Check if we need to refresh the data
+    refresh = request.GET.get('refresh', 'false').lower() == 'true'
+
+    # Get the selected target and page
+    target_id = request.GET.get('target_id')
+    page = request.GET.get('page')
+    if target_id:
+        target = get_object_or_404(Target, pk=target_id)
+    elif targets.exists():
+        target = targets.first()
+    else:
+        target = None
+
+    # Get process data if we have a target
+    process_data = None
+    if target and refresh:
+        try:
+            # Send command to get process data
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(30)  # 30 second timeout
+
+            # Use 127.0.0.1 only for actual local connections
+            ip_to_connect = '127.0.0.1' if target.ip_address in ['127.0.0.1', 'localhost'] else target.ip_address
+            print(f"Connecting to agent at {ip_to_connect}:23033")
+            s.connect((ip_to_connect, 23033))
+
+            # Send the command with page parameter if provided
+            req_id = 1
+            payload = f"page={page}" if page else ""
+            payload_bytes = payload.encode() if payload else b""
+            header = build_request_header(0x01, req_id, CMD_GET_RUNNING_PROCESSES, len(payload_bytes))
+            s.sendall(header + payload_bytes)
+
+            # Receive the response header
+            response_header = s.recv(HEADER_SIZE)
+            # Parse header to get flags and payload_len
+            _, _, flags, _, _, payload_len, _ = struct.unpack(HEADER_FORMAT, response_header)
+
+            # Check if the response is compressed
+            is_compressed = (flags & FLAG_COMPRESSED) != 0
+
+            # Receive the response payload
+            s.settimeout(60)  # 60 second timeout for receiving data
+            response_payload = b""
+            remaining = payload_len
+
+            while remaining > 0:
+                chunk = s.recv(min(4096, remaining))
+                if not chunk:
+                    break
+                response_payload += chunk
+                remaining -= len(chunk)
+
+            s.close()
+
+            # Decompress if needed and decode the response
+            if is_compressed:
+                decompressed_payload = zlib.decompress(response_payload)
+                process_data = decompressed_payload.decode('utf-8', errors='ignore')
+            else:
+                process_data = response_payload.decode('utf-8', errors='ignore')
+
+            # Store the result
+            scan_result = ScanResult.objects.create(
+                target=target,
+                scan_type="Running Processes",
+                result_data=process_data,
+                scan_time=timezone.now()
+            )
+
+            # Update the target's last scan time
+            target.last_scan = timezone.now()
+            target.save()
+
+            messages.success(request, f'Successfully retrieved process data from {target.ip_address}')
+
+        except Exception as e:
+            messages.error(request, f'Error retrieving process data: {str(e)}')
+
+    context = {
+        'targets': targets,
+        'selected_target': target,
+        'process_data': process_data,
+        'page_title': 'Running Processes'
+    }
+    return render(request, 'scanner/processes.html', context)
+
+@login_required
+def get_processes_data(request):
+    """AJAX endpoint to get process data for a target"""
+    target_id = request.GET.get('target_id')
+    page = request.GET.get('page')
+
+    if not target_id:
+        return JsonResponse({'error': 'No target specified'}, status=400)
+
+    target = get_object_or_404(Target, pk=target_id)
+
+    try:
+        # Send command to get process data
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(30)  # 30 second timeout
+
+        # Use 127.0.0.1 only for actual local connections
+        ip_to_connect = '127.0.0.1' if target.ip_address in ['127.0.0.1', 'localhost'] else target.ip_address
+        print(f"Connecting to agent at {ip_to_connect}:23033")
+        s.connect((ip_to_connect, 23033))
+
+        # Send the command with page parameter if provided
+        req_id = 1
+        payload = f"page={page}" if page else ""
+        payload_bytes = payload.encode() if payload else b""
+        header = build_request_header(0x01, req_id, CMD_GET_RUNNING_PROCESSES, len(payload_bytes))
+        s.sendall(header + payload_bytes)
+
+        # Receive the response header
+        response_header = s.recv(HEADER_SIZE)
+        # Parse header to get flags and payload_len
+        _, _, flags, _, _, payload_len, _ = struct.unpack(HEADER_FORMAT, response_header)
+
+        # Check if the response is compressed
+        is_compressed = (flags & FLAG_COMPRESSED) != 0
+
+        # Receive the response payload
+        s.settimeout(60)  # 60 second timeout for receiving data
+        response_payload = b""
+        remaining = payload_len
+
+        while remaining > 0:
+            chunk = s.recv(min(4096, remaining))
+            if not chunk:
+                break
+            response_payload += chunk
+            remaining -= len(chunk)
+
+        s.close()
+
+        # Decompress if needed and decode the response
+        if is_compressed:
+            decompressed_payload = zlib.decompress(response_payload)
+            process_data = decompressed_payload.decode('utf-8', errors='ignore')
+        else:
+            process_data = response_payload.decode('utf-8', errors='ignore')
+
+        # Store the result
+        ScanResult.objects.create(
+            target=target,
+            scan_type="Running Processes",
+            result_data=process_data,
+            scan_time=timezone.now()
+        )
+
+        # Update the target's last scan time
+        target.last_scan = timezone.now()
+        target.save()
+
+        # Return the HTML data directly
+        return JsonResponse({'html': process_data})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+def analyze_process(request):
+    """Analyze memory protection features of a process."""
+    target_id = request.GET.get('target_id')
+    pid = request.GET.get('pid')
+    task_id = request.GET.get('task_id')
+    start = request.GET.get('start', 'false').lower() == 'true'
+
+    # Dictionary to store active analysis tasks
+    if not hasattr(analyze_process, 'active_tasks'):
+        analyze_process.active_tasks = {}
+
+    # If we're checking status of an existing task
+    if task_id:
+        if task_id not in analyze_process.active_tasks:
+            return JsonResponse({'error': 'Task not found'}, status=404)
+
+        task = analyze_process.active_tasks[task_id]
+
+        # If task is complete, return the result and clean up
+        if task.get('complete'):
+            html_output = task.get('html_output', '')
+            # Clean up the task
+            if task_id in analyze_process.active_tasks:
+                del analyze_process.active_tasks[task_id]
+            return JsonResponse({'complete': True, 'html': html_output})
+
+        # Return current progress
+        return JsonResponse({
+            'complete': False,
+            'progress': task.get('progress', 0),
+            'status': task.get('status', 'Processing...')
+        })
+
+    # Validate parameters for starting a new analysis
+    if not target_id:
+        return JsonResponse({'error': 'No target specified'}, status=400)
+
+    if not pid:
+        return JsonResponse({'error': 'No process ID specified'}, status=400)
+
+    try:
+        pid = int(pid)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid process ID'}, status=400)
+
+    target = get_object_or_404(Target, pk=target_id)
+
+    # Generate a unique task ID
+    import uuid
+    new_task_id = str(uuid.uuid4())
+
+    # Initialize task data
+    analyze_process.active_tasks[new_task_id] = {
+        'target_id': target_id,
+        'pid': pid,
+        'start_time': timezone.now(),
+        'progress': 0,
+        'status': 'Initializing analysis...',
+        'complete': False
+    }
+
+    # If this is just a request to start the task, return the task ID
+    if start:
+        # Start the analysis in a background thread
+        import threading
+        thread = threading.Thread(
+            target=perform_process_analysis,
+            args=(new_task_id, target, pid)
+        )
+        thread.daemon = True
+        thread.start()
+
+        return JsonResponse({'task_id': new_task_id})
+
+    # If we get here, something went wrong with the request parameters
+    return JsonResponse({'error': 'Invalid request parameters'}, status=400)
+
+def perform_process_analysis(task_id, target, pid):
+    """Perform the actual process analysis in a background thread."""
+    try:
+        # Update task status
+        analyze_process.active_tasks[task_id]['status'] = 'Connecting to agent...'
+        analyze_process.active_tasks[task_id]['progress'] = 5
+
+        # Check if the target is the local machine (only localhost and actual local IP)
+        local_ips = ['127.0.0.1', 'localhost']
+        try:
+            local_ips.append(socket.gethostbyname(socket.gethostname()))
+        except:
+            pass
+        is_local = target.ip_address in local_ips
+
+        if is_local:
+            # For local machine, perform analysis directly
+            analyze_process.active_tasks[task_id]['status'] = 'Analyzing process locally...'
+            analyze_process.active_tasks[task_id]['progress'] = 10
+
+            analyzer = MemoryProtectionCheck(pid)
+
+            # Update progress as we go
+            analyze_process.active_tasks[task_id]['status'] = 'Enumerating loaded modules...'
+            analyze_process.active_tasks[task_id]['progress'] = 30
+
+            analyzer.analyze()
+
+            analyze_process.active_tasks[task_id]['status'] = 'Generating report...'
+            analyze_process.active_tasks[task_id]['progress'] = 90
+
+            # Generate HTML report and wrap it in a memory-protection-container div
+            html_output = f'<div class="memory-protection-container">{analyzer.generate_html_report()}</div>'
+        else:
+            # For remote targets, send command to the agent
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(60)  # 60 second timeout
+
+            # Use 127.0.0.1 only for actual local connections
+            ip_to_connect = '127.0.0.1' if target.ip_address in ['127.0.0.1', 'localhost'] else target.ip_address
+            print(f"Connecting to agent at {ip_to_connect}:23033 for memory protection analysis")
+
+            analyze_process.active_tasks[task_id]['status'] = f'Connecting to agent at {ip_to_connect}...'
+            analyze_process.active_tasks[task_id]['progress'] = 10
+
+            s.connect((ip_to_connect, 23033))
+
+            analyze_process.active_tasks[task_id]['status'] = 'Sending analysis request to agent...'
+            analyze_process.active_tasks[task_id]['progress'] = 20
+
+            # Send the command with PID as payload
+            req_id = 1
+            payload = str(pid).encode()
+            header = struct.pack(
+                HEADER_FORMAT,
+                MAGIC_HEADER,
+                0x01,  # version
+                0,     # flags
+                req_id,
+                CMD_ANALYZE_PROCESS_MEMORY,
+                len(payload),
+                0      # reserved
+            )
+
+            # Send header and payload
+            s.sendall(header + payload)
+
+            analyze_process.active_tasks[task_id]['status'] = 'Agent is analyzing process security...'
+            analyze_process.active_tasks[task_id]['progress'] = 30
+
+            # Receive the response header
+            response_header = s.recv(HEADER_SIZE)
+            # Parse header to get flags and payload_len
+            _, _, flags, _, _, payload_len, _ = struct.unpack(HEADER_FORMAT, response_header)
+
+            # Check if the response is compressed
+            is_compressed = (flags & FLAG_COMPRESSED) != 0
+
+            analyze_process.active_tasks[task_id]['status'] = 'Receiving analysis results...'
+            analyze_process.active_tasks[task_id]['progress'] = 50
+
+            # Receive the response payload
+            s.settimeout(120)  # 2 minute timeout for receiving data
+            response_payload = b""
+            remaining = payload_len
+
+            # Track progress of data reception
+            total_received = 0
+
+            while remaining > 0:
+                chunk = s.recv(min(4096, remaining))
+                if not chunk:
+                    break
+                response_payload += chunk
+                total_received += len(chunk)
+                remaining -= len(chunk)
+
+                # Update progress based on data received
+                if payload_len > 0:
+                    receive_progress = int((total_received / payload_len) * 40)  # 40% of progress for receiving
+                    analyze_process.active_tasks[task_id]['progress'] = 50 + receive_progress
+                    analyze_process.active_tasks[task_id]['status'] = f'Receiving analysis data: {int(total_received / payload_len * 100)}%'
+
+            s.close()
+
+            analyze_process.active_tasks[task_id]['status'] = 'Processing analysis results...'
+            analyze_process.active_tasks[task_id]['progress'] = 90
+
+            # Decompress if needed and decode the response
+            if is_compressed:
+                decompressed_payload = zlib.decompress(response_payload)
+                decoded_output = decompressed_payload.decode('utf-8', errors='ignore')
+            else:
+                decoded_output = response_payload.decode('utf-8', errors='ignore')
+
+            # Wrap the output in a memory-protection-container div
+            html_output = f'<div class="memory-protection-container">{decoded_output}</div>'
+
+            # Check if the response is an error message
+            if html_output.startswith('Error:'):
+                raise Exception(html_output)
+
+        # Store the result
+        ScanResult.objects.create(
+            target=target,
+            scan_type=f"Memory Protection Analysis (PID: {pid})",
+            result_data=html_output,
+            scan_time=timezone.now()
+        )
+
+        # Update the target's last scan time
+        target.last_scan = timezone.now()
+        target.save()
+
+        # Mark task as complete and store the result
+        analyze_process.active_tasks[task_id]['status'] = 'Analysis complete'
+        analyze_process.active_tasks[task_id]['progress'] = 100
+        analyze_process.active_tasks[task_id]['complete'] = True
+        analyze_process.active_tasks[task_id]['html_output'] = html_output
+
+    except Exception as e:
+        error_message = str(e)
+        logger.error(f"Error analyzing process {pid}: {error_message}")
+
+        html_output = f"""
+        <div class="memory-protection-container">
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <strong>Error Analyzing Process</strong>
+                <p>{error_message}</p>
+                <p class="mb-0">This may be due to insufficient permissions or the process no longer exists.</p>
+            </div>
+        </div>
+        """
+
+        # Mark task as complete with error
+        analyze_process.active_tasks[task_id]['status'] = 'Error: ' + error_message
+        analyze_process.active_tasks[task_id]['progress'] = 100
+        analyze_process.active_tasks[task_id]['complete'] = True
+        analyze_process.active_tasks[task_id]['html_output'] = html_output
+
+@login_required
 def network_info(request):
     """Network Information page"""
     targets = Target.objects.filter(is_active=True).order_by('-last_scan')
@@ -300,6 +818,7 @@ def network_info(request):
     }
     return render(request, 'scanner/network_info.html', context)
 
+@login_required
 def target_detail(request, target_id):
     """Target detail page"""
     target = get_object_or_404(Target, pk=target_id)
@@ -312,6 +831,7 @@ def target_detail(request, target_id):
     }
     return render(request, 'scanner/target_detail.html', context)
 
+@login_required
 def add_target(request):
     """Add a new target"""
     if request.method == 'POST':
@@ -341,6 +861,7 @@ def add_target(request):
 
     return render(request, 'scanner/add_target.html', {'page_title': 'Add Target'})
 
+@login_required
 def scan_network(request):
     """Scan the local network for devices"""
     if request.method == 'POST':
@@ -365,6 +886,7 @@ def scan_network(request):
 
     return redirect('scanner:network_info')
 
+@login_required
 def send_command(request, target_id, command_code):
     """Send a command to a target and store the result"""
     target = get_object_or_404(Target, pk=target_id)
@@ -589,6 +1111,7 @@ def send_command(request, target_id, command_code):
             'message': error_msg
         }, status=500)
 
+@login_required
 def get_scan_result(request, result_id):
     """Get a specific scan result"""
     # request parameter is required by Django's URL routing
@@ -605,6 +1128,7 @@ def get_scan_result(request, result_id):
         'result_data': formatted_data
     })
 
+@login_required
 def delete_target(request, target_id):
     """Delete a target"""
     if request.method == 'POST':
@@ -614,3 +1138,17 @@ def delete_target(request, target_id):
         messages.success(request, f'Target {ip} deleted successfully')
 
     return redirect('scanner:index')
+
+@login_required
+def clear_network_devices(request):
+    """Clear all network devices from the database"""
+    if request.method == 'POST':
+        # Count devices before deletion
+        count = NetworkDevice.objects.count()
+
+        # Delete all network devices
+        NetworkDevice.objects.all().delete()
+
+        messages.success(request, f'Successfully cleared {count} network devices')
+
+    return redirect('scanner:network_info')

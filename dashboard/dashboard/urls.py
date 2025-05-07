@@ -17,9 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
+from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('scanner/', include('scanner.urls')),
     path('', RedirectView.as_view(url='scanner/', permanent=False)),
+
+    # Authentication URLs
+    path('login/', auth_views.LoginView.as_view(template_name='scanner/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('password_change/', auth_views.PasswordChangeView.as_view(template_name='scanner/password_change.html'), name='password_change'),
+    path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='scanner/password_change_done.html'), name='password_change_done'),
 ]
+
+# Serve static files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

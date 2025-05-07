@@ -8,6 +8,9 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('os-info/', views.os_info, name='os_info'),
     path('network-info/', views.network_info, name='network_info'),
+    path('processes/', views.processes, name='processes'),
+    path('processes/data/', views.get_processes_data, name='get_processes_data'),
+    path('processes/analyze/', views.analyze_process, name='analyze_process'),
 
     # Target management
     path('target/add/', views.add_target, name='add_target'),
@@ -21,4 +24,5 @@ urlpatterns = [
 
     # Network scanning
     path('scan-network/', views.scan_network, name='scan_network'),
+    path('clear-network-devices/', views.clear_network_devices, name='clear_network_devices'),
 ]

@@ -4,24 +4,35 @@
 <div class="row mb-4">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header bg-success text-white">
+            <div class="card-header text-white" style="background-color: var(--success-color);">
                 <h5 class="mb-0"><i class="fas fa-network-wired me-2"></i>Network Information</h5>
             </div>
             <div class="card-body">
                 <div class="row mb-4">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header text-white" style="background-color: var(--accent-color);">
                                 <h5 class="mb-0">Network Devices</h5>
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
                                     <form action="{% url 'scanner:scan_network' %}" method="post" class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-success">
+                                        <button type="submit" class="btn btn-success" style="background-color: var(--success-color); border-color: var(--success-color);">
                                             <i class="fas fa-search me-1"></i>Scan Network
                                         </button>
                                     </form>
+
+                                    <form action="{% url 'scanner:clear_network_devices' %}" method="post" class="d-inline ms-2" onsubmit="return confirm('Are you sure you want to clear all network devices? This action cannot be undone.');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger" style="background-color: var(--danger-color); border-color: var(--danger-color);">
+                                            <i class="fas fa-trash-alt me-1"></i>Clear Devices
+                                        </button>
+                                    </form>
+
+                                    <button id="clear-cache-btn" class="btn btn-warning d-inline ms-2" style="background-color: var(--warning-color); border-color: var(--warning-color);">
+                                        <i class="fas fa-trash-alt me-1"></i>Clear Cache
+                                    </button>
                                 </div>
 
                                 {% if devices %}
@@ -72,7 +83,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card mb-4">
-                            <div class="card-header">
+                            <div class="card-header text-white" style="background-color: var(--primary-color);">
                                 <h5 class="mb-0">Target Systems</h5>
                             </div>
                             <div class="card-body">
@@ -99,7 +110,7 @@
                         </div>
 
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header text-white" style="background-color: var(--info-color);">
                                 <h5 class="mb-0">Available Commands</h5>
                             </div>
                             <div class="card-body">
@@ -175,7 +186,7 @@
 
                     <div class="col-md-8">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header text-white" style="background-color: var(--success-color);">
                                 <h5 class="mb-0 result-title">Results</h5>
                             </div>
                             <div class="card-body result-container" id="result-container">
@@ -217,8 +228,16 @@
             // Update result title
             $('.result-title').text(`Results for ${selectedTargetIp}`);
 
-            // Clear results
-            $('#result-container').html('<div class="alert alert-info">Select a command to run.</div>');
+            // Check if we have cached data for this target
+            if (NetworkDevicesData.hasDevicesData(selectedTargetId)) {
+                // Load cached data
+                const cachedData = NetworkDevicesData.loadDevices(selectedTargetId);
+                $('#result-container').html(cachedData);
+                console.log(`Loaded cached network data for target ${selectedTargetId}`);
+            } else {
+                // No cached data, show default message
+                $('#result-container').html('<div class="alert alert-info">Select a command to run.</div>');
+            }
         });
 
         // Handle command selection
@@ -233,8 +252,47 @@
 
                 // Send command
                 sendCommand(selectedTargetId, commandCode, commandName);
+
+                // Save the result to localStorage after a delay to allow the command to complete
+                setTimeout(function() {
+                    const resultHtml = $('#result-container').html();
+                    if (resultHtml && !resultHtml.includes('spinner-border')) {
+                        NetworkDevicesData.saveDevices(selectedTargetId, resultHtml);
+                        console.log(`Saved network data for target ${selectedTargetId}`);
+                    }
+                }, 5000);
+            }
+        });
+
+        // Handle clear cache button
+        $('#clear-cache-btn').click(function() {
+            if (confirm('Are you sure you want to clear all cached network data? This will not affect the database.')) {
+                NetworkDevicesData.clearAllDevices();
+                alert('Network data cache cleared successfully.');
             }
         });
     });
+
+    // Override the original sendCommand function to add caching
+    const originalSendCommand = window.sendCommand;
+    window.sendCommand = function(targetId, commandCode, commandName) {
+        // Call the original function
+        originalSendCommand(targetId, commandCode, commandName);
+
+        // Add a hook to save the result when it's complete
+        const checkForResults = setInterval(function() {
+            const resultContainer = $('#result-container');
+            const content = resultContainer.html();
+
+            // If the content doesn't contain a loading indicator and is not empty
+            if (content && !content.includes('spinner-border') && !content.includes('progress-bar')) {
+                clearInterval(checkForResults);
+
+                // Save the result to localStorage
+                NetworkDevicesData.saveDevices(targetId, content);
+                console.log(`Saved network data for target ${targetId}`);
+            }
+        }, 1000);
+    };
 </script>
 {% endblock %}

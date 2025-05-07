@@ -1,12 +1,337 @@
 {% extends 'scanner/base.html' %}
 
+{% block extra_css %}
+<style>
+    /* Risk cards */
+    .risk-card {
+        border-radius: var(--border-radius);
+        background-color: var(--card-bg);
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        color: var(--text-color);
+    }
+
+    .risk-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .risk-card .risk-icon {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        font-size: 2.5rem;
+        opacity: 0.2;
+    }
+
+    .risk-card .risk-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .risk-card .risk-label {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.8;
+    }
+
+    .risk-card .risk-type {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .risk-card.total {
+        background-color: rgba(255, 94, 94, 0.2);
+        border: 1px solid rgba(255, 94, 94, 0.3);
+    }
+
+    .risk-card.video {
+        background-color: rgba(138, 86, 255, 0.2);
+        border: 1px solid rgba(138, 86, 255, 0.3);
+    }
+
+    .risk-card.image {
+        background-color: rgba(255, 94, 94, 0.2);
+        border: 1px solid rgba(255, 94, 94, 0.3);
+    }
+
+    .risk-card.docs {
+        background-color: rgba(0, 184, 217, 0.2);
+        border: 1px solid rgba(0, 184, 217, 0.3);
+    }
+
+    .risk-card.folder {
+        background-color: rgba(0, 208, 156, 0.2);
+        border: 1px solid rgba(0, 208, 156, 0.3);
+    }
+
+    /* Chart containers */
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    /* Device cards */
+    .device-card {
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: var(--card-bg);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .device-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .device-vendor {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .device-mac {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .device-last-seen {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    /* Risk score gauge */
+    .risk-score-container {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .risk-score {
+        position: relative;
+        width: 200px;
+        height: 200px;
+    }
+
+    .risk-score-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3rem;
+        font-weight: 700;
+    }
+
+    .risk-score-label {
+        margin-top: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 5px 15px;
+        border-radius: 20px;
+        background-color: #ff9f43;
+        color: white;
+    }
+
+    /* Card headers */
+    .card-header-with-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-header-with-actions h5 {
+        margin-bottom: 0;
+        font-weight: 600;
+    }
+
+    .card-header-with-actions .card-actions {
+        display: flex;
+        align-items: center;
+    }
+
+    .card-header-with-actions .dropdown-toggle::after {
+        display: none;
+    }
+
+    /* Threat summary chart */
+    .threat-summary-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<!-- Stats Overview -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value" style="color: var(--accent-color);">{{ total_targets }}</div>
+                        <div class="stat-label">Target Systems</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-server" style="color: var(--accent-color);"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="{% url 'scanner:add_target' %}" class="text-white">
+                    <i class="fas fa-plus me-1"></i>Add Target
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value" style="color: var(--success-color);">{{ total_devices }}</div>
+                        <div class="stat-label">Network Devices</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-network-wired" style="color: var(--success-color);"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="{% url 'scanner:network_info' %}" class="text-white">
+                    <i class="fas fa-search me-1"></i>Scan Network
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value" style="color: var(--info-color);">{{ total_scans }}</div>
+                        <div class="stat-label">Total Scans</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line" style="color: var(--info-color);"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="{% url 'scanner:os_info' %}" class="text-white">
+                    <i class="fas fa-exclamation-triangle me-1"></i>View Issues
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header-with-actions">
+                <h5>Scan Types Distribution</h5>
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-outline-light" type="button">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="scanTypesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header-with-actions">
+                <h5>Scans by Target</h5>
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-outline-light" type="button">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="targetScansChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8 mb-4">
+        <div class="card h-100">
+            <div class="card-header-with-actions">
+                <h5>Scan Activity Timeline</h5>
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-outline-light" type="button">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="timelineChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header-with-actions">
+                <h5>Devices by Vendor</h5>
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-outline-light" type="button">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="vendorChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Target Systems and Network Devices -->
 <div class="row">
     <!-- Target Systems -->
     <div class="col-md-6 mb-4">
         <div class="card h-100">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: var(--accent-color);">
                 <h5 class="mb-0"><i class="fas fa-server me-2"></i>Target Systems</h5>
+                <a href="{% url 'scanner:add_target' %}" class="btn btn-sm btn-light">
+                    <i class="fas fa-plus me-1"></i>Add
+                </a>
             </div>
             <div class="card-body">
                 {% if targets %}
@@ -27,13 +352,21 @@
                                     <td>{{ target.hostname|default:"Unknown" }}</td>
                                     <td>{{ target.last_scan|default:"Never"|date:"Y-m-d H:i" }}</td>
                                     <td>
-                                        <a href="{% url 'scanner:target_detail' target.id %}" class="btn btn-sm btn-info">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ target.id }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                        
+                                        <div class="btn-group">
+                                            <a href="{% url 'scanner:target_detail' target.id %}" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'scanner:os_info' %}?target_id={{ target.id }}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-desktop"></i>
+                                            </a>
+                                            <a href="{% url 'scanner:network_info' %}?target_id={{ target.id }}" class="btn btn-sm btn-success">
+                                                <i class="fas fa-network-wired"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ target.id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+
                                         <!-- Delete Modal -->
                                         <div class="modal fade" id="deleteModal{{ target.id }}" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -63,24 +396,30 @@
                     </div>
                 {% else %}
                     <div class="alert alert-info">
-                        No target systems added yet. 
+                        No target systems added yet.
                         <a href="{% url 'scanner:add_target' %}" class="alert-link">Add a target</a> to get started.
                     </div>
                 {% endif %}
             </div>
-            <div class="card-footer">
-                <a href="{% url 'scanner:add_target' %}" class="btn btn-primary">
-                    <i class="fas fa-plus me-1"></i>Add Target
-                </a>
-            </div>
         </div>
     </div>
-    
+
     <!-- Network Devices -->
     <div class="col-md-6 mb-4">
         <div class="card h-100">
-            <div class="card-header bg-success text-white">
+            <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: var(--success-color);">
                 <h5 class="mb-0"><i class="fas fa-network-wired me-2"></i>Network Devices</h5>
+                <div>
+                    <form action="{% url 'scanner:scan_network' %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-light">
+                            <i class="fas fa-search me-1"></i>Scan
+                        </button>
+                    </form>
+                    <a href="{% url 'scanner:network_info' %}" class="btn btn-sm btn-light ms-1">
+                        <i class="fas fa-list me-1"></i>View All
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 {% if devices %}
@@ -89,19 +428,29 @@
                         <div class="col-md-6 mb-3">
                             <div class="card device-card">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ device.ip_address }}</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">{{ device.vendor|default:"Unknown Vendor" }}</h6>
-                                    <p class="card-text">
-                                        <small>MAC: {{ device.mac_address }}</small><br>
-                                        <small>Last seen: {{ device.last_seen|date:"Y-m-d H:i" }}</small>
-                                    </p>
-                                    {% if not device.ip_address in target_ips %}
-                                    <form action="{% url 'scanner:add_target' %}" method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="ip_address" value="{{ device.ip_address }}">
-                                        <button type="submit" class="btn btn-sm btn-outline-primary">Add as Target</button>
-                                    </form>
-                                    {% endif %}
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="card-title mb-0">{{ device.ip_address }}</h5>
+                                        {% if not device.ip_address in target_ips %}
+                                        <form action="{% url 'scanner:add_target' %}" method="post" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="ip_address" value="{{ device.ip_address }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                        <span class="badge bg-success">Target</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="device-vendor mb-1">
+                                        <i class="fas fa-building me-1"></i>{{ device.vendor|default:"Unknown Vendor" }}
+                                    </div>
+                                    <div class="device-mac mb-1">
+                                        <i class="fas fa-fingerprint me-1"></i>{{ device.mac_address }}
+                                    </div>
+                                    <div class="device-last-seen">
+                                        <i class="fas fa-clock me-1"></i>Last seen: {{ device.last_seen|date:"Y-m-d H:i" }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -109,70 +458,281 @@
                     </div>
                 {% else %}
                     <div class="alert alert-info">
-                        No network devices discovered yet. 
-                        <a href="{% url 'scanner:scan_network' %}" 
-                           onclick="event.preventDefault(); document.getElementById('scan-network-form').submit();" 
+                        No network devices discovered yet.
+                        <a href="{% url 'scanner:scan_network' %}"
+                           onclick="event.preventDefault(); document.getElementById('scan-network-form').submit();"
                            class="alert-link">Scan the network</a> to discover devices.
                     </div>
                 {% endif %}
             </div>
-            <div class="card-footer">
-                <form action="{% url 'scanner:scan_network' %}" method="post" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-search me-1"></i>Scan Network
-                    </button>
-                </form>
-                <a href="{% url 'scanner:network_info' %}" class="btn btn-outline-secondary float-end">
-                    <i class="fas fa-list me-1"></i>View All
-                </a>
-            </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
-<!-- Quick Actions -->
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="card text-center h-100">
-                            <div class="card-body">
-                                <i class="fas fa-desktop fa-3x mb-3 text-primary"></i>
-                                <h5 class="card-title">OS Information</h5>
-                                <p class="card-text">View detailed operating system information for target systems.</p>
-                                <a href="{% url 'scanner:os_info' %}" class="btn btn-primary">Go to OS Info</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card text-center h-100">
-                            <div class="card-body">
-                                <i class="fas fa-network-wired fa-3x mb-3 text-success"></i>
-                                <h5 class="card-title">Network Information</h5>
-                                <p class="card-text">View network information and discovered devices.</p>
-                                <a href="{% url 'scanner:network_info' %}" class="btn btn-success">Go to Network Info</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card text-center h-100">
-                            <div class="card-body">
-                                <i class="fas fa-plus fa-3x mb-3 text-danger"></i>
-                                <h5 class="card-title">Add Target</h5>
-                                <p class="card-text">Add a new target system to scan and monitor.</p>
-                                <a href="{% url 'scanner:add_target' %}" class="btn btn-danger">Add Target</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% block extra_js %}
+<script>
+    // Chart color palette
+    const chartColors = {
+        primary: '#8a56ff',       // Accent color (purple)
+        success: '#00d09c',       // Success color (green)
+        info: '#00b8d9',          // Info color (blue)
+        warning: '#ff9f43',       // Warning color (orange)
+        danger: '#ff5e5e',        // Danger color (red)
+        secondary: '#242736',     // Secondary color (dark blue)
+        light: '#a3aed0',         // Light color (light blue/gray)
+        dark: '#1a1d29',          // Dark color (dark blue)
+        primaryLight: '#b28aff',  // Lighter version of primary
+        successLight: '#33ddb0',  // Lighter version of success
+        infoLight: '#33c9e4',     // Lighter version of info
+        warningLight: '#ffb76b',  // Lighter version of warning
+        dangerLight: '#ff8a8a'    // Lighter version of danger
+    };
+
+    // Function to create gradient
+    function createGradient(ctx, colorStops) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        colorStops.forEach(stop => {
+            gradient.addColorStop(stop.stop, stop.color);
+        });
+        return gradient;
+    }
+
+    // Function to generate random colors
+    function generateColors(count) {
+        const colors = [
+            chartColors.primary,
+            chartColors.success,
+            chartColors.info,
+            chartColors.warning,
+            chartColors.danger,
+            '#9d6fff', // Light Purple
+            '#ff7575', // Light Red
+            '#22c5e5', // Light Blue
+            '#ffad60', // Light Orange
+            '#0fdcaa', // Light Green
+            '#c084fc', // Lavender
+            '#f472b6', // Pink
+            '#60a5fa', // Sky Blue
+            '#34d399', // Emerald
+            '#a78bfa', // Violet
+            '#fbbf24', // Amber
+            '#fb7185', // Rose
+            '#818cf8', // Indigo
+            '#2dd4bf', // Teal
+            '#f87171'  // Red
+        ];
+
+        // If we need more colors than in our predefined list, generate them
+        if (count > colors.length) {
+            for (let i = colors.length; i < count; i++) {
+                const r = Math.floor(Math.random() * 255);
+                const g = Math.floor(Math.random() * 255);
+                const b = Math.floor(Math.random() * 255);
+                colors.push(`rgba(${r}, ${g}, ${b}, 0.7)`);
+            }
+        }
+
+        return colors.slice(0, count);
+    }
+
+    // Initialize charts when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Scan Types Pie Chart
+        const scanTypeLabels = {{ scan_type_labels|safe }};
+        const scanTypeData = {{ scan_type_data|safe }};
+
+        if (scanTypeLabels.length > 0) {
+            const scanTypesCtx = document.getElementById('scanTypesChart').getContext('2d');
+            const scanTypesChart = new Chart(scanTypesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: scanTypeLabels,
+                    datasets: [{
+                        data: scanTypeData,
+                        backgroundColor: generateColors(scanTypeLabels.length),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 15,
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Target Scans Bar Chart
+        const targetLabels = {{ target_labels|safe }};
+        const targetData = {{ target_data|safe }};
+
+        if (targetLabels.length > 0) {
+            const targetScansCtx = document.getElementById('targetScansChart').getContext('2d');
+            const targetScansChart = new Chart(targetScansCtx, {
+                type: 'bar',
+                data: {
+                    labels: targetLabels,
+                    datasets: [{
+                        label: 'Scans',
+                        data: targetData,
+                        backgroundColor: chartColors.success,
+                        borderColor: chartColors.success,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Timeline Line Chart
+        const timelineLabels = {{ timeline_labels|safe }};
+        const timelineData = {{ timeline_data|safe }};
+
+        if (timelineLabels.length > 0) {
+            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+
+            // Create gradient for the area under the line
+            const areaGradient = timelineCtx.createLinearGradient(0, 0, 0, 300);
+            areaGradient.addColorStop(0, 'rgba(0, 184, 217, 0.3)');
+            areaGradient.addColorStop(1, 'rgba(0, 184, 217, 0.0)');
+
+            const timelineChart = new Chart(timelineCtx, {
+                type: 'line',
+                data: {
+                    labels: timelineLabels,
+                    datasets: [{
+                        label: 'Scans',
+                        data: timelineData,
+                        backgroundColor: areaGradient,
+                        borderColor: chartColors.info,
+                        borderWidth: 2,
+                        pointBackgroundColor: chartColors.info,
+                        pointBorderColor: '#fff',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            displayColors: false,
+                            padding: 10
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.5)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.5)',
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Vendor Pie Chart
+        const vendorLabels = {{ vendor_labels|safe }};
+        const vendorData = {{ vendor_data|safe }};
+
+        if (vendorLabels.length > 0) {
+            const vendorCtx = document.getElementById('vendorChart').getContext('2d');
+            const vendorChart = new Chart(vendorCtx, {
+                type: 'pie',
+                data: {
+                    labels: vendorLabels,
+                    datasets: [{
+                        data: vendorData,
+                        backgroundColor: generateColors(vendorLabels.length),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}
