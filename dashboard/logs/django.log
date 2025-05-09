@@ -1500,3 +1500,18 @@ INFO 2025-05-09 23:30:08,037 basehttp "GET /login/ HTTP/1.1" 200 9779
 INFO 2025-05-09 23:30:12,529 basehttp "POST /login/ HTTP/1.1" 302 0
 INFO 2025-05-09 23:30:12,538 basehttp "GET / HTTP/1.1" 302 0
 INFO 2025-05-09 23:30:12,825 basehttp "GET /scanner/ HTTP/1.1" 200 82766
+INFO 2025-05-09 23:35:39,565 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 114280
+INFO 2025-05-09 23:35:41,504 basehttp "GET /scanner/target/3/section/user_folders/ HTTP/1.1" 200 12134
+INFO 2025-05-09 23:35:41,733 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-09 23:35:43,373 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-09 23:35:44,115 basehttp "GET /scanner/target/3/section/file_version/ HTTP/1.1" 200 898
+INFO 2025-05-09 23:35:47,935 basehttp "GET /scanner/target/3/section/running_processes/ HTTP/1.1" 200 64463
+INFO 2025-05-09 23:35:55,676 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 114280
+INFO 2025-05-09 23:35:57,511 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-09 23:35:58,872 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-09 23:36:27,401 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-09 23:36:32,280 basehttp "GET /scanner/ HTTP/1.1" 200 82301
+INFO 2025-05-09 23:36:39,972 basehttp "POST /scanner/scan-network/ HTTP/1.1" 302 0
+INFO 2025-05-09 23:36:40,178 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 76184
+INFO 2025-05-09 23:36:44,428 basehttp "GET /scanner/ HTTP/1.1" 200 84192
+INFO 2025-05-09 23:42:01,808 autoreload Watching for file changes with StatReloader
