@@ -25,4 +25,7 @@ urlpatterns = [
     # Network scanning
     path('scan-network/', views.scan_network, name='scan_network'),
     path('clear-network-devices/', views.clear_network_devices, name='clear_network_devices'),
+
+    # Help and support
+    path('help-support/', views.help_support, name='help_support'),
 ]

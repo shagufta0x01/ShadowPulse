@@ -20,6 +20,7 @@ from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from scanner import views as scanner_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,6 +30,7 @@ urlpatterns = [
     # Authentication URLs
     path('login/', auth_views.LoginView.as_view(template_name='scanner/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('register/', scanner_views.register, name='register'),
     path('password_change/', auth_views.PasswordChangeView.as_view(template_name='scanner/password_change.html'), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='scanner/password_change_done.html'), name='password_change_done'),
 ]

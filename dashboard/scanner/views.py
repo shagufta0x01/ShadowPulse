@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate
 import logging
 import html
 
@@ -467,6 +469,36 @@ def get_os_info_section(request, target_id, section_id):
             'status': 'error',
             'message': error_msg
         }, status=500)
+
+def register(request):
+    """User registration page"""
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Log the user in after registration
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            messages.success(request, f'Account created successfully. Welcome to Rex Security!')
+            return redirect('scanner:index')
+    else:
+        form = UserCreationForm()
+
+    context = {
+        'form': form,
+        'page_title': 'Register'
+    }
+    return render(request, 'scanner/register.html', context)
+
+@login_required
+def help_support(request):
+    """Help and Support page"""
+    context = {
+        'page_title': 'Help & Support'
+    }
+    return render(request, 'scanner/help_support.html', context)
 
 @login_required
 def processes(request):

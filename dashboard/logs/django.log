@@ -1439,3 +1439,64 @@ INFO 2025-05-09 22:57:30,027 basehttp "GET /scanner/target/3/section/powershell_
 INFO 2025-05-09 22:57:31,608 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
 INFO 2025-05-09 22:57:42,569 basehttp "GET /scanner/target/3/section/local_users/ HTTP/1.1" 200 38388
 INFO 2025-05-09 22:58:01,832 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-09 23:05:26,645 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:05:28,811 basehttp "GET /scanner/ HTTP/1.1" 200 72874
+INFO 2025-05-09 23:08:45,023 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 64961
+INFO 2025-05-09 23:08:52,287 basehttp "POST /scanner/target/add/ HTTP/1.1" 302 0
+INFO 2025-05-09 23:08:52,303 basehttp "GET /scanner/target/8/ HTTP/1.1" 200 58085
+INFO 2025-05-09 23:08:54,621 basehttp "POST /scanner/target/8/delete/ HTTP/1.1" 302 0
+INFO 2025-05-09 23:08:54,866 basehttp "GET /scanner/ HTTP/1.1" 200 82014
+INFO 2025-05-09 23:09:01,712 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:09:32,780 basehttp "GET /scanner/ HTTP/1.1" 200 81562
+INFO 2025-05-09 23:11:47,073 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\urls.py changed, reloading.
+INFO 2025-05-09 23:11:48,097 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:12:02,533 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-09 23:12:03,513 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:12:10,590 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:12:13,932 basehttp "GET /scanner/ HTTP/1.1" 200 81584
+INFO 2025-05-09 23:12:14,805 basehttp "GET /scanner/help-support/ HTTP/1.1" 200 68087
+INFO 2025-05-09 23:12:39,489 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:13:58,911 basehttp "GET /scanner/help-support/ HTTP/1.1" 200 68640
+INFO 2025-05-09 23:14:32,161 basehttp "GET /scanner/help-support/? HTTP/1.1" 200 68818
+INFO 2025-05-09 23:15:08,124 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:15:09,867 basehttp "GET /scanner/help-support/? HTTP/1.1" 200 69439
+INFO 2025-05-09 23:15:11,477 basehttp "GET /scanner/help-support/? HTTP/1.1" 200 69439
+INFO 2025-05-09 23:15:16,520 basehttp "GET /scanner/ HTTP/1.1" 200 81584
+INFO 2025-05-09 23:15:21,164 basehttp "GET /scanner/help-support/ HTTP/1.1" 200 69439
+INFO 2025-05-09 23:15:42,384 basehttp "GET /scanner/help-support/ HTTP/1.1" 200 69439
+INFO 2025-05-09 23:18:23,620 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:18:57,146 basehttp "GET /scanner/ HTTP/1.1" 200 82301
+INFO 2025-05-09 23:19:00,482 basehttp "GET /scanner/help-support/ HTTP/1.1" 200 69830
+INFO 2025-05-09 23:19:10,485 basehttp "GET /scanner/help-support/ HTTP/1.1" 200 69830
+INFO 2025-05-09 23:19:27,719 basehttp "GET /scanner/processes/ HTTP/1.1" 200 72042
+INFO 2025-05-09 23:19:29,106 basehttp "GET /scanner/ HTTP/1.1" 200 82301
+INFO 2025-05-09 23:22:20,041 basehttp "GET /logout/ HTTP/1.1" 302 0
+INFO 2025-05-09 23:22:20,048 basehttp "GET /login/ HTTP/1.1" 200 49781
+INFO 2025-05-09 23:24:59,481 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-09 23:25:00,391 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:25:11,596 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-09 23:25:12,483 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:25:26,997 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\dashboard\urls.py changed, reloading.
+INFO 2025-05-09 23:25:27,774 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:25:36,529 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\dashboard\urls.py changed, reloading.
+INFO 2025-05-09 23:25:37,267 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:26:13,859 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 23:26:50,565 basehttp "GET /login/ HTTP/1.1" 200 9779
+INFO 2025-05-09 23:26:56,502 basehttp "GET /register/ HTTP/1.1" 200 12295
+INFO 2025-05-09 23:27:35,760 basehttp "GET /login/ HTTP/1.1" 200 9779
+INFO 2025-05-09 23:27:37,176 basehttp "POST /login/ HTTP/1.1" 302 0
+INFO 2025-05-09 23:27:37,187 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-09 23:27:37,447 basehttp "GET /scanner/ HTTP/1.1" 200 82766
+INFO 2025-05-09 23:28:12,075 basehttp "GET /logout/ HTTP/1.1" 302 0
+INFO 2025-05-09 23:28:12,078 basehttp "GET /login/ HTTP/1.1" 200 9779
+INFO 2025-05-09 23:28:14,430 basehttp "GET /register/ HTTP/1.1" 200 12295
+INFO 2025-05-09 23:28:32,192 basehttp "POST /register/ HTTP/1.1" 200 12567
+INFO 2025-05-09 23:28:56,024 basehttp "POST /register/ HTTP/1.1" 200 12567
+INFO 2025-05-09 23:29:24,731 basehttp "POST /register/ HTTP/1.1" 200 12551
+INFO 2025-05-09 23:29:59,632 basehttp "POST /register/ HTTP/1.1" 302 0
+INFO 2025-05-09 23:29:59,864 basehttp "GET /scanner/ HTTP/1.1" 200 83195
+INFO 2025-05-09 23:30:08,034 basehttp "GET /logout/ HTTP/1.1" 302 0
+INFO 2025-05-09 23:30:08,037 basehttp "GET /login/ HTTP/1.1" 200 9779
+INFO 2025-05-09 23:30:12,529 basehttp "POST /login/ HTTP/1.1" 302 0
+INFO 2025-05-09 23:30:12,538 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-09 23:30:12,825 basehttp "GET /scanner/ HTTP/1.1" 200 82766

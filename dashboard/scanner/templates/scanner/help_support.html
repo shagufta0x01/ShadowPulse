@@ -1,0 +1,348 @@
+{% extends 'scanner/base.html' %}
+
+{% block title %}Help & Support - Rex Security{% endblock %}
+
+{% block page_title %}Help & Support{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Fix for accordion text color */
+    .accordion-button:not(.collapsed) {
+        color: var(--text-color) !important;
+        background-color: rgba(138, 86, 255, 0.1) !important;
+    }
+
+    .accordion-button::after {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .accordion-body {
+        color: var(--text-color) !important;
+        background-color: rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Ensure all text in accordion remains white */
+    .accordion-item p,
+    .accordion-item li,
+    .accordion-item ul,
+    .accordion-item ol,
+    .accordion-item a,
+    .accordion-item span,
+    .accordion-item div {
+        color: var(--text-color) !important;
+    }
+
+    /* Style the accordion body */
+    .accordion-body {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: none;
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+        margin-top: -1px;
+        padding: 15px;
+    }
+
+    /* Style the badge in accordion */
+    .accordion-body .badge {
+        color: white !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Left Column - FAQ and Documentation -->
+    <div class="col-lg-8">
+        <!-- FAQ Section -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Frequently Asked Questions</h5>
+                <span class="badge bg-primary">Top Questions</span>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="faqAccordion">
+                    <!-- FAQ Item 1 -->
+                    <div class="accordion-item bg-transparent border-0 mb-3">
+                        <h2 class="accordion-header" id="faqHeading1">
+                            <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="false" aria-controls="faqCollapse1" style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--border-radius);">
+                                How do I scan my network for vulnerabilities?
+                            </button>
+                        </h2>
+                        <div id="faqCollapse1" class="accordion-collapse collapse" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>To scan your network for vulnerabilities:</p>
+                                <ol>
+                                    <li>Navigate to the Overview page</li>
+                                    <li>Click on the "Scan Network" button in the top navigation bar</li>
+                                    <li>Wait for the scan to complete - this may take several minutes depending on your network size</li>
+                                    <li>Review the results in the Vulnerabilities section</li>
+                                </ol>
+                                <p>For more detailed scans, you can configure advanced options in the Settings page.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="accordion-item bg-transparent border-0 mb-3">
+                        <h2 class="accordion-header" id="faqHeading2">
+                            <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2" style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--border-radius);">
+                                What do the different risk levels mean?
+                            </button>
+                        </h2>
+                        <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>Rex Security uses a 4-level risk classification system:</p>
+                                <ul>
+                                    <li><span class="badge bg-danger">Critical</span> - Severe vulnerabilities that require immediate attention. These can lead to system compromise with minimal effort.</li>
+                                    <li><span class="badge bg-warning">High</span> - Serious vulnerabilities that should be addressed promptly. These pose significant risk to your systems.</li>
+                                    <li><span class="badge bg-info">Medium</span> - Moderate vulnerabilities that should be fixed in your regular maintenance cycle.</li>
+                                    <li><span class="badge bg-success">Low</span> - Minor vulnerabilities with limited potential impact.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="accordion-item bg-transparent border-0 mb-3">
+                        <h2 class="accordion-header" id="faqHeading3">
+                            <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3" style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--border-radius);">
+                                How often should I run security scans?
+                            </button>
+                        </h2>
+                        <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>The recommended scanning frequency depends on your security requirements:</p>
+                                <ul>
+                                    <li><strong>Daily scans</strong> - For high-security environments or systems with frequent changes</li>
+                                    <li><strong>Weekly scans</strong> - For most business environments (recommended default)</li>
+                                    <li><strong>Monthly scans</strong> - Minimum recommendation for stable environments</li>
+                                </ul>
+                                <p>Premium users can set up automated scanning schedules in the Settings page.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="accordion-item bg-transparent border-0 mb-3">
+                        <h2 class="accordion-header" id="faqHeading4">
+                            <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4" style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--border-radius);">
+                                How do I fix the vulnerabilities found in my scan?
+                            </button>
+                        </h2>
+                        <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>For each vulnerability detected, Rex provides:</p>
+                                <ol>
+                                    <li>A detailed description of the vulnerability</li>
+                                    <li>The potential impact if exploited</li>
+                                    <li>Step-by-step remediation instructions</li>
+                                    <li>Links to relevant security advisories</li>
+                                </ol>
+                                <p>Premium users get access to automated remediation for many common vulnerabilities.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 5 -->
+                    <div class="accordion-item bg-transparent border-0">
+                        <h2 class="accordion-header" id="faqHeading5">
+                            <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5" style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--border-radius);">
+                                What's the difference between the free and premium versions?
+                            </button>
+                        </h2>
+                        <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>The free version includes:</p>
+                                <ul>
+                                    <li>Basic network scanning</li>
+                                    <li>Vulnerability detection</li>
+                                    <li>Simple reporting</li>
+                                </ul>
+                                <p>Premium versions add:</p>
+                                <ul>
+                                    <li>Advanced vulnerability detection</li>
+                                    <li>Automated remediation</li>
+                                    <li>Scheduled scans</li>
+                                    <li>Detailed analytics and reporting</li>
+                                    <li>API access</li>
+                                    <li>Priority support</li>
+                                </ul>
+                                <p><a href="#" data-bs-toggle="modal" data-bs-target="#upgradeModal" class="btn btn-sm btn-primary">View Premium Plans</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation Section -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Documentation</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Documentation Category 1 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-book fs-3 text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6>Getting Started</h6>
+                                <p class="text-muted small mb-2">Learn the basics of Rex Security</p>
+                                <ul class="list-unstyled small">
+                                    <li><a href="#" class="text-decoration-none">Installation Guide</a></li>
+                                    <li><a href="#" class="text-decoration-none">First Scan Tutorial</a></li>
+                                    <li><a href="#" class="text-decoration-none">Understanding Reports</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documentation Category 2 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-tools fs-3 text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6>Advanced Features</h6>
+                                <p class="text-muted small mb-2">Maximize your security posture</p>
+                                <ul class="list-unstyled small">
+                                    <li><a href="#" class="text-decoration-none">Custom Scan Profiles</a></li>
+                                    <li><a href="#" class="text-decoration-none">Automated Remediation</a></li>
+                                    <li><a href="#" class="text-decoration-none">API Documentation</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documentation Category 3 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-shield-alt fs-3 text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6>Best Practices</h6>
+                                <p class="text-muted small mb-2">Security recommendations</p>
+                                <ul class="list-unstyled small">
+                                    <li><a href="#" class="text-decoration-none">Vulnerability Management</a></li>
+                                    <li><a href="#" class="text-decoration-none">Network Hardening</a></li>
+                                    <li><a href="#" class="text-decoration-none">Security Policies</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documentation Category 4 -->
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-cogs fs-3 text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6>Troubleshooting</h6>
+                                <p class="text-muted small mb-2">Solve common issues</p>
+                                <ul class="list-unstyled small">
+                                    <li><a href="#" class="text-decoration-none">Scan Failures</a></li>
+                                    <li><a href="#" class="text-decoration-none">False Positives</a></li>
+                                    <li><a href="#" class="text-decoration-none">Performance Issues</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column - Contact and Resources -->
+    <div class="col-lg-4">
+        <!-- Contact Support Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Contact Support</h5>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="supportSubject" class="form-label">Subject</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" id="supportSubject" placeholder="Brief description of your issue">
+                    </div>
+                    <div class="mb-3">
+                        <label for="supportMessage" class="form-label">Message</label>
+                        <textarea class="form-control bg-dark text-white border-secondary" id="supportMessage" rows="5" placeholder="Please describe your issue in detail"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="supportAttachment" class="form-label">Attachment (optional)</label>
+                        <input class="form-control bg-dark text-white border-secondary" type="file" id="supportAttachment">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Submit Ticket</button>
+                </form>
+
+                <div class="mt-4">
+                    <h6>Response Times</h6>
+                    <ul class="list-unstyled">
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>Free Users:</span>
+                            <span>Within 48 hours</span>
+                        </li>
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>Basic Plan:</span>
+                            <span>Within 24 hours</span>
+                        </li>
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>Professional Plan:</span>
+                            <span>Within 8 hours</span>
+                        </li>
+                        <li class="d-flex justify-content-between">
+                            <span>Enterprise Plan:</span>
+                            <span>Within 2 hours</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources Card -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Additional Resources</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush bg-transparent">
+                    <li class="list-group-item bg-transparent border-secondary d-flex align-items-center">
+                        <i class="fas fa-video me-3 text-primary"></i>
+                        <div>
+                            <h6 class="mb-1">Video Tutorials</h6>
+                            <p class="mb-0 small text-muted">Step-by-step visual guides</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item bg-transparent border-secondary d-flex align-items-center">
+                        <i class="fas fa-graduation-cap me-3 text-primary"></i>
+                        <div>
+                            <h6 class="mb-1">Security Academy</h6>
+                            <p class="mb-0 small text-muted">Free security training courses</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item bg-transparent border-secondary d-flex align-items-center">
+                        <i class="fas fa-users me-3 text-primary"></i>
+                        <div>
+                            <h6 class="mb-1">Community Forum</h6>
+                            <p class="mb-0 small text-muted">Connect with other security professionals</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item bg-transparent border-secondary d-flex align-items-center">
+                        <i class="fas fa-newspaper me-3 text-primary"></i>
+                        <div>
+                            <h6 class="mb-1">Security Blog</h6>
+                            <p class="mb-0 small text-muted">Latest security news and insights</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Rex - Security Assessment Tool{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a1d29;      /* Dark background */
+            --secondary-color: #242736;    /* Slightly lighter background */
+            --accent-color: #8a56ff;       /* Purple accent */
+            --success-color: #00d09c;      /* Green */
+            --warning-color: #ff9f43;      /* Orange */
+            --danger-color: #ff5c75;       /* Red */
+            --text-color: #e9ecef;         /* Light text */
+            --text-secondary: #adb5bd;     /* Muted text */
+            --card-bg: #242736;            /* Card background */
+            --light-color: #2c3040;        /* Lighter background */
+            --border-radius: 8px;          /* Border radius */
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #131620 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background-color: rgba(36, 39, 54, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .auth-image {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(138, 86, 255, 0.1) 0%, rgba(106, 63, 201, 0.2) 100%), url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2134&q=80');
+            background-size: cover;
+            background-position: center;
+            min-height: 400px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
+        }
+
+        .auth-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(0deg, rgba(26, 29, 41, 0.9) 0%, rgba(26, 29, 41, 0.4) 100%);
+        }
+
+        .auth-image-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-form {
+            flex: 1;
+            padding: 40px;
+            min-width: 400px;
+        }
+
+        .auth-form-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .auth-form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-form-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-secondary);
+        }
+
+        .logo-container {
+            display: inline-block;
+            position: relative;
+        }
+
+        .logo-bg {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #6a3fc9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin: 0 auto;
+        }
+
+        .logo-bg span {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(138,86,255,0.3) 0%, rgba(138,86,255,0) 70%);
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .form-control, .input-group-text {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .form-control:focus {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(138, 86, 255, 0.25);
+            color: var(--text-color);
+        }
+
+        .input-group-text {
+            color: var(--accent-color);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #7442e6;
+            border-color: #7442e6;
+        }
+
+        .btn-outline-light {
+            color: var(--text-color);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-outline-light:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .text-primary {
+            color: var(--accent-color) !important;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        @media (max-width: 992px) {
+            .auth-image {
+                display: none;
+            }
+        }
+
+        .invalid-feedback {
+            display: block;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-row">
+                <div class="auth-image">
+                    <div class="auth-image-content">
+                        <h1 class="display-4 mb-3">Rex Security</h1>
+                        <p class="lead mb-4">Advanced security assessment and vulnerability scanning for your systems</p>
+                        <div class="features mb-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="me-3"><i class="fas fa-shield-alt fs-4 text-primary"></i></div>
+                                <div>Comprehensive vulnerability scanning</div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="me-3"><i class="fas fa-chart-line fs-4 text-primary"></i></div>
+                                <div>Real-time security monitoring</div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="me-3"><i class="fas fa-lock fs-4 text-primary"></i></div>
+                                <div>Advanced threat detection</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-form">
+                    {% block auth_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

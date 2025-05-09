@@ -611,9 +611,14 @@
                         </ul>
                     </div>
                     {% else %}
-                    <a class="btn btn-sm btn-primary" href="{% url 'login' %}">
-                        <i class="fas fa-sign-in-alt me-1"></i>Login
-                    </a>
+                    <div class="d-flex">
+                        <a class="btn btn-sm btn-outline-light me-2" href="{% url 'register' %}" style="border-radius: 20px;">
+                            <i class="fas fa-user-plus me-1"></i>Register
+                        </a>
+                        <a class="btn btn-sm btn-primary" href="{% url 'login' %}" style="border-radius: 20px;">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -625,15 +630,19 @@
             <!-- Sidebar -->
             <div class="col-md-2 px-0 sidebar">
                 <div class="py-4 px-3 mb-2">
-                    <div class="text-center mb-4">
-                        <img src="https://via.placeholder.com/80" alt="Logo" class="rounded-circle mb-3" style="background-color: var(--accent-color);">
+                    <div class="text-center mb-3">
+                        <div class="logo-container d-inline-block position-relative">
+                            <div class="logo-bg rounded-circle mb-2" style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent-color) 0%, #6a3fc9 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                                <span style="font-size: 32px; font-weight: 700; color: white; text-transform: uppercase;">R</span>
+                            </div>
+                            <div class="logo-glow position-absolute" style="top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(138,86,255,0.3) 0%, rgba(138,86,255,0) 70%); filter: blur(8px); z-index: -1;"></div>
+                        </div>
                     </div>
 
                     <!-- Welcome Message -->
-                    <div class="text-center mb-4">
-                        <p class="mb-0" style="color: var(--text-secondary);">Welcome!</p>
-                        <h6 class="mb-0">{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</h6>
-                        <p class="small text-muted">Security is a process, not a product.</p>
+                    <div class="text-center mb-3">
+                        <h6 class="mb-1 fw-bold" style="color: var(--text-color);">{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</h6>
+                        <p class="small mb-0" style="color: var(--text-secondary); font-style: italic;">Security is a process, not a product.</p>
                     </div>
                 </div>
 
@@ -679,7 +688,7 @@
                     <h6 class="text-uppercase mb-3" style="color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 1px;">Settings</h6>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{% url 'scanner:help_support' %}" class="nav-link {% if '/help-support/' in request.path %}active{% endif %}">
                                 <i class="fas fa-question-circle"></i>Help & Support
                             </a>
                         </li>
@@ -697,7 +706,7 @@
                         <div class="text-center mb-2">
                             <img src="https://via.placeholder.com/40" alt="Upgrade" class="mb-2">
                             <p class="small mb-2">Additional features to enhance your security.</p>
-                            <a href="#" class="btn btn-sm btn-primary w-100">Upgrade <i class="fas fa-arrow-right ms-1"></i></a>
+                            <a href="#" class="btn btn-sm btn-primary w-100" data-bs-toggle="modal" data-bs-target="#upgradeModal">Upgrade <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
                 </div>
@@ -712,13 +721,15 @@
 
             <!-- Main Content -->
             <div class="col-md-10 content">
-                <!-- Welcome Banner -->
+                <!-- Welcome Banner - Only shown on index page -->
+                {% if request.path == '/scanner/' %}
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <h4 class="mb-1">Welcome! {% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</h4>
-                        <p class="text-muted mb-0">Security is a process, not a product.</p>
+                        <h4 class="mb-1">Welcome, {% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</h4>
+                        <p class="text-muted mb-0">Your security dashboard is ready.</p>
                     </div>
                 </div>
+                {% endif %}
 
                 <!-- Messages -->
                 {% if messages %}
@@ -1062,5 +1073,136 @@
     </script>
 
     {% block extra_js %}{% endblock %}
+
+    <!-- Upgrade Modal -->
+    <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="upgradeModalLabel">Upgrade to Premium</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header text-center">
+                                    <h5>Basic</h5>
+                                    <h3 class="mt-2">$9.99<small>/month</small></h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Advanced Vulnerability Scanning</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Network Monitoring</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Basic Reporting</li>
+                                        <li class="mb-2"><i class="fas fa-times text-danger me-2"></i> Automated Remediation</li>
+                                        <li class="mb-2"><i class="fas fa-times text-danger me-2"></i> Threat Intelligence</li>
+                                    </ul>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <button class="btn btn-outline-primary w-100">Select Plan</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100" style="border: 2px solid var(--accent-color); box-shadow: 0 0 15px rgba(138, 86, 255, 0.3);">
+                                <div class="card-header text-center" style="background-color: var(--accent-color);">
+                                    <h5>Professional</h5>
+                                    <h3 class="mt-2">$24.99<small>/month</small></h3>
+                                    <span class="badge bg-warning position-absolute top-0 end-0 translate-middle-y me-2">POPULAR</span>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Advanced Vulnerability Scanning</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Network Monitoring</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Advanced Reporting</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Automated Remediation</li>
+                                        <li class="mb-2"><i class="fas fa-times text-danger me-2"></i> Threat Intelligence</li>
+                                    </ul>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <button class="btn btn-primary w-100">Select Plan</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header text-center">
+                                    <h5>Enterprise</h5>
+                                    <h3 class="mt-2">$49.99<small>/month</small></h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Advanced Vulnerability Scanning</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Network Monitoring</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Advanced Reporting</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Automated Remediation</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Threat Intelligence</li>
+                                    </ul>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <button class="btn btn-outline-primary w-100">Select Plan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>Premium Features</h5>
+                        <div class="row mt-3">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-shield-alt fs-3 text-primary"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6>Advanced Protection</h6>
+                                        <p class="text-muted small">Real-time monitoring and protection against the latest threats and vulnerabilities.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-chart-line fs-3 text-primary"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6>Detailed Analytics</h6>
+                                        <p class="text-muted small">Comprehensive reports and analytics to track security posture over time.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-robot fs-3 text-primary"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6>Automated Remediation</h6>
+                                        <p class="text-muted small">Automatically fix common security issues without manual intervention.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-headset fs-3 text-primary"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6>Priority Support</h6>
+                                        <p class="text-muted small">Get priority access to our security experts for assistance and guidance.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
