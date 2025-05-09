@@ -1012,3 +1012,430 @@ INFO 2025-05-07 09:29:42,080 basehttp "GET /scanner/ HTTP/1.1" 200 63704
 INFO 2025-05-07 09:29:58,092 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 62443
 INFO 2025-05-07 09:29:58,117 basehttp "GET /static/js/data-persistence.js HTTP/1.1" 304 0
 INFO 2025-05-07 09:30:28,333 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 62444
+INFO 2025-05-07 19:50:07,958 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 19:50:25,242 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-07 19:50:25,254 basehttp "GET /scanner/ HTTP/1.1" 302 0
+INFO 2025-05-07 19:50:25,277 basehttp "GET /login/?next=/scanner/ HTTP/1.1" 200 29789
+INFO 2025-05-07 19:50:25,314 basehttp "GET /static/js/data-persistence.js HTTP/1.1" 304 0
+WARNING 2025-05-07 19:50:25,400 log Not Found: /favicon.ico
+WARNING 2025-05-07 19:50:25,401 basehttp "GET /favicon.ico HTTP/1.1" 404 3106
+INFO 2025-05-07 19:50:32,307 basehttp "POST /login/ HTTP/1.1" 302 0
+INFO 2025-05-07 19:50:32,448 basehttp "GET /scanner/ HTTP/1.1" 200 63705
+INFO 2025-05-07 19:51:17,270 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 62444
+INFO 2025-05-07 19:51:23,483 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 868
+INFO 2025-05-07 19:51:33,417 basehttp "GET /scanner/target/3/section/file_version/ HTTP/1.1" 200 898
+INFO 2025-05-07 19:51:36,480 basehttp "GET /scanner/target/3/section/running_processes/ HTTP/1.1" 200 64415
+INFO 2025-05-07 19:51:52,529 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 868
+INFO 2025-05-07 19:51:58,790 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-07 19:52:08,065 basehttp "GET /scanner/target/3/section/local_groups/ HTTP/1.1" 200 22514
+INFO 2025-05-07 19:52:16,324 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 52083
+INFO 2025-05-07 19:52:35,493 basehttp "POST /scanner/clear-network-devices/ HTTP/1.1" 302 0
+INFO 2025-05-07 19:52:35,508 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 44364
+INFO 2025-05-07 19:52:42,310 basehttp "POST /scanner/scan-network/ HTTP/1.1" 302 0
+INFO 2025-05-07 19:52:42,326 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 49895
+INFO 2025-05-07 19:52:52,870 basehttp "GET /scanner/processes/ HTTP/1.1" 200 48785
+INFO 2025-05-07 19:52:56,169 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 111341
+INFO 2025-05-07 19:53:00,110 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 49454
+INFO 2025-05-07 19:53:08,466 basehttp "GET /scanner/target/3/command/3/ HTTP/1.1" 200 1380
+INFO 2025-05-07 19:53:19,437 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 62902
+INFO 2025-05-07 19:53:24,764 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-07 19:53:25,692 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 868
+INFO 2025-05-07 19:54:34,391 basehttp "GET /scanner/processes/ HTTP/1.1" 200 49694
+INFO 2025-05-07 19:54:37,063 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 111342
+INFO 2025-05-07 19:54:42,419 basehttp "GET /scanner/processes/analyze/?target_id=3&pid=1220&start=true HTTP/1.1" 200 51
+INFO 2025-05-07 19:54:42,440 basehttp "GET /scanner/processes/analyze/?task_id=3009fb30-90a1-4d56-aecf-273882a9199a&target_id=3 HTTP/1.1" 200 2471
+INFO 2025-05-07 19:57:29,310 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\memory_protection.py changed, reloading.
+INFO 2025-05-07 19:57:30,143 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 19:57:41,835 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\memory_protection.py changed, reloading.
+INFO 2025-05-07 19:57:42,543 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 19:57:45,848 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 50326
+INFO 2025-05-07 19:57:47,094 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 62612
+INFO 2025-05-07 19:57:52,102 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-07 19:57:53,223 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\memory_protection.py changed, reloading.
+INFO 2025-05-07 19:57:53,906 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 19:57:59,151 basehttp "GET /scanner/target/3/section/environment_variables/ HTTP/1.1" 200 12232
+INFO 2025-05-07 19:58:02,083 basehttp "GET /scanner/target/3/section/user_folders/ HTTP/1.1" 200 352
+INFO 2025-05-07 19:58:03,476 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\memory_protection.py changed, reloading.
+INFO 2025-05-07 19:58:04,198 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 19:58:05,303 basehttp "GET /scanner/target/3/section/file_version/ HTTP/1.1" 200 898
+INFO 2025-05-07 19:58:12,539 basehttp "GET /scanner/processes/ HTTP/1.1" 200 51499
+INFO 2025-05-07 19:58:14,908 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\memory_protection.py changed, reloading.
+INFO 2025-05-07 19:58:15,520 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 19:58:21,859 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 112293
+INFO 2025-05-07 19:58:24,268 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\memory_protection.py changed, reloading.
+INFO 2025-05-07 19:58:25,038 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 19:58:25,851 basehttp "GET /scanner/processes/analyze/?target_id=3&pid=4&start=true HTTP/1.1" 200 51
+INFO 2025-05-07 19:58:25,863 basehttp "GET /scanner/processes/analyze/?task_id=fb17a90c-0323-4fe9-8e47-ca77129819e7&target_id=3 HTTP/1.1" 200 69
+INFO 2025-05-07 19:58:26,883 basehttp "GET /scanner/processes/analyze/?task_id=fb17a90c-0323-4fe9-8e47-ca77129819e7&target_id=3 HTTP/1.1" 200 2441
+INFO 2025-05-07 19:58:40,189 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 112294
+INFO 2025-05-07 19:58:46,981 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 112291
+INFO 2025-05-07 19:59:01,677 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 112292
+INFO 2025-05-07 20:01:11,010 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 62612
+ERROR 2025-05-07 20:01:52,455 log Internal Server Error: /scanner/target/3/command/5/
+ERROR 2025-05-07 20:01:52,456 basehttp "GET /scanner/target/3/command/5/ HTTP/1.1" 500 72
+ERROR 2025-05-07 20:03:22,295 log Internal Server Error: /scanner/target/3/command/5/
+ERROR 2025-05-07 20:03:22,296 basehttp "GET /scanner/target/3/command/5/ HTTP/1.1" 500 72
+ERROR 2025-05-07 20:04:01,798 log Internal Server Error: /scanner/target/3/command/5/
+ERROR 2025-05-07 20:04:01,799 basehttp "GET /scanner/target/3/command/5/ HTTP/1.1" 500 72
+INFO 2025-05-07 20:04:07,589 basehttp "GET /scanner/ HTTP/1.1" 200 65137
+INFO 2025-05-07 20:04:22,425 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 62612
+INFO 2025-05-07 20:04:25,274 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 868
+INFO 2025-05-07 20:07:22,948 basehttp "GET /scanner/ HTTP/1.1" 200 64779
+INFO 2025-05-07 20:08:01,855 basehttp "GET /scanner/ HTTP/1.1" 200 65659
+INFO 2025-05-07 20:08:04,886 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 64781
+INFO 2025-05-07 20:08:08,400 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 868
+INFO 2025-05-07 20:08:12,994 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-07 20:08:17,259 basehttp "GET /scanner/target/3/section/environment_variables/ HTTP/1.1" 200 12232
+INFO 2025-05-07 20:08:20,126 basehttp "GET /scanner/target/3/section/user_folders/ HTTP/1.1" 200 352
+INFO 2025-05-07 20:08:34,724 basehttp "GET /scanner/target/3/section/file_version/ HTTP/1.1" 200 898
+INFO 2025-05-07 20:08:44,646 basehttp "GET /scanner/target/3/section/running_processes/ HTTP/1.1" 200 64424
+INFO 2025-05-07 20:09:06,579 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 252679
+INFO 2025-05-07 20:09:24,052 basehttp "GET /scanner/target/3/section/installed_hotfixes/ HTTP/1.1" 200 10436
+INFO 2025-05-07 20:09:27,659 basehttp "GET /scanner/target/3/section/amsi_providers/ HTTP/1.1" 200 1112
+INFO 2025-05-07 20:09:33,203 basehttp "GET /scanner/target/3/section/antivirus_info/ HTTP/1.1" 200 986
+INFO 2025-05-07 20:09:34,793 basehttp "GET /scanner/target/3/section/defender_settings/ HTTP/1.1" 200 1368
+INFO 2025-05-07 20:09:42,093 basehttp "GET /scanner/target/3/section/auto_run_executables/ HTTP/1.1" 200 39834
+INFO 2025-05-07 20:09:52,468 basehttp "GET /scanner/target/3/section/certificates/ HTTP/1.1" 200 132958
+INFO 2025-05-07 20:10:03,551 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 868
+INFO 2025-05-07 20:10:12,947 basehttp "GET /scanner/target/3/section/certificates/ HTTP/1.1" 200 132958
+INFO 2025-05-07 20:10:29,709 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-07 20:10:30,490 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 20:11:52,816 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 71315
+INFO 2025-05-07 20:13:21,418 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-07 20:13:22,142 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 20:13:30,517 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-07 20:13:31,247 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 20:13:40,647 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-07 20:13:41,316 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 20:13:51,687 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-07 20:13:52,331 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 20:14:02,658 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-07 20:14:03,308 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 20:15:48,182 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 65838
+INFO 2025-05-07 20:15:50,684 basehttp "GET /scanner/ HTTP/1.1" 200 67286
+INFO 2025-05-07 20:15:57,944 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 65838
+WARNING 2025-05-07 20:16:04,897 log Bad Request: /scanner/target/3/section/user_folders/
+WARNING 2025-05-07 20:16:04,898 basehttp "GET /scanner/target/3/section/user_folders/ HTTP/1.1" 400 158
+WARNING 2025-05-07 20:16:13,568 log Bad Request: /scanner/target/3/section/user_folders/
+WARNING 2025-05-07 20:16:13,569 basehttp "GET /scanner/target/3/section/user_folders/ HTTP/1.1" 400 158
+INFO 2025-05-07 20:22:09,951 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 66946
+INFO 2025-05-07 20:22:18,694 basehttp - Broken pipe from ('127.0.0.1', 51940)
+INFO 2025-05-07 20:22:30,748 basehttp "GET /scanner/target/3/section/user_folders/ HTTP/1.1" 200 12167
+INFO 2025-05-07 20:48:08,135 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 65838
+INFO 2025-05-07 20:54:52,812 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 53272
+INFO 2025-05-07 20:55:12,945 basehttp "GET /scanner/ HTTP/1.1" 200 66821
+INFO 2025-05-07 21:15:03,024 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-07 21:15:04,052 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 21:15:28,193 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 60167
+INFO 2025-05-07 21:15:28,217 basehttp "GET /static/js/data-persistence.js HTTP/1.1" 304 0
+INFO 2025-05-07 21:15:29,930 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 60167
+INFO 2025-05-07 21:16:37,904 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 21:16:40,701 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 60349
+INFO 2025-05-07 21:17:11,526 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 60349
+INFO 2025-05-07 21:23:33,781 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 21:24:07,701 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 87712
+INFO 2025-05-07 21:24:11,446 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:24:12,960 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-07 21:24:20,364 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-07 21:24:36,658 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:24:40,160 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:25:10,084 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 21:25:40,119 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 21:26:10,127 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:26:16,942 basehttp "GET /scanner/target/3/section/uac_policies/ HTTP/1.1" 200 5588
+INFO 2025-05-07 21:26:40,196 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 21:27:10,207 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:27:40,213 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:28:05,029 autoreload Watching for file changes with StatReloader
+INFO 2025-05-07 21:28:10,068 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:28:39,540 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:28:42,104 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 96812
+INFO 2025-05-07 21:28:44,045 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:28:45,462 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-07 21:29:09,892 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8187
+INFO 2025-05-07 21:29:13,928 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:29:39,898 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:29:43,917 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:30:12,920 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:30:14,630 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:30:43,917 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 21:31:12,921 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:31:14,642 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:31:43,975 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:32:12,916 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:32:14,643 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:32:43,932 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:33:13,414 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:33:15,808 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:33:44,423 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:34:13,393 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:34:15,735 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:34:44,509 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:35:13,359 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8186
+INFO 2025-05-07 21:35:15,731 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:35:44,454 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8186
+INFO 2025-05-07 21:36:13,585 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:36:16,038 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:36:44,679 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:37:13,474 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:37:15,869 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:37:44,557 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:38:13,362 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:38:15,939 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:38:45,377 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8186
+INFO 2025-05-07 21:39:13,379 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8186
+INFO 2025-05-07 21:39:46,327 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:40:12,891 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:40:46,873 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:41:12,854 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:41:47,888 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:42:12,878 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:42:48,897 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:43:12,861 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:43:50,567 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:44:13,329 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:44:51,405 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:45:13,402 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:45:52,471 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:46:13,644 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:46:53,571 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:47:13,364 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:47:54,394 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:48:13,403 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:48:54,873 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:49:12,873 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:49:55,886 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:50:12,864 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:50:56,848 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:51:12,849 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:51:57,856 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:52:12,852 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 21:52:58,879 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 21:53:12,863 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:53:59,884 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:54:12,911 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 21:55:00,890 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:55:12,870 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:56:01,887 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:56:12,869 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8187
+INFO 2025-05-07 21:57:02,912 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:57:12,849 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:58:03,875 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:58:12,865 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:59:04,879 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 21:59:12,883 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:00:05,892 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:00:12,901 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:01:06,846 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:01:12,855 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:02:07,901 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:02:12,849 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:03:08,883 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:03:12,854 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:04:09,885 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:04:13,410 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:05:11,392 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:05:13,782 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:06:12,392 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:06:14,837 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:07:13,379 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8187
+INFO 2025-05-07 22:07:15,771 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:08:13,366 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8187
+INFO 2025-05-07 22:08:15,811 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:09:13,400 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:09:15,780 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:10:13,386 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8187
+INFO 2025-05-07 22:10:15,656 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:11:13,401 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:11:15,833 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:12:13,350 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:12:15,716 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 22:13:13,359 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:13:15,752 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:14:13,462 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:14:15,957 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:15:13,371 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:15:15,825 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:16:13,368 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 22:16:15,703 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:17:13,375 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 22:17:15,740 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:18:13,417 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:18:15,803 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:19:13,367 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:19:15,762 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:20:13,397 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:20:15,687 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:21:12,861 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:21:14,545 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8187
+INFO 2025-05-07 22:22:12,867 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:22:14,558 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 22:23:12,844 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:23:14,513 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:24:12,887 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:24:14,571 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:25:13,382 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-07 22:25:15,714 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:26:13,373 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:26:15,727 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:27:04,892 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-07 22:27:13,583 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:27:16,001 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-07 22:27:22,081 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-07 22:27:23,854 basehttp "GET /scanner/target/3/section/environment_variables/ HTTP/1.1" 200 12232
+INFO 2025-05-07 22:27:30,334 basehttp "GET /scanner/target/3/section/user_folders/ HTTP/1.1" 200 12167
+INFO 2025-05-09 22:03:17,334 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:03:37,058 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-09 22:03:37,066 basehttp "GET /scanner/ HTTP/1.1" 302 0
+INFO 2025-05-09 22:03:37,082 basehttp "GET /login/?next=/scanner/ HTTP/1.1" 200 32633
+INFO 2025-05-09 22:03:37,365 basehttp "GET /static/js/data-persistence.js HTTP/1.1" 200 7957
+WARNING 2025-05-09 22:03:37,641 log Not Found: /favicon.ico
+WARNING 2025-05-09 22:03:37,642 basehttp "GET /favicon.ico HTTP/1.1" 404 3106
+INFO 2025-05-09 22:03:49,885 basehttp "POST /login/ HTTP/1.1" 302 0
+INFO 2025-05-09 22:03:50,522 basehttp "GET /scanner/ HTTP/1.1" 200 67289
+INFO 2025-05-09 22:03:57,074 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 96812
+INFO 2025-05-09 22:04:00,225 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-09 22:04:02,196 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-09 22:04:04,132 basehttp "GET /scanner/ HTTP/1.1" 200 66841
+INFO 2025-05-09 22:04:08,007 basehttp "POST /scanner/target/add/ HTTP/1.1" 302 0
+INFO 2025-05-09 22:04:08,701 basehttp "GET /scanner/target/5/ HTTP/1.1" 200 41822
+INFO 2025-05-09 22:04:11,065 basehttp "GET /scanner/ HTTP/1.1" 200 69590
+INFO 2025-05-09 22:04:36,660 basehttp "GET /scanner/ HTTP/1.1" 200 69590
+INFO 2025-05-09 22:04:53,018 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 53414
+INFO 2025-05-09 22:04:59,203 basehttp "POST /scanner/clear-network-devices/ HTTP/1.1" 302 0
+INFO 2025-05-09 22:04:59,464 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 48875
+INFO 2025-05-09 22:05:10,149 basehttp - Broken pipe from ('127.0.0.1', 51865)
+INFO 2025-05-09 22:05:10,491 basehttp "GET /scanner/processes/ HTTP/1.1" 200 53571
+INFO 2025-05-09 22:05:14,970 basehttp "GET /scanner/ HTTP/1.1" 200 67701
+INFO 2025-05-09 22:05:17,933 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 52074
+INFO 2025-05-09 22:07:50,054 basehttp "GET /scanner/ HTTP/1.1" 200 67701
+INFO 2025-05-09 22:07:52,286 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 52074
+INFO 2025-05-09 22:07:54,298 basehttp "GET /scanner/ HTTP/1.1" 200 67701
+INFO 2025-05-09 22:07:55,609 basehttp "GET /scanner/target/add/ HTTP/1.1" 200 35102
+INFO 2025-05-09 22:08:00,688 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 96938
+INFO 2025-05-09 22:08:03,533 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-09 22:08:05,286 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-09 22:08:33,096 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-09 22:08:35,899 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 97914
+INFO 2025-05-09 22:08:38,819 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-09 22:08:39,065 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 53121
+INFO 2025-05-09 22:08:40,896 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-09 22:08:41,616 basehttp "GET /scanner/ HTTP/1.1" 200 68677
+INFO 2025-05-09 22:09:15,210 basehttp "GET /scanner/ HTTP/1.1" 200 68677
+INFO 2025-05-09 22:09:17,819 basehttp "GET /scanner/processes/ HTTP/1.1" 200 54547
+INFO 2025-05-09 22:09:39,446 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 116684
+INFO 2025-05-09 22:10:50,705 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:11:08,658 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 117061
+INFO 2025-05-09 22:11:20,130 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 54207
+INFO 2025-05-09 22:11:22,617 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 54207
+INFO 2025-05-09 22:13:08,281 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:13:38,413 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:13:53,970 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 54655
+INFO 2025-05-09 22:14:10,660 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 54655
+INFO 2025-05-09 22:16:59,358 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:17:06,916 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 55382
+INFO 2025-05-09 22:17:14,779 basehttp "GET /scanner/ HTTP/1.1" 200 69170
+INFO 2025-05-09 22:17:38,446 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 55382
+INFO 2025-05-09 22:19:40,720 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:19:44,010 basehttp "GET /scanner/ HTTP/1.1" 200 69851
+INFO 2025-05-09 22:20:28,368 basehttp "GET /scanner/processes/ HTTP/1.1" 200 55545
+INFO 2025-05-09 22:20:30,457 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 55887
+INFO 2025-05-09 22:21:50,808 basehttp "GET /scanner/target/3/command/3/ HTTP/1.1" 200 1168
+INFO 2025-05-09 22:21:56,432 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 56428
+INFO 2025-05-09 22:22:01,202 autoreload Watching for file changes with StatReloader
+WARNING 2025-05-09 22:22:32,684 log Not Found: /scanner/network_info/
+WARNING 2025-05-09 22:22:32,686 basehttp "GET /scanner/network_info/ HTTP/1.1" 404 5831
+INFO 2025-05-09 22:22:50,834 autoreload Watching for file changes with StatReloader
+WARNING 2025-05-09 22:22:52,617 log Not Found: /scanner/network_info/
+WARNING 2025-05-09 22:22:52,618 basehttp "GET /scanner/network_info/ HTTP/1.1" 404 5831
+WARNING 2025-05-09 22:22:53,295 log Not Found: /scanner/network_info/
+WARNING 2025-05-09 22:22:53,295 basehttp "GET /scanner/network_info/ HTTP/1.1" 404 5831
+INFO 2025-05-09 22:22:55,046 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 56428
+INFO 2025-05-09 22:22:56,149 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 99275
+INFO 2025-05-09 22:22:57,062 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 56428
+INFO 2025-05-09 22:22:57,891 basehttp "GET /scanner/processes/ HTTP/1.1" 200 55908
+INFO 2025-05-09 22:22:58,460 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-09 22:22:58,873 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 56428
+INFO 2025-05-09 22:23:00,435 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-09 22:23:03,086 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 56428
+INFO 2025-05-09 22:24:30,084 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 58019
+INFO 2025-05-09 22:24:49,697 autoreload Watching for file changes with StatReloader
+WARNING 2025-05-09 22:24:52,033 log Not Found: /scanner/network_info/
+WARNING 2025-05-09 22:24:52,035 basehttp "GET /scanner/network_info/ HTTP/1.1" 404 5831
+INFO 2025-05-09 22:24:54,502 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 58019
+INFO 2025-05-09 22:25:56,594 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 59269
+INFO 2025-05-09 22:26:14,210 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 59492
+INFO 2025-05-09 22:26:43,628 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 59492
+INFO 2025-05-09 22:26:44,476 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:26:45,296 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 59492
+WARNING 2025-05-09 22:27:17,102 log Not Found: /scanner/network_info/
+WARNING 2025-05-09 22:27:17,102 basehttp "GET /scanner/network_info/ HTTP/1.1" 404 5831
+INFO 2025-05-09 22:28:10,089 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 59737
+INFO 2025-05-09 22:28:34,710 basehttp "GET /scanner/target/3/command/3/ HTTP/1.1" 200 1168
+INFO 2025-05-09 22:28:51,883 basehttp "GET /scanner/target/3/command/48/ HTTP/1.1" 200 955
+INFO 2025-05-09 22:28:53,292 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:28:55,656 basehttp "GET /scanner/target/3/command/49/ HTTP/1.1" 200 83405
+INFO 2025-05-09 22:29:18,097 basehttp "GET /scanner/target/3/command/50/ HTTP/1.1" 200 18500
+WARNING 2025-05-09 22:29:24,492 log Not Found: /scanner/network_info/
+WARNING 2025-05-09 22:29:24,492 basehttp "GET /scanner/network_info/ HTTP/1.1" 404 5831
+INFO 2025-05-09 22:29:45,234 basehttp "GET /scanner/ HTTP/1.1" 200 72463
+INFO 2025-05-09 22:30:54,591 basehttp "GET /scanner/ HTTP/1.1" 200 72463
+INFO 2025-05-09 22:30:57,616 basehttp "POST /scanner/target/5/delete/ HTTP/1.1" 302 0
+INFO 2025-05-09 22:30:57,999 basehttp "GET /scanner/ HTTP/1.1" 200 69809
+INFO 2025-05-09 22:31:41,219 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:32:15,153 basehttp "GET /scanner/ HTTP/1.1" 200 74405
+INFO 2025-05-09 22:32:21,399 basehttp "POST /scanner/target/add/ HTTP/1.1" 302 0
+INFO 2025-05-09 22:32:21,766 basehttp "GET /scanner/target/6/ HTTP/1.1" 200 50189
+INFO 2025-05-09 22:32:24,385 basehttp "GET /scanner/ HTTP/1.1" 200 77511
+INFO 2025-05-09 22:34:41,263 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:34:50,939 basehttp "GET /scanner/ HTTP/1.1" 200 74382
+INFO 2025-05-09 22:35:03,274 basehttp - Broken pipe from ('127.0.0.1', 52966)
+INFO 2025-05-09 22:35:05,983 basehttp - Broken pipe from ('127.0.0.1', 53004)
+WARNING 2025-05-09 22:35:06,586 log Not Found: /scanner/target/6/delete/
+WARNING 2025-05-09 22:35:06,586 basehttp "POST /scanner/target/6/delete/ HTTP/1.1" 404 4036
+INFO 2025-05-09 22:35:07,439 basehttp - Broken pipe from ('127.0.0.1', 52967)
+INFO 2025-05-09 22:35:14,358 basehttp "GET /scanner/ HTTP/1.1" 200 72840
+INFO 2025-05-09 22:35:20,489 basehttp "POST /scanner/target/add/ HTTP/1.1" 302 0
+INFO 2025-05-09 22:35:21,299 basehttp "GET /scanner/target/7/ HTTP/1.1" 200 49397
+INFO 2025-05-09 22:35:23,969 basehttp "GET /scanner/ HTTP/1.1" 200 74382
+INFO 2025-05-09 22:35:26,647 basehttp "POST /scanner/target/7/delete/ HTTP/1.1" 302 0
+INFO 2025-05-09 22:35:27,393 basehttp "GET /scanner/ HTTP/1.1" 200 73292
+INFO 2025-05-09 22:35:32,429 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 105179
+INFO 2025-05-09 22:35:36,294 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-09 22:35:38,829 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-09 22:35:41,434 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-09 22:36:05,592 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-09 22:36:35,534 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-09 22:36:39,727 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-09 22:36:57,970 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 64907
+INFO 2025-05-09 22:37:03,721 basehttp "GET /scanner/processes/ HTTP/1.1" 200 61716
+INFO 2025-05-09 22:37:16,277 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 123859
+INFO 2025-05-09 22:40:53,476 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:41:27,668 basehttp "GET /scanner/processes/ HTTP/1.1" 200 62614
+INFO 2025-05-09 22:41:56,518 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:42:03,918 basehttp "GET /scanner/processes/ HTTP/1.1" 200 62614
+INFO 2025-05-09 22:42:12,399 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 124768
+INFO 2025-05-09 22:43:50,364 basehttp - Broken pipe from ('127.0.0.1', 53186)
+INFO 2025-05-09 22:43:51,468 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 123872
+INFO 2025-05-09 22:46:15,398 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 123872
+INFO 2025-05-09 22:47:49,897 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 124388
+INFO 2025-05-09 22:48:37,135 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:49:08,758 basehttp "GET /scanner/processes/ HTTP/1.1" 200 62567
+INFO 2025-05-09 22:49:19,822 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 124705
+INFO 2025-05-09 22:49:39,617 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 124705
+INFO 2025-05-09 22:51:04,289 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:51:23,858 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 124934
+INFO 2025-05-09 22:51:38,854 basehttp "GET /scanner/processes/ HTTP/1.1" 200 62796
+INFO 2025-05-09 22:51:44,213 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 124934
+INFO 2025-05-09 22:56:05,887 autoreload Watching for file changes with StatReloader
+INFO 2025-05-09 22:56:11,300 basehttp "GET /scanner/processes/?target_id=3&refresh=true HTTP/1.1" 200 125079
+INFO 2025-05-09 22:56:26,330 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 64907
+INFO 2025-05-09 22:56:29,063 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 105179
+INFO 2025-05-09 22:56:33,104 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-09 22:56:34,226 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-09 22:57:01,788 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-09 22:57:15,989 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1576
+INFO 2025-05-09 22:57:30,027 basehttp "GET /scanner/target/3/section/powershell_history/ HTTP/1.1" 200 234408
+INFO 2025-05-09 22:57:31,608 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-09 22:57:42,569 basehttp "GET /scanner/target/3/section/local_users/ HTTP/1.1" 200 38388
+INFO 2025-05-09 22:58:01,832 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189

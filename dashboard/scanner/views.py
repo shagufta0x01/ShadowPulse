@@ -85,6 +85,11 @@ def index(request):
     # Get list of target IPs for template
     target_ips = [target.ip_address for target in targets]
 
+    # Show a welcome message only once per session
+    if not request.session.get('welcome_shown'):
+        messages.info(request, f'Welcome to Rex! Select a target system to begin scanning.')
+        request.session['welcome_shown'] = True
+
     # Get scan results for statistics
     scan_results = ScanResult.objects.all().order_by('-scan_time')
 
@@ -167,6 +172,48 @@ def os_info(request):
     """OS Information page"""
     targets = Target.objects.filter(is_active=True).order_by('-last_scan')
 
+    # Get target ID from query parameters if provided
+    target_id = request.GET.get('target_id')
+    if target_id:
+        selected_target = get_object_or_404(Target, pk=target_id)
+    elif targets.exists():
+        selected_target = targets.first()
+    else:
+        selected_target = None
+
+    # System resource data (placeholder values)
+    system_resources = {
+        'cpu': 40,
+        'memory': 70,
+        'disk': 50
+    }
+
+    # Security status data (placeholder values)
+    security_status = {
+        'score': 92,
+        'critical_issues': 0,
+        'warnings': 2,
+        'firewall_active': True
+    }
+
+    # System overview data
+    system_overview = {
+        'hostname': selected_target.hostname if selected_target else 'Unknown hostname',
+        'ip_address': selected_target.ip_address if selected_target else '192.168.29.244',
+        'last_scan': selected_target.last_scan.strftime('%Y-%m-%d %H:%M') if selected_target and selected_target.last_scan else '2023-05-07 14:40',
+        'status': 'Secure'  # Placeholder
+    }
+
+    # OS details data (placeholder values)
+    os_details = {
+        'os_name': 'Windows 10 Pro',
+        'version': '21H2 (Build 19044.2604)',
+        'system_type': '64-bit Operating System, x64-based processor',
+        'last_boot': '2023-05-07 09:15:22',
+        'critical_vulnerabilities': 0,
+        'patch_status': 'Up to date'
+    }
+
     # Group sections by category
     sections_by_category = {}
     for section in OS_INFO_SECTIONS:
@@ -177,9 +224,14 @@ def os_info(request):
 
     context = {
         'targets': targets,
+        'selected_target': selected_target,
         'sections': OS_INFO_SECTIONS,
         'sections_by_category': sections_by_category,
-        'page_title': 'OS Information'
+        'page_title': 'OS Information',
+        'system_resources': system_resources,
+        'security_status': security_status,
+        'system_overview': system_overview,
+        'os_details': os_details
     }
     return render(request, 'scanner/os_info.html', context)
 
@@ -324,7 +376,8 @@ def get_os_info_section(request, target_id, section_id):
         target.last_scan = timezone.now()
         target.save()
 
-        messages.success(request, f'Successfully retrieved {section_name} from {target.ip_address}')
+        # Don't show a success message for every section retrieval
+        # This prevents cluttering the UI with too many notifications
 
         # Special handling for firewall rules section
         if section_id == 'firewall_rules':
@@ -356,6 +409,26 @@ def get_os_info_section(request, target_id, section_id):
                 </div>
                 """
         else:
+            # Check if the result contains an error message
+            if "Error retrieving section" in result_data:
+                error_msg = f"Error retrieving section '{section_name}': {result_data}"
+                print(f"Error: {error_msg}")
+                messages.error(request, error_msg)
+                return JsonResponse({
+                    'status': 'error',
+                    'message': error_msg
+                }, status=400)
+
+            # Check if the result is empty
+            if not result_data or not result_data.strip():
+                error_msg = f"No data returned for section '{section_name}'"
+                print(f"Error: {error_msg}")
+                messages.error(request, error_msg)
+                return JsonResponse({
+                    'status': 'error',
+                    'message': error_msg
+                }, status=400)
+
             # Format the result data for professional display
             formatted_data = format_command_output(result_data, section_name)
 
@@ -474,7 +547,8 @@ def processes(request):
             target.last_scan = timezone.now()
             target.save()
 
-            messages.success(request, f'Successfully retrieved process data from {target.ip_address}')
+            # Don't show a success message for process data retrieval
+            # This prevents cluttering the UI with too many notifications
 
         except Exception as e:
             messages.error(request, f'Error retrieving process data: {str(e)}')
@@ -556,7 +630,7 @@ def get_processes_data(request):
         target.last_scan = timezone.now()
         target.save()
 
-        # Return the HTML data directly
+        # Return the HTML data directly without showing a notification
         return JsonResponse({'html': process_data})
 
     except Exception as e:
@@ -1070,7 +1144,8 @@ def send_command(request, target_id, command_code):
         target.last_scan = timezone.now()
         target.save()
 
-        messages.success(request, f'Successfully ran {command_name} on {target.ip_address}')
+        # Don't show a success message for every command
+        # This prevents cluttering the UI with too many notifications
 
         # Format the result data for professional display
         formatted_data = format_command_output(result_data, command_name)

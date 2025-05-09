@@ -3,232 +3,558 @@
 {% block extra_css %}
 <style>
     /* Custom styles for OS Info page */
-    .section-list, .command-list {
-        max-height: 600px;
-        overflow-y: auto;
+    :root {
+        --dark-bg: #1a1d29;
+        --darker-bg: #141824;
+        --card-bg: #242736;
+        --accent-color: #8a56ff;
+        --success-color: #00d09c;
+        --warning-color: #ff9f43;
+        --danger-color: #ff5c75;
+        --text-color: #e9ecef;
+        --text-secondary: #adb5bd;
+        --border-color: #2c3040;
     }
 
-    .list-group-item-info {
-        background-color: var(--secondary-color);
-        color: white;
-        font-weight: bold;
+    body {
+        background-color: var(--dark-bg);
+        color: var(--text-color);
     }
 
-    .section-item:hover, .command-item:hover {
-        background-color: #f8f9fa;
+    .card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 20px;
     }
 
-    .section-item.active, .command-item.active {
-        background-color: var(--accent-color);
-        border-color: var(--accent-color);
+    .card-header {
+        background-color: var(--card-bg);
+        border-bottom: 1px solid var(--border-color);
+        padding: 15px 20px;
+        font-weight: 600;
     }
 
-    pre {
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
+    .card-body {
+        padding: 20px;
+    }
+
+    .progress {
+        height: 8px;
+        background-color: rgba(255, 255, 255, 0.1);
         border-radius: 4px;
-        padding: 10px;
-        white-space: pre-wrap;
-        word-wrap: break-word;
+        margin-top: 5px;
+        margin-bottom: 15px;
     }
 
-    .html-report iframe {
-        width: 100%;
-        height: 600px;
-        border: none;
+    .progress-bar-cpu {
+        background-color: var(--accent-color);
     }
 
-    /* Styles for formatted output */
-    .key-value-container {
-        margin-bottom: 1rem;
+    .progress-bar-memory {
+        background-color: var(--success-color);
     }
 
-    .key-value-container dt {
+    .progress-bar-disk {
+        background-color: var(--warning-color);
+    }
+
+    .circular-progress {
+        position: relative;
+        width: 120px;
+        height: 120px;
+    }
+
+    .circular-progress svg {
+        transform: rotate(-90deg);
+    }
+
+    .circular-progress circle {
+        fill: none;
+        stroke-width: 8;
+        stroke-linecap: round;
+    }
+
+    .circular-progress .bg {
+        stroke: rgba(255, 255, 255, 0.1);
+    }
+
+    .circular-progress .progress-circle {
+        stroke: var(--success-color);
+        transition: stroke-dashoffset 0.5s;
+    }
+
+    .circular-progress .percentage {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
         font-weight: bold;
-        color: #495057;
+        color: white;
     }
 
-    .key-value-container dd {
-        margin-bottom: 0.5rem;
+    .status-item {
+        margin-bottom: 10px;
     }
 
-    .section-title {
-        color: var(--accent-color);
-        border-bottom: 1px solid #dee2e6;
-        padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
+    .status-label {
+        color: var(--text-secondary);
+        font-size: 14px;
     }
 
-    .table-responsive {
-        margin-bottom: 1rem;
+    .status-value {
+        font-weight: 600;
     }
 
-    .table-responsive table {
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-active {
+        background-color: var(--success-color);
+        color: white;
+    }
+
+    .section-nav {
+        margin-top: 20px;
+    }
+
+    .section-nav .nav-link {
+        color: var(--text-color);
+        padding: 10px 15px;
+        border-radius: 6px;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-nav .nav-link.active {
+        background-color: var(--accent-color);
+        color: white;
+    }
+
+    .section-nav .nav-link:hover:not(.active) {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .section-nav .nav-link i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .tab-buttons {
+        display: flex;
+        margin-bottom: 20px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        padding: 5px;
+    }
+
+    .tab-button {
+        flex: 1;
+        padding: 10px;
+        text-align: center;
+        border-radius: 4px;
+        cursor: pointer;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .tab-button.active {
+        background-color: var(--accent-color);
+        color: white;
+    }
+
+    /* Card-based info display */
+    .info-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+    }
+
+    .info-card {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .info-card-header {
+        background-color: var(--accent-color);
+        color: white;
+        padding: 12px 15px;
+        font-weight: 600;
+        font-size: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .info-card-body {
+        padding: 15px;
+    }
+
+    .info-item {
+        margin-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .info-item:last-child {
         margin-bottom: 0;
     }
 
-    .list-container {
-        margin-bottom: 1rem;
+    .info-label {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        margin-bottom: 4px;
     }
 
-    .list-title {
-        color: var(--accent-color);
-        margin-bottom: 1rem;
+    .info-value {
+        font-weight: 500;
+        font-size: 1rem;
+        word-break: break-word;
     }
 
-    .list-styled li {
-        margin-bottom: 0.5rem;
+    /* For backward compatibility */
+    .detail-table {
+        width: 100%;
+        border-collapse: collapse;
+        display: none; /* Hide the old table */
     }
 
-    .generic-output pre {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        max-height: 500px;
-        overflow-y: auto;
+    .vulnerability-count {
+        color: var(--danger-color);
+        font-weight: bold;
     }
 
-    .result-content {
-        background-color: white;
-        padding: 1rem;
-        border-radius: 0.25rem;
+    .patch-status {
+        color: var(--success-color);
+        font-weight: bold;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header text-white" style="background-color: var(--accent-color);">
-                <h5 class="mb-0"><i class="fas fa-desktop me-2"></i>OS Information Dashboard</h5>
-            </div>
-            <div class="card-body">
-                <div class="alert alert-primary mb-3">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <strong>Instructions:</strong> Select a target system from the list, then choose either an individual section (recommended) or a full command to run. Results will be displayed in the right panel.
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>OS Information</h2>
+        <div class="d-flex align-items-center">
+            <label for="target-selector" class="me-2">Target:</label>
+            <select id="target-selector" class="form-select" style="width: 250px; background-color: var(--card-bg); color: var(--text-color); border-color: var(--border-color);">
+                {% for target in targets %}
+                    <option value="{{ target.id }}" {% if selected_target and selected_target.id == target.id %}selected{% endif %}>
+                        {{ target.ip_address }} {% if target.hostname %}({{ target.hostname }}){% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- System Overview Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    System Overview
                 </div>
+                <div class="card-body">
+                    <div class="status-item">
+                        <div class="status-label">Hostname</div>
+                        <div class="status-value">{{ system_overview.hostname }}</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">IP</div>
+                        <div class="status-value">{{ system_overview.ip_address }}</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Last Scan</div>
+                        <div class="status-value">{{ system_overview.last_scan }}</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Status</div>
+                        <div class="status-value">{{ system_overview.status }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <div class="card-header text-white" style="background-color: var(--primary-color);">
-                                <h5 class="mb-0"><i class="fas fa-server me-2"></i>Target Systems</h5>
-                            </div>
-                            <div class="card-body">
-                                {% if targets %}
-                                    <div class="list-group">
-                                        {% for target in targets %}
-                                            <a href="#" class="list-group-item list-group-item-action target-item"
-                                               data-target-id="{{ target.id }}" data-target-ip="{{ target.ip_address }}">
-                                                <div class="d-flex w-100 justify-content-between">
-                                                    <h6 class="mb-1">{{ target.ip_address }}</h6>
-                                                    <small>{{ target.last_scan|default:"Never scanned"|date:"Y-m-d H:i" }}</small>
-                                                </div>
-                                                <small>{{ target.hostname|default:"Unknown hostname" }}</small>
-                                            </a>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    <div class="alert alert-info">
-                                        No target systems added yet.
-                                        <a href="{% url 'scanner:add_target' %}" class="alert-link">Add a target</a> to get started.
-                                    </div>
-                                {% endif %}
-                            </div>
+        <!-- Security Status Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    Security Status
+                </div>
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <div class="circular-progress mb-3">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle class="bg" cx="60" cy="60" r="54" stroke-dasharray="339.292" stroke-dashoffset="0"></circle>
+                            <circle class="progress-circle" cx="60" cy="60" r="54" stroke-dasharray="339.292" stroke-dashoffset="27.143"></circle>
+                        </svg>
+                        <div class="percentage">{{ security_status.score }}%</div>
+                    </div>
+                    <div class="status-item text-center">
+                        <div class="status-label">Critical Issues</div>
+                        <div class="status-value">{{ security_status.critical_issues }}</div>
+                    </div>
+                    <div class="status-item text-center">
+                        <div class="status-label">Warnings</div>
+                        <div class="status-value">{{ security_status.warnings }}</div>
+                    </div>
+                    <div class="status-item text-center">
+                        <div class="status-label">Firewall</div>
+                        <div class="status-value">
+                            {% if security_status.firewall_active %}
+                                <span class="status-badge badge-active">Active</span>
+                            {% else %}
+                                <span class="status-badge" style="background-color: var(--danger-color);">Inactive</span>
+                            {% endif %}
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--info-color);">
-                                <h5 class="mb-0"><i class="fas fa-list-alt me-2"></i>OS Information Commands</h5>
-                            </div>
-                            <div class="card-body p-0">
-                                <!-- Command type selector tabs -->
-                                <ul class="nav nav-tabs" id="commandTypeTabs" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="sections-tab" data-bs-toggle="tab"
-                                                data-bs-target="#sections-content" type="button" role="tab"
-                                                aria-controls="sections-content" aria-selected="true">
-                                            <i class="fas fa-puzzle-piece me-1"></i>Individual Sections
-                                        </button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="full-commands-tab" data-bs-toggle="tab"
-                                                data-bs-target="#full-commands-content" type="button" role="tab"
-                                                aria-controls="full-commands-content" aria-selected="false">
-                                            <i class="fas fa-file-alt me-1"></i>Full Reports
-                                        </button>
-                                    </li>
-                                </ul>
+        <!-- System Resources Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    System Resources
+                </div>
+                <div class="card-body">
+                    <div class="status-item">
+                        <div class="d-flex justify-content-between">
+                            <div class="status-label">CPU</div>
+                            <div class="status-value">{{ system_resources.cpu }}%</div>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-cpu" role="progressbar" style="width: {{ system_resources.cpu }}%"></div>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="d-flex justify-content-between">
+                            <div class="status-label">Memory</div>
+                            <div class="status-value">{{ system_resources.memory }}%</div>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-memory" role="progressbar" style="width: {{ system_resources.memory }}%"></div>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="d-flex justify-content-between">
+                            <div class="status-label">Disk</div>
+                            <div class="status-value">{{ system_resources.disk }}%</div>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-disk" role="progressbar" style="width: {{ system_resources.disk }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                <!-- Tab content -->
-                                <div class="tab-content p-3" id="commandTypeContent">
-                                    <!-- Individual Sections Tab -->
-                                    <div class="tab-pane fade show active" id="sections-content" role="tabpanel" aria-labelledby="sections-tab">
-                                        <div class="alert alert-success mb-3">
-                                            <i class="fas fa-check-circle me-2"></i>
-                                            <strong>Recommended:</strong> Individual sections provide faster, more reliable results.
-                                        </div>
+    <!-- OS Information Dashboard Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-desktop me-2"></i>
+                OS Information Dashboard
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Tab Buttons -->
+            <div class="tab-buttons">
+                <div class="tab-button active" id="btn-individual-sections">Individual Sections</div>
+                <div class="tab-button" id="btn-full-reports">Full Reports</div>
+            </div>
 
-                                        <div class="list-group section-list" style="display: none;">
-                                            <!-- Display sections by category -->
-                                            {% for category, category_sections in sections_by_category.items %}
-                                                <div class="list-group-item list-group-item-info">{{ category }}</div>
-                                                {% for section in category_sections %}
-                                                    <button class="list-group-item list-group-item-action section-item"
-                                                            data-section-id="{{ section.id }}" data-section-name="{{ section.name }}">
-                                                        <i class="fas fa-file-alt me-2"></i>{{ section.name }}
-                                                    </button>
-                                                {% endfor %}
-                                            {% endfor %}
-                                        </div>
-                                        <div class="alert alert-info select-target-message">
-                                            Please select a target system first.
-                                        </div>
-                                    </div>
-
-                                    <!-- Full Commands Tab -->
-                                    <div class="tab-pane fade" id="full-commands-content" role="tabpanel" aria-labelledby="full-commands-tab">
-                                        <div class="alert alert-warning mb-3">
-                                            <i class="fas fa-exclamation-triangle me-2"></i>
-                                            <strong>Note:</strong> Full reports may experience timeout issues with large systems.
-                                        </div>
-
-                                        <div class="list-group command-list" style="display: none;">
-                                            <!-- Basic Commands -->
-                                            <div class="list-group-item list-group-item-info">Basic Commands</div>
-
-                                            <button class="list-group-item list-group-item-action command-item"
-                                                    data-command-code="1" data-command-name="Basic OS Info">
-                                                <i class="fas fa-info-circle me-2"></i>Basic OS Info
-                                            </button>
-
-                                            <button class="list-group-item list-group-item-action command-item"
-                                                    data-command-code="5" data-command-name="Full OS Report">
-                                                <i class="fas fa-file-alt me-2"></i>Full OS Report
-                                            </button>
-
-                                            <button class="list-group-item list-group-item-action command-item"
-                                                    data-command-code="4" data-command-name="System Diagnostic">
-                                                <i class="fas fa-stethoscope me-2"></i>System Diagnostic
-                                            </button>
-                                        </div>
-                                        <div class="alert alert-info select-target-message">
-                                            Please select a target system first.
-                                        </div>
-                                    </div>
-                                </div>
+            <div class="row">
+                <!-- Left Column - System Information -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            System Information
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="section-nav">
+                                {% for section in sections %}
+                                    {% if section.category == "System Information" %}
+                                        <a href="#" class="nav-link {% if section.id == 'system_overview' %}active{% endif %}"
+                                           data-section-id="{{ section.id }}" data-section-name="{{ section.name }}">
+                                            <i class="fas {% if section.id == 'system_overview' %}fa-info-circle
+                                                        {% elif section.id == 'os_details' %}fa-cogs
+                                                        {% elif section.id == 'environment_variables' %}fa-code
+                                                        {% elif section.id == 'user_folders' %}fa-folder
+                                                        {% elif section.id == 'running_processes' %}fa-tasks
+                                                        {% elif section.id == 'file_version' %}fa-file-code
+                                                        {% else %}fa-file-alt{% endif %}"></i>
+                                            {{ section.name }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header text-white" style="background-color: var(--success-color);">
-                                <h5 class="mb-0 result-title"><i class="fas fa-chart-bar me-2"></i>Results</h5>
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            Security Information
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="section-nav">
+                                {% for section in sections %}
+                                    {% if section.category == "Security Information" %}
+                                        <a href="#" class="nav-link"
+                                           data-section-id="{{ section.id }}" data-section-name="{{ section.name }}">
+                                            <i class="fas {% if section.id == 'antivirus_info' %}fa-shield-alt
+                                                        {% elif section.id == 'defender_settings' %}fa-shield-virus
+                                                        {% elif section.id == 'firewall_rules' %}fa-fire
+                                                        {% elif section.id == 'certificates' %}fa-certificate
+                                                        {% elif section.id == 'audit_policy' %}fa-clipboard-check
+                                                        {% elif section.id == 'secure_boot_info' %}fa-lock
+                                                        {% else %}fa-shield-alt{% endif %}"></i>
+                                            {{ section.name }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
-                            <div class="card-body result-container" id="result-container">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i>Select a target and command to view results.
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            Software & Updates
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="section-nav">
+                                {% for section in sections %}
+                                    {% if section.category == "Software & Updates" %}
+                                        <a href="#" class="nav-link"
+                                           data-section-id="{{ section.id }}" data-section-name="{{ section.name }}">
+                                            <i class="fas {% if section.id == 'installed_software' %}fa-box
+                                                        {% elif section.id == 'installed_hotfixes' %}fa-wrench
+                                                        {% elif section.id == 'windows_updates' %}fa-sync
+                                                        {% else %}fa-cube{% endif %}"></i>
+                                            {{ section.name }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            User Information
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="section-nav">
+                                {% for section in sections %}
+                                    {% if section.category == "User Information" %}
+                                        <a href="#" class="nav-link"
+                                           data-section-id="{{ section.id }}" data-section-name="{{ section.name }}">
+                                            <i class="fas {% if section.id == 'local_groups' %}fa-users
+                                                        {% elif section.id == 'local_users' %}fa-user
+                                                        {% elif section.id == 'powershell_history' %}fa-terminal
+                                                        {% else %}fa-user-circle{% endif %}"></i>
+                                            {{ section.name }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Operating System Details -->
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            Operating System Details
+                        </div>
+                        <div class="card-body">
+                            <div id="os-details-content">
+                                <!-- Hidden table for backward compatibility with JavaScript -->
+                                <table class="detail-table">
+                                    <tr>
+                                        <td>OS Name</td>
+                                        <td>{{ os_details.os_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Version</td>
+                                        <td>{{ os_details.version }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>System Type</td>
+                                        <td>{{ os_details.system_type }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Last Boot Time</td>
+                                        <td>{{ os_details.last_boot }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Critical Vulnerabilities</td>
+                                        <td><span class="vulnerability-count">{{ os_details.critical_vulnerabilities }}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Patch Status</td>
+                                        <td><span class="patch-status">{{ os_details.patch_status }}</span></td>
+                                    </tr>
+                                </table>
+
+                                <!-- New card-based layout -->
+                                <div class="info-card-grid">
+                                    <!-- System Info Card -->
+                                    <div class="info-card">
+                                        <div class="info-card-header">
+                                            <i class="fas fa-desktop me-2"></i>System Information
+                                        </div>
+                                        <div class="info-card-body">
+                                            <div class="info-item">
+                                                <div class="info-label">OS Name</div>
+                                                <div class="info-value os-name-value">{{ os_details.os_name }}</div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="info-label">Version</div>
+                                                <div class="info-value os-version-value">{{ os_details.version }}</div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="info-label">System Type</div>
+                                                <div class="info-value system-type-value">{{ os_details.system_type }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Boot & Status Card -->
+                                    <div class="info-card">
+                                        <div class="info-card-header">
+                                            <i class="fas fa-power-off me-2"></i>Boot & Status
+                                        </div>
+                                        <div class="info-card-body">
+                                            <div class="info-item">
+                                                <div class="info-label">Last Boot Time</div>
+                                                <div class="info-value boot-time-value">{{ os_details.last_boot }}</div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="info-label">Critical Vulnerabilities</div>
+                                                <div class="info-value">
+                                                    <span class="vulnerability-count">{{ os_details.critical_vulnerabilities }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="info-label">Patch Status</div>
+                                                <div class="info-value">
+                                                    <span class="patch-status">{{ os_details.patch_status }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -243,8 +569,411 @@
 {% block extra_js %}
 <script>
     $(document).ready(function() {
+        // Tab switching functionality
+        $('#btn-individual-sections').click(function() {
+            $(this).addClass('active');
+            $('#btn-full-reports').removeClass('active');
+        });
+
+        $('#btn-full-reports').click(function() {
+            $(this).addClass('active');
+            $('#btn-individual-sections').removeClass('active');
+        });
+
+        // Target selection
         let selectedTargetId = null;
         let selectedTargetIp = null;
+
+        {% if selected_target %}
+        // Initialize with the selected target
+        selectedTargetId = {{ selected_target.id }};
+        selectedTargetIp = "{{ selected_target.ip_address }}";
+        {% endif %}
+
+        // Handle target selection from dropdown
+        $('#target-selector').change(function() {
+            const targetId = $(this).val();
+            if (targetId) {
+                // Redirect to the same page with the selected target
+                window.location.href = `/scanner/os-info/?target_id=${targetId}`;
+            }
+        });
+
+        // Section navigation
+        $('.section-nav .nav-link').click(function(e) {
+            e.preventDefault();
+
+            // Check if a target is selected
+            if (!selectedTargetId) {
+                alert('Please select a target system first.');
+                return;
+            }
+
+            $('.section-nav .nav-link').removeClass('active');
+            $(this).addClass('active');
+
+            // Get the section ID and name
+            const sectionId = $(this).data('section-id');
+            const sectionName = $(this).data('section-name');
+
+            // Update the right panel header
+            $('.col-md-8 .card-header').text(sectionName);
+
+            // Show loading indicator
+            $('.col-md-8 .card-body').html(`
+                <div class="text-center p-4">
+                    <div class="spinner-border" role="status" style="width: 3rem; height: 3rem; color: var(--accent-color);"></div>
+                    <p class="mt-3 fw-bold" style="color: var(--accent-color);">Loading ${sectionName}, please wait...</p>
+                </div>
+            `);
+
+            // Fetch data from the server
+            fetch(`/scanner/target/${selectedTargetId}/section/${sectionId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Check if the result is HTML content
+                        if (data.result_data.trim().startsWith('<!DOCTYPE html>') ||
+                            data.result_data.trim().startsWith('<html>')) {
+                            // Create an iframe to display it properly
+                            const iframeContainer = document.createElement('div');
+                            iframeContainer.className = 'html-report';
+
+                            // Create a blob URL for the HTML content
+                            const blob = new Blob([data.result_data], {type: 'text/html'});
+                            const url = URL.createObjectURL(blob);
+
+                            // Create an iframe and set its source to the blob URL
+                            const iframe = document.createElement('iframe');
+                            iframe.src = url;
+
+                            // Add the iframe to the container
+                            iframeContainer.appendChild(iframe);
+                            $('.col-md-8 .card-body').empty().append(iframeContainer);
+                        } else {
+                            // Check if the result is already HTML
+                            if (data.result_data.trim().startsWith('<div') ||
+                                data.result_data.trim().startsWith('<table') ||
+                                data.result_data.trim().startsWith('<pre')) {
+                                // It's already formatted HTML
+                                $('.col-md-8 .card-body').html(data.result_data);
+                            } else {
+                                // Try to format the data in our card-based layout
+                                try {
+                                    const formattedData = formatDataToCards(data.result_data, sectionName);
+                                    $('.col-md-8 .card-body').html(formattedData);
+                                } catch (e) {
+                                    console.error('Error formatting data to cards:', e);
+                                    // Fallback to plain text if formatting fails
+                                    $('.col-md-8 .card-body').html(`
+                                        <pre class="mb-0" style="max-height: 500px; overflow-y: auto; color: var(--text-color);">${data.result_data}</pre>
+                                    `);
+                                }
+                            }
+                        }
+                    } else {
+                        // Show error message
+                        $('.col-md-8 .card-body').html(`
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Error:</strong> ${data.message}
+                            </div>
+                        `);
+                    }
+                })
+                .catch(error => {
+                    // Show error message
+                    $('.col-md-8 .card-body').html(`
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Network Error:</strong> ${error.message}
+                        </div>
+                    `);
+                });
+        });
+
+        // Function to update the system overview panel
+        function updateSystemOverviewPanel() {
+            $('.col-md-8 .card-header').text('System Overview');
+            $('.col-md-8 .card-body').html(`
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="status-item">
+                            <div class="status-label">System Name</div>
+                            <div class="status-value">DESKTOP-PC</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">Domain</div>
+                            <div class="status-value">WORKGROUP</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">Uptime</div>
+                            <div class="status-value">3 days, 7 hours</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="status-item">
+                            <div class="status-label">Processor</div>
+                            <div class="status-value">Intel Core i7-10700K</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">Installed Memory</div>
+                            <div class="status-value">16 GB</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">System Type</div>
+                            <div class="status-value">64-bit Operating System</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        // Initialize circular progress
+        const circle = document.querySelector('.progress-circle');
+        if (circle) {
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+
+            // Set progress based on security score
+            const securityScore = {{ security_status.score }};
+            const offset = circumference - (securityScore / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+
+        // Function to load real-time system resources
+        function loadSystemResources() {
+            if (!selectedTargetId) return;
+
+            // Fetch system resource data
+            fetch(`/scanner/target/${selectedTargetId}/section/system_overview/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        try {
+                            // Parse the data to extract CPU, memory, and disk usage
+                            const text = data.result_data;
+
+                            // Extract CPU usage
+                            const cpuMatch = text.match(/CPU Usage:\s*(\d+)%/);
+                            if (cpuMatch && cpuMatch[1]) {
+                                const cpuUsage = parseInt(cpuMatch[1]);
+                                $('.progress-bar-cpu').css('width', `${cpuUsage}%`);
+                                $('.status-item:contains("CPU") .status-value').text(`${cpuUsage}%`);
+                            }
+
+                            // Extract memory usage
+                            const memMatch = text.match(/Memory Usage:\s*(\d+)%/);
+                            if (memMatch && memMatch[1]) {
+                                const memUsage = parseInt(memMatch[1]);
+                                $('.progress-bar-memory').css('width', `${memUsage}%`);
+                                $('.status-item:contains("Memory") .status-value').text(`${memUsage}%`);
+                            }
+
+                            // Extract disk usage
+                            const diskMatch = text.match(/Disk Usage:\s*(\d+)%/);
+                            if (diskMatch && diskMatch[1]) {
+                                const diskUsage = parseInt(diskMatch[1]);
+                                $('.progress-bar-disk').css('width', `${diskUsage}%`);
+                                $('.status-item:contains("Disk") .status-value').text(`${diskUsage}%`);
+                            }
+                        } catch (e) {
+                            console.error('Error parsing system resources:', e);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching system resources:', error);
+                });
+        }
+
+        // Function to load OS details
+        function loadOsDetails() {
+            if (!selectedTargetId) return;
+
+            // Fetch OS details data
+            fetch(`/scanner/target/${selectedTargetId}/section/os_details/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        try {
+                            // Parse the data to extract OS details
+                            const text = data.result_data;
+
+                            // Create a temporary div to parse HTML content if needed
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = text;
+
+                            // Try to extract data from HTML or text
+                            let osName = '';
+                            let version = '';
+                            let systemType = '';
+                            let lastBoot = '';
+
+                            // Extract from text
+                            const osNameMatch = text.match(/OS Name:\s*([^\n]+)/);
+                            if (osNameMatch && osNameMatch[1]) {
+                                osName = osNameMatch[1].trim();
+                            }
+
+                            const versionMatch = text.match(/Version:\s*([^\n]+)/);
+                            if (versionMatch && versionMatch[1]) {
+                                version = versionMatch[1].trim();
+                            }
+
+                            const archMatch = text.match(/Architecture:\s*([^\n]+)/);
+                            if (archMatch && archMatch[1]) {
+                                systemType = archMatch[1].trim();
+                            }
+
+                            const bootMatch = text.match(/Last Boot:\s*([^\n]+)/);
+                            if (bootMatch && bootMatch[1]) {
+                                lastBoot = bootMatch[1].trim();
+                            }
+
+                            // Update both the hidden table (for backward compatibility) and the new card layout
+                            if (osName) {
+                                $('#os-details-content table tr:nth-child(1) td:nth-child(2)').text(osName);
+                                $('.os-name-value').text(osName);
+                            }
+                            if (version) {
+                                $('#os-details-content table tr:nth-child(2) td:nth-child(2)').text(version);
+                                $('.os-version-value').text(version);
+                            }
+                            if (systemType) {
+                                $('#os-details-content table tr:nth-child(3) td:nth-child(2)').text(systemType);
+                                $('.system-type-value').text(systemType);
+                            }
+                            if (lastBoot) {
+                                $('#os-details-content table tr:nth-child(4) td:nth-child(2)').text(lastBoot);
+                                $('.boot-time-value').text(lastBoot);
+                            }
+                        } catch (e) {
+                            console.error('Error parsing OS details:', e);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching OS details:', error);
+                });
+        }
+
+        // Function to format data into cards
+        function formatDataToCards(data, sectionTitle) {
+            // Split the data into lines
+            const lines = data.split('\n');
+
+            // Group data into logical sections
+            const sections = [];
+            let currentSection = { title: 'General Information', items: [] };
+
+            // Process each line
+            for (let line of lines) {
+                line = line.trim();
+                if (!line) continue;
+
+                // Check if this is a section header (all caps or ends with a colon)
+                if (line.match(/^[A-Z\s]+$/) || line.match(/^[A-Z][\w\s]+:$/)) {
+                    // Save the current section if it has items
+                    if (currentSection.items.length > 0) {
+                        sections.push(currentSection);
+                    }
+
+                    // Start a new section
+                    currentSection = {
+                        title: line.replace(/:$/, ''),
+                        items: []
+                    };
+                    continue;
+                }
+
+                // Check if this is a key-value pair
+                const kvMatch = line.match(/^([^:]+):\s*(.*)$/);
+                if (kvMatch) {
+                    currentSection.items.push({
+                        key: kvMatch[1].trim(),
+                        value: kvMatch[2].trim()
+                    });
+                } else {
+                    // Add as a simple item
+                    currentSection.items.push({
+                        key: '',
+                        value: line
+                    });
+                }
+            }
+
+            // Add the last section if it has items
+            if (currentSection.items.length > 0) {
+                sections.push(currentSection);
+            }
+
+            // Generate HTML for the cards
+            let html = `<div class="info-card-grid">`;
+
+            // If we have no sections, create a default one with the section title
+            if (sections.length === 0) {
+                html += `
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <i class="fas fa-info-circle me-2"></i>${sectionTitle}
+                        </div>
+                        <div class="info-card-body">
+                            <div class="info-item">
+                                <div class="info-value">No data available</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Create a card for each section
+                for (let section of sections) {
+                    html += `
+                        <div class="info-card">
+                            <div class="info-card-header">
+                                <i class="fas fa-info-circle me-2"></i>${section.title}
+                            </div>
+                            <div class="info-card-body">
+                    `;
+
+                    // Add items to the card
+                    for (let item of section.items) {
+                        if (item.key) {
+                            html += `
+                                <div class="info-item">
+                                    <div class="info-label">${item.key}</div>
+                                    <div class="info-value">${item.value}</div>
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div class="info-item">
+                                    <div class="info-value">${item.value}</div>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            html += `</div>`;
+            return html;
+        }
+
+        // Load system resources and OS details on page load
+        if (selectedTargetId) {
+            loadSystemResources();
+            loadOsDetails();
+            // Refresh system resources every 30 seconds
+            setInterval(loadSystemResources, 30000);
+        }
 
         // Handle target selection
         $('.target-item').click(function(e) {
@@ -348,18 +1077,18 @@
                                     data.result_data.trim().startsWith('<pre')) {
                                     // It's already formatted HTML, wrap it in a container
                                     resultContainer.innerHTML = `
-                                        <div class="bg-light p-3 border rounded">
+                                        <div class="p-3 border rounded" style="background-color: var(--secondary-bg-color);">
                                             <h5 class="mb-3" style="color: var(--accent-color);"><i class="fas fa-file-alt me-2"></i>${sectionName}</h5>
-                                            <div class="result-content" style="max-height: 500px; overflow-y: auto;">
+                                            <div class="result-content" style="max-height: 500px; overflow-y: auto; color: var(--text-color);">
                                                 ${data.result_data}
                                             </div>
                                         </div>`;
                                 } else {
                                     // It's plain text, wrap in pre tags with styling
                                     resultContainer.innerHTML = `
-                                        <div class="bg-light p-3 border rounded">
+                                        <div class="p-3 border rounded" style="background-color: var(--secondary-bg-color);">
                                             <h5 class="mb-3" style="color: var(--accent-color);"><i class="fas fa-file-alt me-2"></i>${sectionName}</h5>
-                                            <pre class="mb-0" style="max-height: 500px; overflow-y: auto;">${data.result_data}</pre>
+                                            <pre class="mb-0" style="max-height: 500px; overflow-y: auto; color: var(--text-color);">${data.result_data}</pre>
                                         </div>`;
                                 }
                             }
@@ -396,18 +1125,18 @@
                             data.result_data.trim().startsWith('<pre')) {
                             // It's already formatted HTML, wrap it in a container
                             resultContainer.innerHTML = `
-                                <div class="bg-light p-3 border rounded">
+                                <div class="p-3 border rounded" style="background-color: var(--secondary-bg-color);">
                                     <h5 class="mb-3" style="color: var(--accent-color);"><i class="fas fa-file-alt me-2"></i>${commandName}</h5>
-                                    <div class="result-content" style="max-height: 500px; overflow-y: auto;">
+                                    <div class="result-content" style="max-height: 500px; overflow-y: auto; color: var(--text-color);">
                                         ${data.result_data}
                                     </div>
                                 </div>`;
                         } else {
                             // It's plain text, wrap in pre tags with styling
                             resultContainer.innerHTML = `
-                                <div class="bg-light p-3 border rounded">
+                                <div class="p-3 border rounded" style="background-color: var(--secondary-bg-color);">
                                     <h5 class="mb-3" style="color: var(--accent-color);"><i class="fas fa-file-alt me-2"></i>${commandName}</h5>
-                                    <pre class="mb-0" style="max-height: 500px; overflow-y: auto;">${data.result_data}</pre>
+                                    <pre class="mb-0" style="max-height: 500px; overflow-y: auto; color: var(--text-color);">${data.result_data}</pre>
                                 </div>`;
                         }
                     } else {

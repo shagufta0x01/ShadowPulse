@@ -3,6 +3,114 @@
 
 {% block title %}Running Processes{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Dark mode styles for Memory Protection Analysis */
+    .modal-content {
+        background-color: var(--primary-bg-color);
+        color: var(--text-color);
+    }
+
+    .modal-body table {
+        color: var(--text-color);
+    }
+
+    .modal-body .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .modal-body .bg-light {
+        background-color: var(--secondary-bg-color) !important;
+    }
+
+    .modal-body .text-success {
+        color: #4caf50 !important;
+    }
+
+    .modal-body .text-danger {
+        color: #f44336 !important;
+    }
+
+    .modal-body .card {
+        background-color: var(--secondary-bg-color);
+        border-color: var(--border-color);
+    }
+
+    .modal-body .card-header {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+
+    .modal-body .progress {
+        background-color: var(--secondary-bg-color);
+    }
+
+    /* Dark mode styles for Process Table */
+    #process-table {
+        color: var(--text-color);
+        background-color: var(--primary-bg-color);
+    }
+
+    #process-table thead {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+
+    #process-table tbody tr {
+        border-color: var(--border-color);
+    }
+
+    #process-table tbody tr:nth-of-type(odd) {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    #process-table tbody tr:nth-of-type(even) {
+        background-color: var(--primary-bg-color);
+    }
+
+    .process-row:hover {
+        background-color: rgba(138, 86, 255, 0.15) !important;
+    }
+
+    /* Ensure hover on selected row maintains black text */
+    .process-row.table-primary:hover {
+        color: #000000 !important;
+    }
+
+    .process-row.table-primary {
+        background-color: rgba(138, 86, 255, 0.35) !important;
+        color: #000000 !important;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 0 8px rgba(138, 86, 255, 0.5);
+        border-left: 3px solid rgba(138, 86, 255, 0.8);
+        font-weight: 500;
+    }
+
+    /* Force black text on all cells in selected row */
+    .process-row.table-primary td {
+        color: #000000 !important;
+    }
+
+    /* Add a subtle pulsing effect to the selected row */
+    @keyframes pulse-highlight {
+        0% {
+            background-color: rgba(138, 86, 255, 0.35);
+        }
+        50% {
+            background-color: rgba(138, 86, 255, 0.45);
+        }
+        100% {
+            background-color: rgba(138, 86, 255, 0.35);
+        }
+    }
+
+    .process-row.table-primary {
+        animation: pulse-highlight 2s infinite;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
     <div class="row">
@@ -130,12 +238,20 @@
     $(document).ready(function() {
         // Handle process selection for memory analysis
         $(document).on('click', '.process-row', function() {
+            // Remove selection from all rows
             $('.process-row').removeClass('table-primary');
+
+            // Add selection to clicked row with visual effect
             $(this).addClass('table-primary');
 
             // Enable analyze buttons
             $('#analyze-selected-btn').prop('disabled', false);
             $('#analyze-btn').prop('disabled', false);
+
+            // Scroll to ensure the selected row is visible
+            $('html, body').animate({
+                scrollTop: $(this).offset().top - 200
+            }, 200);
         });
 
         // Handle pagination links to prevent page reload
@@ -255,7 +371,7 @@
         const selectedRow = $('.process-row.table-primary');
         if (selectedRow.length) {
             const pid = selectedRow.find('.process-pid').text();
-            const processName = selectedRow.find('.process-name span').text();
+            const processName = selectedRow.find('.process-name span').text() || selectedRow.find('.process-name').text();
             const targetId = $('#target-select').val();
 
             // Show modal

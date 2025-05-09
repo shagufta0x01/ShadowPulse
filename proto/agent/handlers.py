@@ -8,6 +8,7 @@ import subprocess
 import wmi
 import html
 from datetime import datetime
+import concurrent.futures
 from proto.pro.protocol import *
 
 # JavaScript code for the process list page
@@ -208,7 +209,7 @@ function refreshProcesses() {
 </script>
 """
 
-# Helper function to generate HTML-formatted output
+# Helper functions for HTML output
 def format_html_output(title, sections):
     """
     Generate HTML-formatted output for web display
@@ -220,167 +221,6 @@ def format_html_output(title, sections):
     Returns:
         str: HTML-formatted output
     """
-    css = """
-    <style>
-        .report-container {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .report-header {
-            background-color: #0d6efd;
-            color: white;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .report-title {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 600;
-        }
-        .report-timestamp {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        .report-section {
-            background-color: white;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .section-header {
-            background-color: #e9ecef;
-            padding: 12px 15px;
-            border-bottom: 1px solid #dee2e6;
-            font-weight: 600;
-            font-size: 18px;
-            color: #212529;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .section-status {
-            font-size: 14px;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        .status-success {
-            background-color: #d1e7dd;
-            color: #0f5132;
-        }
-        .status-error {
-            background-color: #f8d7da;
-            color: #842029;
-        }
-        .section-content {
-            padding: 15px;
-            overflow-x: auto;
-        }
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .data-table th, .data-table td {
-            padding: 8px 12px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
-        .data-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-        .data-table tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        .data-table tr:hover {
-            background-color: #e9ecef;
-        }
-        .error-message {
-            color: #842029;
-            background-color: #f8d7da;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .summary-section {
-            background-color: #e9ecef;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 20px;
-        }
-        .summary-title {
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        .summary-stats {
-            display: flex;
-            gap: 20px;
-        }
-        .stat-item {
-            background-color: white;
-            padding: 10px 15px;
-            border-radius: 4px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        .stat-label {
-            font-size: 14px;
-            color: #6c757d;
-        }
-        .stat-value {
-            font-size: 20px;
-            font-weight: 600;
-            margin-top: 5px;
-        }
-        .success-value {
-            color: #198754;
-        }
-        .error-value {
-            color: #dc3545;
-        }
-        pre {
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 4px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 14px;
-        }
-        .key-value-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .key-value-table td {
-            padding: 8px 12px;
-            border-bottom: 1px solid #dee2e6;
-        }
-        .key-value-table td:first-child {
-            font-weight: 600;
-            width: 30%;
-        }
-        .category-header {
-            margin: 25px 0 15px 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #0d6efd;
-        }
-        .category-header h2 {
-            font-size: 22px;
-            color: #0d6efd;
-            margin: 0;
-            font-weight: 600;
-        }
-    </style>
-    """
-
     # Generate timestamp
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -392,7 +232,164 @@ def format_html_output(title, sections):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{html.escape(title)}</title>
-        {css}
+        <style>
+            .report-container {{
+                font-family: 'Segoe UI', Arial, sans-serif;
+                max-width: 100%;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #f8f9fa;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }}
+            .report-header {{
+                background-color: #0d6efd;
+                color: white;
+                padding: 15px;
+                border-radius: 6px;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }}
+            .report-title {{
+                margin: 0;
+                font-size: 24px;
+                font-weight: 600;
+            }}
+            .report-timestamp {{
+                font-size: 14px;
+                opacity: 0.9;
+            }}
+            .report-section {{
+                background-color: white;
+                border-radius: 6px;
+                margin-bottom: 20px;
+                overflow: hidden;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }}
+            .section-header {{
+                background-color: #e9ecef;
+                padding: 12px 15px;
+                border-bottom: 1px solid #dee2e6;
+                font-weight: 600;
+                font-size: 18px;
+                color: #212529;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }}
+            .section-status {{
+                font-size: 14px;
+                padding: 4px 8px;
+                border-radius: 4px;
+            }}
+            .status-success {{
+                background-color: #d1e7dd;
+                color: #0f5132;
+            }}
+            .status-error {{
+                background-color: #f8d7da;
+                color: #842029;
+            }}
+            .section-content {{
+                padding: 15px;
+                overflow-x: auto;
+            }}
+            .data-table {{
+                width: 100%;
+                border-collapse: collapse;
+            }}
+            .data-table th, .data-table td {{
+                padding: 8px 12px;
+                text-align: left;
+                border-bottom: 1px solid #dee2e6;
+            }}
+            .data-table th {{
+                background-color: #f8f9fa;
+                font-weight: 600;
+            }}
+            .data-table tr:nth-child(even) {{
+                background-color: #f8f9fa;
+            }}
+            .data-table tr:hover {{
+                background-color: #e9ecef;
+            }}
+            .error-message {{
+                color: #842029;
+                background-color: #f8d7da;
+                padding: 10px;
+                border-radius: 4px;
+                margin-bottom: 10px;
+            }}
+            .summary-section {{
+                background-color: #e9ecef;
+                padding: 15px;
+                border-radius: 6px;
+                margin-top: 20px;
+            }}
+            .summary-title {{
+                font-weight: 600;
+                margin-bottom: 10px;
+            }}
+            .summary-stats {{
+                display: flex;
+                gap: 20px;
+            }}
+            .stat-item {{
+                background-color: white;
+                padding: 10px 15px;
+                border-radius: 4px;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            }}
+            .stat-label {{
+                font-size: 14px;
+                color: #6c757d;
+            }}
+            .stat-value {{
+                font-size: 20px;
+                font-weight: 600;
+                margin-top: 5px;
+            }}
+            .success-value {{
+                color: #198754;
+            }}
+            .error-value {{
+                color: #dc3545;
+            }}
+            pre {{
+                background-color: #f8f9fa;
+                padding: 10px;
+                border-radius: 4px;
+                overflow-x: auto;
+                white-space: pre-wrap;
+                font-family: 'Consolas', 'Courier New', monospace;
+                font-size: 14px;
+            }}
+            .key-value-table {{
+                width: 100%;
+                border-collapse: collapse;
+            }}
+            .key-value-table td {{
+                padding: 8px 12px;
+                border-bottom: 1px solid #dee2e6;
+            }}
+            .key-value-table td:first-child {{
+                font-weight: 600;
+                width: 30%;
+            }}
+            .category-header {{
+                margin: 25px 0 15px 0;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #0d6efd;
+            }}
+            .category-header h2 {{
+                font-size: 22px;
+                color: #0d6efd;
+                margin: 0;
+                font-weight: 600;
+            }}
+        </style>
     </head>
     <body>
         <div class="report-container">
@@ -490,10 +487,10 @@ def text_to_html_table(text):
         return "<p>No data available</p>"
 
     # If it's already HTML content, return it as is
-    if text.strip().startswith('<') and ('<table' in text or '<div' in text):
+    if isinstance(text, str) and text.strip().startswith('<') and ('<table' in text or '<div' in text):
         return text
 
-    lines = text.strip().split('\n')
+    lines = text.strip().split('\n') if isinstance(text, str) else []
 
     # Check if this is a key-value format (contains colons)
     if any(':' in line for line in lines if line and not line.startswith('-')):
@@ -522,11 +519,11 @@ def format_system_info(info_text):
         return "<p>No system information available</p>"
 
     # If it's already HTML content, return it as is
-    if info_text.strip().startswith('<') and ('<table' in info_text or '<div' in info_text):
+    if isinstance(info_text, str) and info_text.strip().startswith('<') and ('<table' in info_text or '<div' in info_text):
         return info_text
 
     # Parse the text to extract system info
-    lines = info_text.strip().split('\n')
+    lines = info_text.strip().split('\n') if isinstance(info_text, str) else []
     html_output = '<div class="table-responsive"><table class="key-value-table" style="width:100%">'
 
     for line in lines:
@@ -543,27 +540,58 @@ def format_system_info(info_text):
 def format_error_message(error_text):
     """Format error message as HTML"""
     # If it's already HTML content, return it as is
-    if error_text.strip().startswith('<') and ('<div' in error_text):
+    if isinstance(error_text, str) and error_text.strip().startswith('<') and ('<div' in error_text):
         return error_text
 
-    return f'<div class="error-message alert alert-danger">{html.escape(error_text)}</div>'
+    return f'<div class="error-message alert alert-danger">{html.escape(str(error_text))}</div>'
 
 c = wmi.WMI()
 
 def run_powershell_command(command, timeout=30):
+    """
+    Run a PowerShell command and return the output.
+
+    Args:
+        command (str): The PowerShell command to execute
+        timeout (int): Maximum execution time in seconds
+
+    Returns:
+        str: Command output or error message
+    """
     try:
+        # Add error handling to the PowerShell command
+        wrapped_command = f"""
+        $ErrorActionPreference = 'Stop'
+        try {{
+            {command}
+        }} catch {{
+            ConvertTo-Json -Compress @{{
+                Error = $true
+                Message = $_.Exception.Message
+                Type = $_.Exception.GetType().Name
+                ScriptStackTrace = $_.ScriptStackTrace
+            }}
+        }}
+        """
+
         result = subprocess.run(
-            ["powershell", "-Command", command],
+            ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", wrapped_command],
             capture_output=True,
             text=True,
             timeout=timeout,
-            check=True
+            check=False  # Don't raise exception on non-zero exit code
         )
+
+        # Check for errors in the output
+        if result.returncode != 0:
+            error_msg = result.stderr.strip() if result.stderr else f"PowerShell command failed with exit code {result.returncode}"
+            return json.dumps({"Error": True, "Message": error_msg})
+
         return result.stdout
     except subprocess.TimeoutExpired:
-        return "Command timed out after {} seconds".format(timeout)
-    except subprocess.CalledProcessError as e:
-        return f"Error executing command: {str(e)}"
+        return json.dumps({"Error": True, "Message": f"Command timed out after {timeout} seconds"})
+    except Exception as e:
+        return json.dumps({"Error": True, "Message": str(e)})
 
 class OsInfo:
     def _get_os_info_fallback(self):
@@ -729,314 +757,213 @@ class OsInfo:
         }
 
     def handle_basic_info(self):
-        if 'web_display' in self.__dict__ and self.web_display:
-            command = """
-            # Add System.Web for HTML encoding
-            Add-Type -AssemblyName System.Web
+        """Get basic system information and return formatted HTML for web display"""
+        # We only need web display output
+        command = """
+        # Get basic system information efficiently
+        $systemInfo = @{
+            "System Overview" = @()
+            "CPU Information" = @()
+            "Memory Status" = @()
+            "Disk Information" = @()
+        }
 
-            # Get basic system information
-            $systemInfo = @{
-                "System Overview" = @()
-                "CPU Information" = @()
-                "Memory Status" = @()
-                "Disk Information" = @()
-            }
+        # System overview - use Environment class for better performance
+        $systemInfo["System Overview"] += @{
+            "Name" = "OS Name"
+            "Value" = [System.Environment]::OSVersion.VersionString
+        }
+        $systemInfo["System Overview"] += @{
+            "Name" = "Computer Name"
+            "Value" = [System.Environment]::MachineName
+        }
+        $systemInfo["System Overview"] += @{
+            "Name" = "User Name"
+            "Value" = [System.Environment]::UserName
+        }
+        $systemInfo["System Overview"] += @{
+            "Name" = "Domain Name"
+            "Value" = [System.Environment]::UserDomainName
+        }
+        $systemInfo["System Overview"] += @{
+            "Name" = "System Directory"
+            "Value" = [System.Environment]::SystemDirectory
+        }
+        $systemInfo["System Overview"] += @{
+            "Name" = ".NET Version"
+            "Value" = [System.Environment]::Version.ToString()
+        }
+        $systemInfo["System Overview"] += @{
+            "Name" = "64-bit OS"
+            "Value" = [System.Environment]::Is64BitOperatingSystem
+        }
 
-            # System overview
-            $systemInfo["System Overview"] += @{
-                "Name" = "OS Name"
-                "Value" = [System.Environment]::OSVersion.VersionString
-            }
-            $systemInfo["System Overview"] += @{
-                "Name" = "Computer Name"
-                "Value" = [System.Environment]::MachineName
-            }
-            $systemInfo["System Overview"] += @{
-                "Name" = "User Name"
-                "Value" = [System.Environment]::UserName
-            }
-            $systemInfo["System Overview"] += @{
-                "Name" = "Domain Name"
-                "Value" = [System.Environment]::UserDomainName
-            }
-            $systemInfo["System Overview"] += @{
-                "Name" = "System Directory"
-                "Value" = [System.Environment]::SystemDirectory
-            }
-            $systemInfo["System Overview"] += @{
-                "Name" = ".NET Version"
-                "Value" = [System.Environment]::Version.ToString()
-            }
-            $systemInfo["System Overview"] += @{
-                "Name" = "64-bit OS"
-                "Value" = [System.Environment]::Is64BitOperatingSystem
-            }
-            $systemInfo["System Overview"] += @{
-                "Name" = "64-bit Process"
-                "Value" = [System.Environment]::Is64BitProcess
-            }
-            # Get system uptime (compatible with older PowerShell versions)
-            try {
-                # Try using Get-Uptime (PowerShell 5.1+)
-                $uptime = (Get-Uptime).ToString()
-            } catch {
-                # Fallback for older PowerShell versions
-                $os = Get-WmiObject -Class Win32_OperatingSystem
-                $lastBoot = [System.Management.ManagementDateTimeConverter]::ToDateTime($os.LastBootUpTime)
-                $uptime = (Get-Date) - $lastBoot
-                $uptime = "$($uptime.Days) days, $($uptime.Hours) hours, $($uptime.Minutes) minutes"
-            }
+        # Get system uptime efficiently
+        try {
+            $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop
+            $uptime = (Get-Date) - $os.LastBootUpTime
+            $uptimeStr = "$($uptime.Days) days, $($uptime.Hours) hours, $($uptime.Minutes) minutes"
 
             $systemInfo["System Overview"] += @{
                 "Name" = "System Uptime"
-                "Value" = $uptime
+                "Value" = $uptimeStr
             }
-
-            # CPU information
-            try {
-                $processor = Get-WmiObject -Class Win32_Processor
-                $systemInfo["CPU Information"] += @{
-                    "Name" = "Processor Name"
-                    "Value" = $processor.Name
-                }
-                $systemInfo["CPU Information"] += @{
-                    "Name" = "Manufacturer"
-                    "Value" = $processor.Manufacturer
-                }
-                $systemInfo["CPU Information"] += @{
-                    "Name" = "Description"
-                    "Value" = $processor.Description
-                }
-                $systemInfo["CPU Information"] += @{
-                    "Name" = "Number of Cores"
-                    "Value" = $processor.NumberOfCores
-                }
-                $systemInfo["CPU Information"] += @{
-                    "Name" = "Number of Logical Processors"
-                    "Value" = $processor.NumberOfLogicalProcessors
-                }
-                $systemInfo["CPU Information"] += @{
-                    "Name" = "Current Clock Speed"
-                    "Value" = "$($processor.CurrentClockSpeed) MHz"
-                }
-                $systemInfo["CPU Information"] += @{
-                    "Name" = "Max Clock Speed"
-                    "Value" = "$($processor.MaxClockSpeed) MHz"
-                }
-                $systemInfo["CPU Information"] += @{
-                    "Name" = "L2 Cache Size"
-                    "Value" = "$($processor.L2CacheSize) KB"
-                }
-                $systemInfo["CPU Information"] += @{
-                    "Name" = "L3 Cache Size"
-                    "Value" = "$($processor.L3CacheSize) KB"
-                }
-            } catch {
-                $systemInfo["CPU Information"] += @{
-                    "Name" = "Error"
-                    "Value" = "Could not retrieve CPU information: $($_.Exception.Message)"
-                }
+        } catch {
+            $systemInfo["System Overview"] += @{
+                "Name" = "System Uptime"
+                "Value" = "Unable to determine"
             }
+        }
 
-            # Memory status
-            try {
-                $computerSystem = Get-WmiObject -Class Win32_ComputerSystem
-                $operatingSystem = Get-WmiObject -Class Win32_OperatingSystem
-
-                $totalMemoryGB = [math]::Round($computerSystem.TotalPhysicalMemory / 1GB, 2)
-                $freeMemoryGB = [math]::Round($operatingSystem.FreePhysicalMemory / 1MB, 2)
-                $usedMemoryGB = [math]::Round($totalMemoryGB - $freeMemoryGB, 2)
-                $memoryUsagePercent = [math]::Round(($usedMemoryGB / $totalMemoryGB) * 100, 1)
-
-                $systemInfo["Memory Status"] += @{
-                    "Name" = "Total Physical Memory"
-                    "Value" = "$totalMemoryGB GB"
-                }
-                $systemInfo["Memory Status"] += @{
-                    "Name" = "Free Physical Memory"
-                    "Value" = "$freeMemoryGB GB"
-                }
-                $systemInfo["Memory Status"] += @{
-                    "Name" = "Used Physical Memory"
-                    "Value" = "$usedMemoryGB GB ($memoryUsagePercent%)"
-                }
-
-                $totalVirtualMemoryGB = [math]::Round($operatingSystem.TotalVirtualMemorySize / 1MB, 2)
-                $freeVirtualMemoryGB = [math]::Round($operatingSystem.FreeVirtualMemory / 1MB, 2)
-                $usedVirtualMemoryGB = [math]::Round($totalVirtualMemoryGB - $freeVirtualMemoryGB, 2)
-                $virtualMemoryUsagePercent = [math]::Round(($usedVirtualMemoryGB / $totalVirtualMemoryGB) * 100, 1)
-
-                $systemInfo["Memory Status"] += @{
-                    "Name" = "Total Virtual Memory"
-                    "Value" = "$totalVirtualMemoryGB GB"
-                }
-                $systemInfo["Memory Status"] += @{
-                    "Name" = "Free Virtual Memory"
-                    "Value" = "$freeVirtualMemoryGB GB"
-                }
-                $systemInfo["Memory Status"] += @{
-                    "Name" = "Used Virtual Memory"
-                    "Value" = "$usedVirtualMemoryGB GB ($virtualMemoryUsagePercent%)"
-                }
-            } catch {
-                $systemInfo["Memory Status"] += @{
-                    "Name" = "Error"
-                    "Value" = "Could not retrieve memory information: $($_.Exception.Message)"
-                }
+        # CPU information - use CimInstance for better performance
+        try {
+            $processor = Get-CimInstance -ClassName CIM_Processor -ErrorAction Stop | Select-Object -First 1
+            $systemInfo["CPU Information"] += @{
+                "Name" = "Processor Name"
+                "Value" = $processor.Name
             }
+            $systemInfo["CPU Information"] += @{
+                "Name" = "Number of Cores"
+                "Value" = $processor.NumberOfCores
+            }
+            $systemInfo["CPU Information"] += @{
+                "Name" = "Number of Logical Processors"
+                "Value" = $processor.NumberOfLogicalProcessors
+            }
+            $systemInfo["CPU Information"] += @{
+                "Name" = "Current Clock Speed"
+                "Value" = "$($processor.CurrentClockSpeed) MHz"
+            }
+            $systemInfo["CPU Information"] += @{
+                "Name" = "Max Clock Speed"
+                "Value" = "$($processor.MaxClockSpeed) MHz"
+            }
+        } catch {
+            $systemInfo["CPU Information"] += @{
+                "Name" = "Error"
+                "Value" = "Could not retrieve CPU information"
+            }
+        }
 
-            # Disk information
-            try {
-                $disks = Get-WmiObject -Class Win32_LogicalDisk -Filter "DriveType=3"
-                $diskCount = 0
+        # Memory status - use CimInstance for better performance
+        try {
+            $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop
+            $computerSystem = Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction Stop
 
-                foreach ($disk in $disks) {
-                    $diskCount++
-                    $diskSizeGB = [math]::Round($disk.Size / 1GB, 2)
-                    $diskFreeSpaceGB = [math]::Round($disk.FreeSpace / 1GB, 2)
-                    $diskUsedSpaceGB = [math]::Round($diskSizeGB - $diskFreeSpaceGB, 2)
-                    $diskUsagePercent = [math]::Round(($diskUsedSpaceGB / $diskSizeGB) * 100, 1)
+            $totalMemoryGB = [math]::Round($computerSystem.TotalPhysicalMemory / 1GB, 2)
+            $freeMemoryGB = [math]::Round($os.FreePhysicalMemory / 1MB, 2)
+            $usedMemoryGB = [math]::Round($totalMemoryGB - $freeMemoryGB, 2)
+            $memoryUsagePercent = [math]::Round(($usedMemoryGB / $totalMemoryGB) * 100, 1)
 
-                    $systemInfo["Disk Information"] += @{
-                        "Name" = "Drive $($disk.DeviceID)"
-                        "Value" = "$($disk.VolumeName) - $diskSizeGB GB total, $diskFreeSpaceGB GB free ($diskUsagePercent% used)"
-                    }
-                }
+            $systemInfo["Memory Status"] += @{
+                "Name" = "Total Physical Memory"
+                "Value" = "$totalMemoryGB GB"
+            }
+            $systemInfo["Memory Status"] += @{
+                "Name" = "Free Physical Memory"
+                "Value" = "$freeMemoryGB GB"
+            }
+            $systemInfo["Memory Status"] += @{
+                "Name" = "Used Physical Memory"
+                "Value" = "$usedMemoryGB GB ($memoryUsagePercent%)"
+            }
+        } catch {
+            $systemInfo["Memory Status"] += @{
+                "Name" = "Error"
+                "Value" = "Could not retrieve memory information"
+            }
+        }
 
-                if ($diskCount -eq 0) {
-                    $systemInfo["Disk Information"] += @{
-                        "Name" = "Disks"
-                        "Value" = "No fixed disks found"
-                    }
-                }
-            } catch {
+        # Disk information - use CimInstance for better performance
+        try {
+            $disks = Get-CimInstance -ClassName CIM_LogicalDisk -Filter "DriveType=3" -ErrorAction Stop
+
+            foreach ($disk in $disks) {
+                $diskSizeGB = [math]::Round($disk.Size / 1GB, 2)
+                $diskFreeSpaceGB = [math]::Round($disk.FreeSpace / 1GB, 2)
+                $diskUsedSpaceGB = [math]::Round($diskSizeGB - $diskFreeSpaceGB, 2)
+                $diskUsagePercent = [math]::Round(($diskUsedSpaceGB / $diskSizeGB) * 100, 1)
+
                 $systemInfo["Disk Information"] += @{
-                    "Name" = "Error"
-                    "Value" = "Could not retrieve disk information: $($_.Exception.Message)"
+                    "Name" = "Drive $($disk.DeviceID)"
+                    "Value" = "$($disk.VolumeName) - $diskSizeGB GB total, $diskFreeSpaceGB GB free ($diskUsagePercent% used)"
                 }
             }
+        } catch {
+            $systemInfo["Disk Information"] += @{
+                "Name" = "Error"
+                "Value" = "Could not retrieve disk information"
+            }
+        }
 
-            # Create HTML output with cards for each category
-            $htmlOutput = @"
-            <div class="system-info-container">
-                <div class="row">
+        # Create HTML output with cards for each category
+        $htmlOutput = '<div class="system-info-container"><div class="row">'
+
+        # Process each category
+        foreach ($category in $systemInfo.Keys) {
+            $items = $systemInfo[$category]
+            if ($items.Count -gt 0) {
+                $categoryId = $category.Replace(" ", "-").ToLower()
+                $htmlOutput += @"
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">$category</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover mb-0">
+                                    <tbody>
 "@
 
-            # Process each category
-            foreach ($category in $systemInfo.Keys) {
-                $items = $systemInfo[$category]
-                if ($items.Count -gt 0) {
-                    $categoryId = $category.Replace(" ", "-").ToLower()
-                    $htmlOutput += @"
-                    <div class="col-md-6 mb-4">
-                        <div class="card h-100">
-                            <div class="card-header bg-primary text-white">
-                                <h5 class="mb-0">$category</h5>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover mb-0">
-                                        <tbody>
-"@
-
-                    foreach ($item in $items) {
-                        $name = [System.Web.HttpUtility]::HtmlEncode($item.Name)
-                        $value = [System.Web.HttpUtility]::HtmlEncode($item.Value)
-
-                        $htmlOutput += @"
-                                            <tr>
-                                                <td style="width: 40%; font-weight: 500;">$name</td>
-                                                <td style="word-break: break-word;">$value</td>
-                                            </tr>
-"@
-                    }
+                foreach ($item in $items) {
+                    $name = $item.Name
+                    $value = $item.Value
 
                     $htmlOutput += @"
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        <tr>
+                                            <td style="width: 40%; font-weight: 500;">$name</td>
+                                            <td style="word-break: break-word;">$value</td>
+                                        </tr>
+"@
+                }
+
+                $htmlOutput += @"
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-"@
-                }
-            }
-
-            $htmlOutput += @"
                 </div>
-            </div>
 "@
-
-            # Create text output for terminal
-            $textOutput = "System Information:`n"
-            $textOutput += "-" * 70 + "`n"
-
-            foreach ($category in $systemInfo.Keys) {
-                $items = $systemInfo[$category]
-                if ($items.Count -gt 0) {
-                    $textOutput += "`n$category:`n"
-                    $textOutput += "-" * 30 + "`n"
-
-                    foreach ($item in $items) {
-                        $textOutput += "{0,-25} {1}`n" -f $item.Name + ":", $item.Value
-                    }
-                }
             }
+        }
 
-            # Return both formats
-            $result = @{
-                Text = $textOutput
-                Html = $htmlOutput
-            } | ConvertTo-Json -Depth 4 -Compress
+        $htmlOutput += '</div></div>'
 
-            Write-Output $result
-            """
+        # Return the HTML output directly
+        ConvertTo-Json -Compress @{
+            Html = $htmlOutput
+        }
+        """
 
-            result = run_powershell_command(command, timeout=30)
+        result = run_powershell_command(command, timeout=30)
 
+        try:
+            # Try to parse the JSON result
+            data = json.loads(result)
+
+            # Check if there was an error
+            if isinstance(data, dict) and data.get('Error'):
+                error_msg = data.get('Message', 'Unknown error occurred')
+                return self._generate_error_html("System Information Error", error_msg).encode()
+
+            # Return the HTML format
+            return data['Html'].encode()
+        except Exception as e:
+            # Fallback to a simpler method if PowerShell approach fails
             try:
-                # Try to parse the JSON result
-                data = json.loads(result)
-
-                # Return the HTML format
-                return data['Html'].encode()
-            except Exception as e:
-                # Fallback to original method if PowerShell approach fails
-                try:
-                    # Collect system information
-                    system_info = [
-                        {'key': 'System', 'value': platform.system()},
-                        {'key': 'Node', 'value': platform.node()},
-                        {'key': 'Release', 'value': platform.release()},
-                        {'key': 'Version', 'value': platform.version()},
-                        {'key': 'Machine', 'value': platform.machine()},
-                        {'key': 'Processor', 'value': platform.processor()}
-                    ]
-
-                    # Format the output
-                    output = self.format_output("System Information", system_info, is_table=False)
-                    return output['html'].encode()
-                except Exception as e:
-                    # Fallback with minimal information if platform module fails
-                    error_info = f"""
-                    <div class="card">
-                        <div class="card-header bg-danger text-white">
-                            <h5 class="mb-0">System Information Error</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-danger">
-                                <strong>Error:</strong> {html.escape(str(e))}
-                            </div>
-                            <p><strong>System:</strong> Windows (assumed)</p>
-                            <p><strong>Note:</strong> Error occurred while collecting system information</p>
-                        </div>
-                    </div>
-                    """
-                    return error_info.encode()
-        else:
-            # For terminal display, use the original method
-            try:
-                # Collect system information
+                # Collect basic system information using platform module
                 system_info = [
                     {'key': 'System', 'value': platform.system()},
                     {'key': 'Node', 'value': platform.node()},
@@ -1046,19 +973,43 @@ class OsInfo:
                     {'key': 'Processor', 'value': platform.processor()}
                 ]
 
-                # Format the output
-                output = self.format_output("System Information", system_info, is_table=False)
-                return output['text'].encode()
-            except Exception as e:
-                # Fallback with minimal information if platform module fails
-                error_info = f"""
-System Information (Error):
---------------------------
-Error:      {str(e)}
-System:     Windows (assumed)
-Note:       Error occurred while collecting system information
-"""
-                return error_info.encode()
+                # Format as HTML
+                html_output = '<div class="system-info-container"><div class="row">'
+                html_output += '<div class="col-md-6 mb-4"><div class="card h-100">'
+                html_output += '<div class="card-header bg-primary text-white"><h5 class="mb-0">System Overview</h5></div>'
+                html_output += '<div class="card-body p-0"><div class="table-responsive">'
+                html_output += '<table class="table table-striped table-hover mb-0"><tbody>'
+
+                for item in system_info:
+                    html_output += f'<tr><td style="width: 40%; font-weight: 500;">{html.escape(item["key"])}</td>'
+                    html_output += f'<td style="word-break: break-word;">{html.escape(str(item["value"]))}</td></tr>'
+
+                html_output += '</tbody></table></div></div></div></div></div></div>'
+
+                return html_output.encode()
+            except Exception as fallback_error:
+                # Ultimate fallback with minimal information
+                return self._generate_error_html(
+                    "System Information Error",
+                    f"Error: {str(fallback_error)}<br>Failed to retrieve system information"
+                ).encode()
+
+    def _generate_error_html(self, title, message):
+        """Generate a standardized error HTML card"""
+        return f"""
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">{html.escape(title)}</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    {html.escape(message)}
+                </div>
+                <p><strong>System:</strong> {platform.system()} (detected)</p>
+                <p><strong>Note:</strong> Error occurred while collecting information</p>
+            </div>
+        </div>
+        """
 
     def get_os_info(self):
         if 'web_display' in self.__dict__ and self.web_display:
@@ -4140,414 +4091,142 @@ Common Windows Firewall Rules:
             return output['text'].encode()
 
     def list_user_folders(self):
+        """List user folders and their contents.
+
+        Returns:
+            bytes: HTML-formatted output for web display or text for terminal
+        """
+        # Default fallback HTML response in case all methods fail
+        fallback_html = """
+        <div class="user-folders-container">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Warning:</strong> Unable to retrieve user folders information.
+                <p>This may be due to insufficient permissions or a system configuration issue.</p>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">User Folders</h5>
+                </div>
+                <div class="card-body">
+                    <p>No user folder information available.</p>
+                </div>
+            </div>
+        </div>
+        """
+
         if 'web_display' in self.__dict__ and self.web_display:
-            # Use a separate PowerShell script file for better reliability
-            script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_folders.ps1")
-
-            # Run the PowerShell script
-            command = f"powershell.exe -ExecutionPolicy Bypass -File {script_path}"
-            result = subprocess.run(command, capture_output=True, text=True, timeout=30)
-
-            if result.returncode != 0:
-                # Fallback to embedded script if the file approach fails
-                command = """
-                # Add System.Web for HTML encoding
-                Add-Type -AssemblyName System.Web
-
-                # Define the folders to list with their paths
-                $userFolders = @(
-                    @{ Name = "Downloads"; Path = [System.IO.Path]::Combine($env:USERPROFILE, "Downloads") },
-                    @{ Name = "Documents"; Path = [System.Environment]::GetFolderPath("MyDocuments") },
-                    @{ Name = "Desktop"; Path = [System.Environment]::GetFolderPath("Desktop") },
-                    @{ Name = "Pictures"; Path = [System.Environment]::GetFolderPath("MyPictures") },
-                    @{ Name = "Videos"; Path = [System.Environment]::GetFolderPath("MyVideos") },
-                    @{ Name = "Music"; Path = [System.Environment]::GetFolderPath("MyMusic") }
-                )
-
-                # Check for OneDrive paths
-                $oneDrivePath = Join-Path $env:USERPROFILE "OneDrive"
-                $useOneDrive = Test-Path $oneDrivePath
-
-                if ($useOneDrive) {
-                    # Update paths for common redirected folders
-                    foreach ($folder in $userFolders) {
-                        $oneDriveFolder = Join-Path $oneDrivePath $folder.Name
-                        if (Test-Path $oneDriveFolder) {
-                            $folder.Path = $oneDriveFolder
-                        }
-                    }
+            try:
+                # Define special folder mappings with proper paths
+                special_folders = {
+                    "Downloads": {"env_var": "USERPROFILE", "subpath": "Downloads"},
+                    "Documents": {"env_var": "USERPROFILE", "subpath": "Documents"},
+                    "Desktop": {"env_var": "USERPROFILE", "subpath": "Desktop"},
+                    "Pictures": {"env_var": "USERPROFILE", "subpath": "Pictures"},
+                    "Videos": {"env_var": "USERPROFILE", "subpath": "Videos"},
+                    "Music": {"env_var": "USERPROFILE", "subpath": "Music"}
                 }
 
-                # Create a simple array to store folder data
-                $folderData = @()
-
-                # Process each folder
-                foreach ($folder in $userFolders) {
-                    $folderName = $folder.Name
-                    $folderPath = $folder.Path
-
-                    # Create a folder entry
-                    $folderEntry = @{
-                        "name" = $folderName
-                        "path" = $folderPath
-                        "items" = @()
-                        "error" = $null
-                    }
-
-                    # Get folder contents if the path exists
-                    if (Test-Path $folderPath) {
-                        try {
-                            # Get only the first 50 items to avoid overwhelming the response
-                            $items = Get-ChildItem -Path $folderPath -ErrorAction Stop | Select-Object -First 50
-
-                            # Process each item
-                            foreach ($item in $items) {
-                                $itemType = if ($item.PSIsContainer) { "Folder" } else { $item.Extension }
-                                $itemSize = if ($item.PSIsContainer) { 0 } else { $item.Length }
-
-                                # Add the item to the folder's items array
-                                $folderEntry.items += @{
-                                    "name" = $item.Name
-                                    "type" = $itemType
-                                    "size" = $itemSize.ToString()
-                                    "date" = $item.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
-                                }
-                            }
-                        } catch {
-                            $folderEntry.error = $_.Exception.Message
-                        }
-                    } else {
-                        $folderEntry.error = "Folder not found"
-                    }
-
-                    # Add the folder entry to the result
-                    $folderData += $folderEntry
-                }
-
-                # Convert to JSON
-                $jsonOutput = ConvertTo-Json -InputObject $folderData -Depth 5 -Compress
-                Write-Output $jsonOutput
+                # Format as HTML
+                html_output = """
+                <div class="user-folders-container">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">User Folders</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
                 """
 
-                # Run the PowerShell command
-                result = run_powershell_command(command, timeout=30)
+                for folder, folder_info in special_folders.items():
+                    # Try multiple methods to find the correct path
+                    path = None
 
-                try:
-                    # Parse the JSON result
-                    import json
+                    # Method 1: Use USERPROFILE environment variable
+                    if os.environ.get(folder_info["env_var"]):
+                        path = os.path.join(os.environ[folder_info["env_var"]], folder_info["subpath"])
 
-                    # Parse the folder data
-                    folder_data = json.loads(result)
+                    # Method 2: Use expanduser as fallback
+                    if not path or not os.path.exists(path):
+                        path = os.path.expanduser(f"~/{folder}")
 
-                    # Create HTML output
-                    html_output = """
-                    <div class="user-folders-container">
-                        <div class="mb-4">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                <input type="text" class="form-control" id="folder-item-search" placeholder="Search files and folders..." onkeyup="filterFolderItems()">
-                                <button class="btn btn-outline-secondary" type="button" onclick="clearFolderSearch()">Clear</button>
-                            </div>
-                            <div class="form-text">Search by file name or type</div>
-                        </div>
+                    # Method 3: Try OneDrive paths for Windows 10/11
+                    if not os.path.exists(path) and os.environ.get('USERPROFILE'):
+                        onedrive_path = os.path.join(os.environ['USERPROFILE'], "OneDrive", folder)
+                        if os.path.exists(onedrive_path):
+                            path = onedrive_path
 
-                        <script>
-                        function filterFolderItems() {
-                            const searchText = document.getElementById('folder-item-search').value.toLowerCase();
-                            const rows = document.querySelectorAll('.folder-item-row');
+                    # Get folder contents if the path exists
+                    items = []
+                    error = None
 
-                            let visibleFolders = new Set();
-
-                            // First pass: determine which rows should be visible
-                            rows.forEach(row => {
-                                const itemName = row.querySelector('.item-name').textContent.toLowerCase();
-                                const itemType = row.querySelector('.item-type').textContent.toLowerCase();
-
-                                if (searchText === '' || itemName.includes(searchText) || itemType.includes(searchText)) {
-                                    row.style.display = '';
-                                    // Add this row's folder to the visible set
-                                    const folderId = row.closest('.folder-card').id;
-                                    visibleFolders.add(folderId);
-                                } else {
-                                    row.style.display = 'none';
-                                }
-                            });
-
-                            // Second pass: show/hide folder cards based on whether they have visible rows
-                            document.querySelectorAll('.folder-card').forEach(folder => {
-                                if (visibleFolders.has(folder.id) || searchText === '') {
-                                    folder.style.display = '';
-                                } else {
-                                    folder.style.display = 'none';
-                                }
-                            });
-                        }
-
-                        function clearFolderSearch() {
-                            document.getElementById('folder-item-search').value = '';
-                            filterFolderItems();
-                        }
-                        </script>
-
-                        <div class="row">
-                    """
-
-                    # Process each folder
-                    for folder in folder_data:
-                        folder_name = folder['name']
-                        folder_path = folder.get('path', '')
-                        items = folder.get('items', [])
-                        error = folder.get('error')
-                        folder_id = folder_name.lower()
-
-                        html_output += f"""
-                            <div class="col-md-6 mb-4 folder-card" id="folder-{folder_id}">
-                                <div class="card h-100">
-                                    <div class="card-header bg-primary text-white">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h5 class="mb-0"><i class="fas fa-folder me-2"></i>{folder_name}</h5>
-                                            <span class="badge bg-light text-dark">{"Empty" if not items else f"{len(items)} items"}</span>
-                                        </div>
-                                    </div>
-                                    <div class="card-body p-0">
-                        """
-
-                        if error:
-                            html_output += f"""
-                                <div class="alert alert-warning m-3">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    <strong>Error:</strong> {error}
-                                </div>
-                            """
-                        elif not items:
-                            html_output += """
-                                <div class="alert alert-info m-3">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    This folder is empty.
-                                </div>
-                            """
-                        else:
-                            html_output += """
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover mb-0">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Type</th>
-                                                <th>Size</th>
-                                                <th>Modified</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                            """
-
-                            for item in items:
-                                item_name = item.get('name', '')
-                                item_type = item.get('type', '')
-                                item_size = int(item.get('size', 0))
-                                item_date = item.get('date', '')
-
-                                # Format size
-                                if item_type == "Folder":
-                                    size_display = "—"
-                                else:
-                                    if item_size < 1024:
-                                        size_display = f"{item_size} B"
-                                    elif item_size < 1024 * 1024:
-                                        size_display = f"{item_size / 1024:.1f} KB"
-                                    elif item_size < 1024 * 1024 * 1024:
-                                        size_display = f"{item_size / (1024 * 1024):.1f} MB"
-                                    else:
-                                        size_display = f"{item_size / (1024 * 1024 * 1024):.2f} GB"
-
-                                # Choose icon based on type
-                                if item_type == "Folder":
-                                    icon = '<i class="fas fa-folder text-warning"></i>'
-                                elif item_type.lower() in ['.exe', '.msi', '.bat', '.cmd']:
-                                    icon = '<i class="fas fa-cog text-primary"></i>'
-                                elif item_type.lower() in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff']:
-                                    icon = '<i class="fas fa-image text-success"></i>'
-                                elif item_type.lower() in ['.mp3', '.wav', '.ogg', '.flac', '.m4a']:
-                                    icon = '<i class="fas fa-music text-info"></i>'
-                                elif item_type.lower() in ['.mp4', '.avi', '.mkv', '.mov', '.wmv']:
-                                    icon = '<i class="fas fa-video text-danger"></i>'
-                                elif item_type.lower() in ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx']:
-                                    icon = '<i class="fas fa-file-alt text-secondary"></i>'
-                                elif item_type.lower() in ['.zip', '.rar', '.7z', '.tar', '.gz']:
-                                    icon = '<i class="fas fa-archive text-dark"></i>'
-                                else:
-                                    icon = '<i class="fas fa-file text-muted"></i>'
-
-                                html_output += f"""
-                                            <tr class="folder-item-row">
-                                                <td class="item-name">{icon} <span style="margin-left: 5px;">{item_name}</span></td>
-                                                <td class="item-type">{item_type}</td>
-                                                <td>{size_display}</td>
-                                                <td>{item_date}</td>
-                                            </tr>
-                                """
-
-                            html_output += """
-                                        </tbody>
-                                    </table>
-                                </div>
-                            """
-
-                        html_output += f"""
-                                    </div>
-                                    <div class="card-footer bg-light">
-                                        <small class="text-muted">
-                                            <i class="fas fa-hdd me-1"></i> {folder_path}
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        """
-
-                    html_output += """
-                        </div>
-                    </div>
-                    """
-
-                    return html_output.encode()
-                except Exception as e:
-                    # Fallback to original method if PowerShell approach fails
-                    # Define special folder mappings
-                    special_folders = {
-                        "Downloads": {"env_var": "USERPROFILE", "subpath": "Downloads"},
-                        "Documents": {"env_var": "USERPROFILE", "subpath": "Documents"},
-                        "Desktop": {"env_var": "USERPROFILE", "subpath": "Desktop"},
-                        "Pictures": {"env_var": "USERPROFILE", "subpath": "Pictures"},
-                        "Videos": {"env_var": "USERPROFILE", "subpath": "Videos"},
-                        "Music": {"env_var": "USERPROFILE", "subpath": "Music"}
-                    }
-
-                    # Format as HTML
-                    html_output = """
-                    <div class="user-folders-container">
-                        <div class="card">
-                            <div class="card-header bg-primary text-white">
-                                <h5 class="mb-0">User Folders</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="alert alert-warning">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    <strong>Error:</strong> Could not retrieve folder contents. Using fallback method.
-                                </div>
-                                <div class="row">
-                    """
-
-                    for folder, folder_info in special_folders.items():
-                        # Try multiple methods to find the correct path
-                        path = None
-
-                        # Method 1: Use USERPROFILE environment variable
-                        if os.environ.get(folder_info["env_var"]):
-                            path = os.path.join(os.environ[folder_info["env_var"]], folder_info["subpath"])
-
-                        # Method 2: Use expanduser as fallback
-                        if not path or not os.path.exists(path):
-                            path = os.path.expanduser(f"~/{folder}")
-
-                        # Method 3: Try OneDrive paths for Windows 10/11
-                        if not os.path.exists(path) and os.environ.get('USERPROFILE'):
-                            onedrive_path = os.path.join(os.environ['USERPROFILE'], "OneDrive", folder)
-                            if os.path.exists(onedrive_path):
-                                path = onedrive_path
-
-                        html_output += f"""
-                            <div class="col-md-6 mb-3">
-                                <div class="card">
-                                    <div class="card-header bg-light">
-                                        <i class="fas fa-folder me-2 text-warning"></i> {folder}
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="text-muted"><small>{path}</small></p>
-                                    </div>
-                                </div>
-                            </div>
-                        """
-
-                    html_output += """
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    """
-
-                    return html_output.encode()
-                except Exception as e:
-                    # Fallback to original method if PowerShell approach fails
-                    table = "User Folders Content:\n"
-                    table += "-" * 50 + "\n"
-
-                    # Define special folder mappings
-                    special_folders = {
-                        "Downloads": {"env_var": "USERPROFILE", "subpath": "Downloads"},
-                        "Documents": {"env_var": "USERPROFILE", "subpath": "Documents"},
-                        "Desktop": {"env_var": "USERPROFILE", "subpath": "Desktop"},
-                        "Pictures": {"env_var": "USERPROFILE", "subpath": "Pictures"},
-                        "Videos": {"env_var": "USERPROFILE", "subpath": "Videos"},
-                        "Music": {"env_var": "USERPROFILE", "subpath": "Music"}
-                    }
-
-                    for folder, folder_info in special_folders.items():
-                        # Try multiple methods to find the correct path
-                        path = None
-
-                        # Method 1: Use USERPROFILE environment variable
-                        if os.environ.get(folder_info["env_var"]):
-                            path = os.path.join(os.environ[folder_info["env_var"]], folder_info["subpath"])
-
-                        # Method 2: Use expanduser as fallback
-                        if not path or not os.path.exists(path):
-                            path = os.path.expanduser(f"~/{folder}")
-
-                        # Method 3: Try OneDrive paths for Windows 10/11
-                        if not os.path.exists(path) and os.environ.get('USERPROFILE'):
-                            onedrive_path = os.path.join(os.environ['USERPROFILE'], "OneDrive", folder)
-                            if os.path.exists(onedrive_path):
-                                path = onedrive_path
-
-                        # Method 4: Try common redirected paths
-                        if folder == "Documents" and not os.path.exists(path) and os.environ.get('USERPROFILE'):
-                            # Try "My Documents" for older Windows versions
-                            alt_path = os.path.join(os.environ['USERPROFILE'], "My Documents")
-                            if os.path.exists(alt_path):
-                                path = alt_path
-
-                        table += f"\n{folder}:\n"
-                        table += f"{path}\n"
-                        table += "-" * 25 + "\n"
-
+                    if path and os.path.exists(path):
                         try:
-                            items = os.listdir(path)
-                            if items:
-                                for item in items[:10]:  # Limit to 10 items to avoid huge output
-                                    table += f"- {item}\n"
-                                if len(items) > 10:
-                                    table += f"... and {len(items) - 10} more items\n"
-                            else:
-                                table += "No items in this folder\n"
+                            # Get only the first 10 items to avoid overwhelming the response
+                            items = os.listdir(path)[:10]
                         except Exception as e:
-                            table += f"Access denied or folder not found: {str(e)}\n"
+                            error = f"Access denied: {str(e)}"
+                    else:
+                        error = "Folder not found"
 
-                    # Format as HTML
-                    import html
-                    html_output = f"""
-                    <div class="user-folders-container">
-                        <div class="card">
-                            <div class="card-header bg-primary text-white">
-                                <h5 class="mb-0">User Folders</h5>
+                    html_output += f"""
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <i class="fas fa-folder me-2 text-warning"></i> {folder}
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted"><small>{path or 'Path not found'}</small></p>
+                    """
+
+                    if error:
+                        html_output += f"""
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        {error}
+                                    </div>
+                        """
+                    elif not items:
+                        html_output += """
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        This folder is empty.
+                                    </div>
+                        """
+                    else:
+                        html_output += """
+                                    <ul class="list-group">
+                        """
+                        for item in items:
+                            html_output += f"""
+                                        <li class="list-group-item">{item}</li>
+                            """
+                        if len(items) == 10:
+                            html_output += """
+                                        <li class="list-group-item text-muted">... and more items</li>
+                            """
+                        html_output += """
+                                    </ul>
+                        """
+
+                    html_output += """
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <pre style="white-space: pre-wrap; word-wrap: break-word; max-height: 500px; overflow-y: auto;">{html.escape(table)}</pre>
+                        </div>
+                    """
+
+                html_output += """
                             </div>
                         </div>
                     </div>
-                    """
+                </div>
+                """
 
-                    return html_output.encode()
+                return html_output.encode()
+
+            except Exception as e:
+                print(f"Error generating user folders HTML: {str(e)}")
+                return fallback_html.encode()
         else:
             # For terminal display, use a more robust method
             table = "User Folders Content:\n"
@@ -4603,6 +4282,7 @@ Common Windows Firewall Rules:
                         table += "No items in this folder\n"
                 except Exception as e:
                     table += f"Access denied or folder not found: {str(e)}\n"
+
             return table.encode()
 
     def get_running_processes(self, page=1, page_size=100):
@@ -4685,10 +4365,36 @@ Common Windows Firewall Rules:
                         cursor: pointer;
                     }}
                     .process-row:hover {{
-                        background-color: rgba(0,123,255,0.1) !important;
+                        background-color: rgba(138, 86, 255, 0.15) !important;
                     }}
                     .process-row.table-primary {{
-                        background-color: rgba(0,123,255,0.2) !important;
+                        background-color: rgba(138, 86, 255, 0.25) !important;
+                        color: white;
+                    }}
+
+                    /* Dark mode styles */
+                    @media (prefers-color-scheme: dark) {{
+                        #process-table {{
+                            color: #e9ecef;
+                            background-color: #1a1d29;
+                        }}
+
+                        #process-table thead {{
+                            background-color: #242736;
+                            color: white;
+                        }}
+
+                        #process-table tbody tr {{
+                            border-color: #2c3040;
+                        }}
+
+                        #process-table tbody tr:nth-of-type(odd) {{
+                            background-color: rgba(255, 255, 255, 0.05);
+                        }}
+
+                        #process-table tbody tr:nth-of-type(even) {{
+                            background-color: #1a1d29;
+                        }}
                     }}
                 </style>
 
@@ -4723,8 +4429,8 @@ Common Windows Firewall Rules:
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover mb-0" id="process-table">
-                                <thead class="table-light">
+                            <table class="table table-striped table-hover table-dark mb-0" id="process-table">
+                                <thead>
                                     <tr>
                                         <th onclick="sortTable(0)" style="cursor: pointer;">PID <i class="fas fa-sort"></i></th>
                                         <th onclick="sortTable(1)" style="cursor: pointer;">Name <i class="fas fa-sort"></i></th>
@@ -4977,7 +4683,7 @@ Common Windows Firewall Rules:
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-striped">
+                                <table class="table table-striped table-dark" id="process-table">
                                     <thead>
                                         <tr>
                                             <th>PID</th>
@@ -10236,7 +9942,7 @@ def command_dispatcher(cmd_code, **kwargs):
                 "formatter": text_to_html_table,
                 "critical": False,
                 "category": "User Information"
-            },
+             },
             {
                 "name": "User Accounts",
                 "function": lambda: os_info.get_local_users(),

@@ -176,6 +176,16 @@
         height: 300px;
         width: 100%;
     }
+
+    /* Ensure text stays white on hover for index page */
+    .table-hover tbody tr:hover td {
+        color: #ffffff !important;
+    }
+
+    /* Force all table text to be white */
+    .table td, .table th, .table tr {
+        color: #ffffff !important;
+    }
 </style>
 {% endblock %}
 
@@ -336,57 +346,38 @@
             <div class="card-body">
                 {% if targets %}
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover" style="background-color: #242736; border: 1px solid #3a3f52; border-collapse: separate; border-spacing: 0;">
                             <thead>
-                                <tr>
-                                    <th>IP Address</th>
-                                    <th>Hostname</th>
-                                    <th>Last Scan</th>
-                                    <th>Actions</th>
+                                <tr style="background-color: #242736; color: #ffffff;">
+                                    <th style="border-bottom: 2px solid #3a3f52; padding: 12px 15px;">IP Address</th>
+                                    <th style="border-bottom: 2px solid #3a3f52; padding: 12px 15px;">Hostname</th>
+                                    <th style="border-bottom: 2px solid #3a3f52; padding: 12px 15px;">Last Scan</th>
+                                    <th style="border-bottom: 2px solid #3a3f52; padding: 12px 15px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for target in targets %}
-                                <tr>
-                                    <td>{{ target.ip_address }}</td>
-                                    <td>{{ target.hostname|default:"Unknown" }}</td>
-                                    <td>{{ target.last_scan|default:"Never"|date:"Y-m-d H:i" }}</td>
-                                    <td>
+                                <tr style="color: #ffffff; background-color: {% cycle '#1a1d29' '#1e2130' %}; border-bottom: 1px solid #3a3f52;">
+                                    <td style="border-top: none; padding: 12px 15px;">{{ target.ip_address }}</td>
+                                    <td style="border-top: none; padding: 12px 15px;">{{ target.hostname|default:"Unknown" }}</td>
+                                    <td style="border-top: none; padding: 12px 15px;">{{ target.last_scan|default:"Never"|date:"Y-m-d H:i" }}</td>
+                                    <td style="border-top: none; padding: 12px 15px;">
                                         <div class="btn-group">
-                                            <a href="{% url 'scanner:target_detail' target.id %}" class="btn btn-sm btn-info">
+                                            <a href="{% url 'scanner:target_detail' target.id %}" class="btn btn-sm btn-info" style="color: white;">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{% url 'scanner:os_info' %}?target_id={{ target.id }}" class="btn btn-sm btn-primary">
+                                            <a href="{% url 'scanner:os_info' %}?target_id={{ target.id }}" class="btn btn-sm btn-primary" style="color: white;">
                                                 <i class="fas fa-desktop"></i>
                                             </a>
-                                            <a href="{% url 'scanner:network_info' %}?target_id={{ target.id }}" class="btn btn-sm btn-success">
+                                            <a href="{% url 'scanner:network_info' %}?target_id={{ target.id }}" class="btn btn-sm btn-success" style="color: white;">
                                                 <i class="fas fa-network-wired"></i>
                                             </a>
-                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ target.id }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-
-                                        <!-- Delete Modal -->
-                                        <div class="modal fade" id="deleteModal{{ target.id }}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Confirm Deletion</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        Are you sure you want to delete target {{ target.ip_address }}?
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                        <form action="{% url 'scanner:delete_target' target.id %}" method="post">
-                                                            {% csrf_token %}
-                                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <form action="{% url 'scanner:delete_target' target.id %}" method="post" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-danger" style="color: white;">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>

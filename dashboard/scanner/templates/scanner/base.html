@@ -30,6 +30,13 @@
             --chart-color2: #8a56ff;       /* Chart color 2 */
             --chart-color3: #00d09c;       /* Chart color 3 */
             --chart-color4: #00b8d9;       /* Chart color 4 */
+
+            /* Additional dark mode variables */
+            --primary-bg-color: #1a1d29;   /* Main background color */
+            --secondary-bg-color: #242736; /* Secondary background color */
+            --border-color: #2c3040;       /* Border color for elements */
+            --hover-color: rgba(138, 86, 255, 0.15); /* Hover background color */
+            --active-color: rgba(138, 86, 255, 0.25); /* Active background color */
         }
 
         body {
@@ -101,6 +108,11 @@
             padding: 15px 20px;
         }
 
+        .card-body {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
         .btn {
             border-radius: var(--border-radius);
             font-weight: 500;
@@ -164,6 +176,111 @@
             border-color: #ffad60;
         }
 
+        /* Outline buttons for dark theme */
+        .btn-outline-primary {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-outline-secondary {
+            color: var(--text-secondary);
+            border-color: var(--border-color);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--light-color);
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-outline-light {
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        .btn-outline-light:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        /* Fix dropdown items hover */
+        .dropdown-item {
+            color: var(--text-color) !important;
+        }
+
+        .dropdown-item:hover, .dropdown-item:focus {
+            background-color: var(--hover-color);
+            color: var(--text-color) !important;
+        }
+
+        /* Fix button colors for dark theme */
+        .btn-info, .btn-primary, .btn-success, .btn-danger, .btn-warning {
+            color: white !important;
+        }
+
+        .btn-info:hover, .btn-primary:hover, .btn-success:hover, .btn-danger:hover, .btn-warning:hover {
+            color: white !important;
+        }
+
+        /* Fix table styling for dark theme */
+        .table {
+            color: var(--text-color) !important;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table tbody tr {
+            background-color: var(--card-bg) !important;
+            color: var(--text-color) !important;
+        }
+
+        .table thead tr {
+            background-color: var(--secondary-color) !important;
+            color: var(--text-color) !important;
+        }
+
+        .table th {
+            border-bottom: 2px solid var(--border-color) !important;
+            border-top: none !important;
+            padding: 12px 15px !important;
+        }
+
+        .table td {
+            border-top: none !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            padding: 12px 15px !important;
+        }
+
+        /* Fix table row hover */
+        .table-hover tbody tr:hover {
+            color: #ffffff !important;
+            background-color: var(--hover-color) !important;
+        }
+
+        /* Ensure text stays white on hover */
+        .table-hover tbody tr:hover td {
+            color: #ffffff !important;
+        }
+
+        /* Force all table text to be white */
+        .table td, .table th, .table tr {
+            color: #ffffff !important;
+        }
+
+        /* Add border to tables */
+        .table-responsive .table {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
         .bg-primary {
             background-color: var(--accent-color) !important;
         }
@@ -225,8 +342,32 @@
 
         .alert {
             border-radius: var(--border-radius);
-            border: none;
-            background-color: var(--light-color);
+            border: 1px solid var(--border-color);
+            background-color: var(--secondary-bg-color);
+            color: var(--text-color);
+        }
+
+        .alert-info {
+            background-color: rgba(0, 184, 217, 0.1);
+            border-color: rgba(0, 184, 217, 0.2);
+            color: var(--text-color);
+        }
+
+        .alert-success {
+            background-color: rgba(0, 208, 156, 0.1);
+            border-color: rgba(0, 208, 156, 0.2);
+            color: var(--text-color);
+        }
+
+        .alert-warning {
+            background-color: rgba(255, 159, 67, 0.1);
+            border-color: rgba(255, 159, 67, 0.2);
+            color: var(--text-color);
+        }
+
+        .alert-danger {
+            background-color: rgba(255, 94, 94, 0.1);
+            border-color: rgba(255, 94, 94, 0.2);
             color: var(--text-color);
         }
 
@@ -272,9 +413,27 @@
         .result-container {
             max-height: 600px;
             overflow-y: auto;
-            background-color: var(--card-bg);
+            background-color: var(--primary-bg-color);
+            color: var(--text-color);
             border-radius: var(--border-radius);
             padding: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Ensure all content in result container is properly styled for dark mode */
+        .result-container table {
+            color: var(--text-color);
+        }
+
+        .result-container pre {
+            background-color: var(--secondary-bg-color);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        .result-container .bg-light {
+            background-color: var(--secondary-bg-color) !important;
+            color: var(--text-color);
         }
 
         /* Stat cards */
@@ -339,6 +498,50 @@
             position: absolute;
             top: 70%;
             left: 50%;
+        }
+
+        /* Modal styling for dark theme */
+        .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            padding: 15px 20px;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+            background-color: var(--secondary-color);
+            padding: 15px 20px;
+        }
+
+        .modal-body {
+            padding: 20px;
+            font-size: 1rem;
+        }
+
+        .btn-close {
+            color: var(--text-color);
+            opacity: 0.8;
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* Ensure all modals have proper content */
+        .modal:not(.show) {
+            display: none;
+        }
+
+        /* Fix for empty modals */
+        .modal-dialog {
+            min-width: 320px;
+        }
             transform: translateX(-50%);
             font-size: 0.9rem;
             opacity: 0.8;
@@ -398,10 +601,10 @@
                             </div>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="background-color: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);">
-                            <li><a class="dropdown-item text-white" href="{% url 'password_change' %}"><i class="fas fa-key me-2"></i>Change Password</a></li>
+                            <li><a class="dropdown-item text-white" href="{% url 'password_change' %}" style="color: var(--text-color) !important;"><i class="fas fa-key me-2"></i>Change Password</a></li>
                             <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></li>
                             <li>
-                                <a class="dropdown-item text-white" href="{% url 'logout' %}">
+                                <a class="dropdown-item text-white" href="{% url 'logout' %}" style="color: var(--text-color) !important;">
                                     <i class="fas fa-sign-out-alt me-2"></i>Logout
                                 </a>
                             </li>
@@ -546,6 +749,104 @@
     <script>
         // Register the annotation plugin
         Chart.register(ChartAnnotation);
+
+        // Auto-dismiss success notifications after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find all success alerts
+            const successAlerts = document.querySelectorAll('.alert-success');
+            const infoAlerts = document.querySelectorAll('.alert-info');
+
+            // Auto-dismiss success alerts after 5 seconds
+            successAlerts.forEach(function(alert) {
+                setTimeout(function() {
+                    // Create a bootstrap alert instance and close it
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+
+            // Auto-dismiss info alerts after 8 seconds
+            infoAlerts.forEach(function(alert) {
+                setTimeout(function() {
+                    // Create a bootstrap alert instance and close it
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 8000);
+            });
+
+            // Fix empty modals
+            document.addEventListener('show.bs.modal', function(event) {
+                const modal = event.target;
+                const modalBody = modal.querySelector('.modal-body');
+                const modalTitle = modal.querySelector('.modal-title');
+
+                // If modal body is empty or contains only whitespace
+                if (!modalBody || !modalBody.innerHTML.trim()) {
+                    // Create a default modal body if it doesn't exist
+                    if (!modalBody) {
+                        const newModalBody = document.createElement('div');
+                        newModalBody.className = 'modal-body';
+                        newModalBody.innerHTML = 'Are you sure you want to proceed with this action?';
+
+                        // Insert after header or as first child of content
+                        const modalContent = modal.querySelector('.modal-content');
+                        const modalHeader = modal.querySelector('.modal-header');
+
+                        if (modalHeader) {
+                            modalHeader.insertAdjacentElement('afterend', newModalBody);
+                        } else if (modalContent) {
+                            modalContent.prepend(newModalBody);
+                        }
+                    } else {
+                        // Update existing empty modal body
+                        modalBody.innerHTML = 'Are you sure you want to proceed with this action?';
+                    }
+                }
+
+                // If modal title is empty or doesn't exist
+                if (!modalTitle || !modalTitle.innerHTML.trim()) {
+                    // Create a default modal title if it doesn't exist
+                    if (!modalTitle) {
+                        const modalHeader = modal.querySelector('.modal-header');
+                        if (modalHeader) {
+                            const newModalTitle = document.createElement('h5');
+                            newModalTitle.className = 'modal-title';
+                            newModalTitle.innerHTML = 'Confirmation';
+                            modalHeader.prepend(newModalTitle);
+                        }
+                    } else {
+                        // Update existing empty modal title
+                        modalTitle.innerHTML = 'Confirmation';
+                    }
+                }
+
+                // Ensure modal has a footer with buttons if it doesn't
+                const modalFooter = modal.querySelector('.modal-footer');
+                if (!modalFooter || !modalFooter.innerHTML.trim()) {
+                    // Create a default modal footer if it doesn't exist
+                    if (!modalFooter) {
+                        const newModalFooter = document.createElement('div');
+                        newModalFooter.className = 'modal-footer';
+                        newModalFooter.innerHTML = `
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        `;
+
+                        // Insert at the end of content
+                        const modalContent = modal.querySelector('.modal-content');
+                        if (modalContent) {
+                            modalContent.appendChild(newModalFooter);
+                        }
+                    } else {
+                        // Update existing empty modal footer
+                        modalFooter.innerHTML = `
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        `;
+                    }
+                }
+            });
+        });
     </script>
     <!-- Data Persistence -->
     <script src="{% static 'js/data-persistence.js' %}"></script>

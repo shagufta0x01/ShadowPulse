@@ -1,5 +1,140 @@
 {% extends 'scanner/base.html' %}
 
+{% block extra_css %}
+<style>
+    .list-group-item-info {
+        background-color: var(--secondary-color);
+        color: white;
+        font-weight: bold;
+    }
+
+    .command-item:hover {
+        background-color: var(--secondary-bg-color);
+        color: var(--text-color);
+    }
+
+    .command-item.active {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+    }
+
+    /* Fix for list-group-item hover */
+    .list-group-item-action:hover {
+        background-color: var(--secondary-bg-color);
+        color: var(--text-color);
+    }
+
+    .list-group-item-action.active {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+    }
+
+    /* Apply text color to all command items */
+    .command-item {
+        color: var(--text-color);
+    }
+
+    /* Fix list-group-item background color */
+    .list-group-item {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border-color: var(--border-color);
+    }
+
+    pre {
+        background-color: var(--secondary-bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 10px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        color: var(--text-color);
+    }
+
+    .result-content {
+        background-color: var(--secondary-bg-color);
+        padding: 1rem;
+        border-radius: 0.25rem;
+        color: var(--text-color);
+    }
+
+    .table {
+        color: var(--text-color);
+    }
+
+    /* Fix table styles for dark mode */
+    .table-hover tbody tr {
+        color: #ffffff !important;
+        background-color: #1a1d29 !important;
+    }
+
+    .table-hover tbody tr:nth-child(odd) {
+        background-color: #1e2130 !important;
+    }
+
+    .table-hover tbody tr:hover {
+        color: #ffffff !important;
+        background-color: #2a2e40 !important;
+    }
+
+    /* Ensure text stays white on hover */
+    .table-hover tbody tr:hover td {
+        color: #ffffff !important;
+    }
+
+    /* Force all table text to be white */
+    .table td, .table th, .table tr {
+        color: #ffffff !important;
+    }
+
+    .table thead th {
+        background-color: #242736 !important;
+        color: #ffffff !important;
+        border-bottom: 2px solid var(--border-color) !important;
+        padding: 12px 15px !important;
+        font-weight: 600 !important;
+    }
+
+    .table tbody td {
+        border-color: var(--border-color) !important;
+        padding: 12px 15px !important;
+        border-top: none !important;
+    }
+
+    /* Custom table styles for network info page */
+    .table {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 4px !important;
+        overflow: hidden !important;
+        margin-bottom: 1rem !important;
+        width: 100% !important;
+        color: #ffffff !important;
+    }
+
+    /* Fix button styles in tables */
+    .table .btn-outline-primary {
+        color: var(--accent-color) !important;
+        border-color: var(--accent-color) !important;
+        background-color: transparent !important;
+    }
+
+    .table .btn-outline-primary:hover {
+        color: #ffffff !important;
+        background-color: var(--accent-color) !important;
+    }
+
+    /* Fix badge styles in tables */
+    .table .badge {
+        font-size: 0.8rem !important;
+        padding: 0.35em 0.65em !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row mb-4">
     <div class="col-md-12">
@@ -7,14 +142,14 @@
             <div class="card-header text-white" style="background-color: var(--success-color);">
                 <h5 class="mb-0"><i class="fas fa-network-wired me-2"></i>Network Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="background-color: var(--card-bg); color: var(--text-color);">
                 <div class="row mb-4">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header text-white" style="background-color: var(--accent-color);">
                                 <h5 class="mb-0">Network Devices</h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style="background-color: var(--card-bg); color: var(--text-color);">
                                 <div class="mb-3">
                                     <form action="{% url 'scanner:scan_network' %}" method="post" class="d-inline">
                                         {% csrf_token %}
@@ -37,31 +172,31 @@
 
                                 {% if devices %}
                                     <div class="table-responsive">
-                                        <table class="table table-hover">
+                                        <table class="table table-hover" style="background-color: #242736; border: 1px solid #3a3f52; border-collapse: separate; border-spacing: 0;">
                                             <thead>
-                                                <tr>
-                                                    <th>IP Address</th>
-                                                    <th>MAC Address</th>
-                                                    <th>Vendor</th>
-                                                    <th>Last Seen</th>
-                                                    <th>Actions</th>
+                                                <tr style="background-color: #242736; color: #ffffff;">
+                                                    <th style="border-bottom: 2px solid #3a3f52; padding: 12px 15px;">IP Address</th>
+                                                    <th style="border-bottom: 2px solid #3a3f52; padding: 12px 15px;">MAC Address</th>
+                                                    <th style="border-bottom: 2px solid #3a3f52; padding: 12px 15px;">Vendor</th>
+                                                    <th style="border-bottom: 2px solid #3a3f52; padding: 12px 15px;">Last Seen</th>
+                                                    <th style="border-bottom: 2px solid #3a3f52; padding: 12px 15px;">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {% for device in devices %}
-                                                <tr>
-                                                    <td>{{ device.ip_address }}</td>
-                                                    <td>{{ device.mac_address }}</td>
-                                                    <td>{{ device.vendor|default:"Unknown" }}</td>
-                                                    <td>{{ device.last_seen|date:"Y-m-d H:i" }}</td>
-                                                    <td>
+                                                <tr style="color: #ffffff; background-color: {% cycle '#1a1d29' '#1e2130' %}; border-bottom: 1px solid #3a3f52;">
+                                                    <td style="border-top: none; padding: 12px 15px;">{{ device.ip_address }}</td>
+                                                    <td style="border-top: none; padding: 12px 15px;">{{ device.mac_address }}</td>
+                                                    <td style="border-top: none; padding: 12px 15px;">{{ device.vendor|default:"Unknown" }}</td>
+                                                    <td style="border-top: none; padding: 12px 15px;">{{ device.last_seen|date:"Y-m-d H:i" }}</td>
+                                                    <td style="border-top: none; padding: 12px 15px;">
                                                         {% if device.ip_address in target_ips %}
                                                             <span class="badge bg-success">Target</span>
                                                         {% else %}
                                                             <form action="{% url 'scanner:add_target' %}" method="post" class="d-inline">
                                                                 {% csrf_token %}
                                                                 <input type="hidden" name="ip_address" value="{{ device.ip_address }}">
-                                                                <button type="submit" class="btn btn-sm btn-outline-primary">Add as Target</button>
+                                                                <button type="submit" class="btn btn-sm btn-outline-primary" style="color: #8a56ff; border-color: #8a56ff; background-color: transparent;">Add as Target</button>
                                                             </form>
                                                         {% endif %}
                                                     </td>
@@ -86,12 +221,13 @@
                             <div class="card-header text-white" style="background-color: var(--primary-color);">
                                 <h5 class="mb-0">Target Systems</h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style="background-color: var(--card-bg); color: var(--text-color);">
                                 {% if targets %}
                                     <div class="list-group">
                                         {% for target in targets %}
                                             <a href="#" class="list-group-item list-group-item-action target-item"
-                                               data-target-id="{{ target.id }}" data-target-ip="{{ target.ip_address }}">
+                                               data-target-id="{{ target.id }}" data-target-ip="{{ target.ip_address }}"
+                                               style="color: var(--text-color);">
                                                 <div class="d-flex w-100 justify-content-between">
                                                     <h6 class="mb-1">{{ target.ip_address }}</h6>
                                                     <small>{{ target.last_scan|default:"Never scanned"|date:"Y-m-d H:i" }}</small>
@@ -113,13 +249,14 @@
                             <div class="card-header text-white" style="background-color: var(--info-color);">
                                 <h5 class="mb-0">Available Commands</h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style="background-color: var(--card-bg); color: var(--text-color);">
                                 <div class="list-group command-list" style="display: none;">
                                     <!-- Basic Network Commands -->
                                     <div class="list-group-item list-group-item-info">Basic Network Commands</div>
 
                                     <button class="list-group-item list-group-item-action command-item"
-                                            data-command-code="3" data-command-name="Network Scan">
+                                            data-command-code="3" data-command-name="Network Scan"
+                                            style="color: var(--text-color);">
                                         <i class="fas fa-search me-2"></i>Network Scan
                                     </button>
 
@@ -185,11 +322,11 @@
                     </div>
 
                     <div class="col-md-8">
-                        <div class="card">
+                        <div class="card bg-dark border-secondary">
                             <div class="card-header text-white" style="background-color: var(--success-color);">
                                 <h5 class="mb-0 result-title">Results</h5>
                             </div>
-                            <div class="card-body result-container" id="result-container">
+                            <div class="card-body result-container" id="result-container" style="background-color: var(--primary-bg-color); color: var(--text-color);">
                                 <div class="alert alert-info">
                                     Select a target and command to view results.
                                 </div>

@@ -47,10 +47,10 @@ class MemoryProtectionCheck:
 
             # Get loaded modules
             self.modules = self.get_loaded_modules()
-            
+
             # Analyze modules
             self.analyze_loaded_modules()
-            
+
             # Return results
             return {
                 'user_dlls': self.user_dll_analysis,
@@ -206,7 +206,7 @@ class MemoryProtectionCheck:
         <div class="mb-4">
             <h5>Memory Protection Summary for PID: {self.pid}</h5>
             <div class="progress mb-2">
-                <div class="progress-bar bg-{score_color}" role="progressbar" style="width: {protection_score}%" 
+                <div class="progress-bar bg-{score_color}" role="progressbar" style="width: {protection_score}%"
                      aria-valuenow="{protection_score}" aria-valuemin="0" aria-valuemax="100">{protection_score}%</div>
             </div>
             <p class="text-muted">Overall memory protection score: {protection_score}% ({score_text})</p>
@@ -219,7 +219,7 @@ class MemoryProtectionCheck:
             <div class="col-md-12 mb-4">
                 <div class="card">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">User DLLs</h6>
+                        <h6 class="m-0 font-weight-bold">User DLLs</h6>
                     </div>
                     <div class="card-body p-0">
         """
@@ -227,7 +227,7 @@ class MemoryProtectionCheck:
         if self.user_dll_analysis:
             html_output += """
                         <div class="table-responsive">
-                            <table class="table table-striped mb-0">
+                            <table class="table table-striped table-dark mb-0">
                                 <thead>
                                     <tr>
                                         <th>Module</th>
@@ -246,10 +246,10 @@ class MemoryProtectionCheck:
                                     <tr>
                                         <td>{html.escape(analysis["Module"])}</td>
                                         <td>{html.escape(analysis["Base Address"])}</td>
-                                        <td><span class="badge badge-{'success' if analysis['ASLR'] == 'Enabled' else 'danger'}">{analysis["ASLR"]}</span></td>
-                                        <td><span class="badge badge-{'success' if analysis['DEP'] == 'Enabled' else 'danger'}">{analysis["DEP"]}</span></td>
-                                        <td><span class="badge badge-{'success' if analysis['SafeSEH'] == 'Enabled' else 'danger'}">{analysis["SafeSEH"]}</span></td>
-                                        <td><span class="badge badge-{'success' if analysis['Rebase'] == 'Enabled' else 'danger'}">{analysis["Rebase"]}</span></td>
+                                        <td><span class="badge bg-{'success text-dark' if analysis['ASLR'] == 'Enabled' else 'danger'}">{analysis["ASLR"]}</span></td>
+                                        <td><span class="badge bg-{'success text-dark' if analysis['DEP'] == 'Enabled' else 'danger'}">{analysis["DEP"]}</span></td>
+                                        <td><span class="badge bg-{'success text-dark' if analysis['SafeSEH'] == 'Enabled' else 'danger'}">{analysis["SafeSEH"]}</span></td>
+                                        <td><span class="badge bg-{'success text-dark' if analysis['Rebase'] == 'Enabled' else 'danger'}">{analysis["Rebase"]}</span></td>
                                     </tr>
                 """
 
@@ -279,7 +279,7 @@ class MemoryProtectionCheck:
             <div class="col-md-12 mb-4">
                 <div class="card">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">System DLLs</h6>
+                        <h6 class="m-0 font-weight-bold">System DLLs</h6>
                     </div>
                     <div class="card-body p-0">
         """
@@ -287,7 +287,7 @@ class MemoryProtectionCheck:
         if self.system_dll_analysis:
             html_output += """
                         <div class="table-responsive">
-                            <table class="table table-striped mb-0">
+                            <table class="table table-striped table-dark mb-0">
                                 <thead>
                                     <tr>
                                         <th>Module</th>
@@ -306,10 +306,10 @@ class MemoryProtectionCheck:
                                     <tr>
                                         <td>{html.escape(analysis["Module"])}</td>
                                         <td>{html.escape(analysis["Base Address"])}</td>
-                                        <td><span class="badge badge-{'success' if analysis['ASLR'] == 'Enabled' else 'danger'}">{analysis["ASLR"]}</span></td>
-                                        <td><span class="badge badge-{'success' if analysis['DEP'] == 'Enabled' else 'danger'}">{analysis["DEP"]}</span></td>
-                                        <td><span class="badge badge-{'success' if analysis['SafeSEH'] == 'Enabled' else 'danger'}">{analysis["SafeSEH"]}</span></td>
-                                        <td><span class="badge badge-{'success' if analysis['Rebase'] == 'Enabled' else 'danger'}">{analysis["Rebase"]}</span></td>
+                                        <td><span class="badge bg-{'success text-dark' if analysis['ASLR'] == 'Enabled' else 'danger'}">{analysis["ASLR"]}</span></td>
+                                        <td><span class="badge bg-{'success text-dark' if analysis['DEP'] == 'Enabled' else 'danger'}">{analysis["DEP"]}</span></td>
+                                        <td><span class="badge bg-{'success text-dark' if analysis['SafeSEH'] == 'Enabled' else 'danger'}">{analysis["SafeSEH"]}</span></td>
+                                        <td><span class="badge bg-{'success text-dark' if analysis['Rebase'] == 'Enabled' else 'danger'}">{analysis["Rebase"]}</span></td>
                                     </tr>
                 """
 
