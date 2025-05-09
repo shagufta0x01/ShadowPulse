@@ -1,0 +1,214 @@
+{% extends 'scanner/base.html' %}
+{% load static %}
+{% load scanner_filters %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Vulnerability Scan Results</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'scanner:index' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'scanner:port_scanner_home' %}">Port Scanner</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'scanner:port_scanner_results' scan_result.id %}">Scan Results</a></li>
+        <li class="breadcrumb-item active">Vulnerabilities</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Vulnerability Results for {{ scan_result.target.ip_address }}
+                    </div>
+                    <div>
+                        <a href="{% url 'scanner:port_scanner_results' scan_result.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Back to Port Scan
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Scan Information</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Target:</th>
+                                    <td>{{ scan_result.target.ip_address }} {% if scan_result.target.hostname %}({{ scan_result.target.hostname }}){% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Scan Date:</th>
+                                    <td>{{ scan_result.start_time }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Open Ports:</th>
+                                    <td>{{ scan_result.open_ports_count }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Vulnerability Summary</h5>
+                            <div class="row text-center">
+                                <div class="col">
+                                    <div class="card bg-danger text-white mb-2">
+                                        <div class="card-body py-2">
+                                            <h2 class="mb-0">{{ severity_counts.critical }}</h2>
+                                            <div>Critical</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card bg-warning text-dark mb-2">
+                                        <div class="card-body py-2">
+                                            <h2 class="mb-0">{{ severity_counts.high }}</h2>
+                                            <div>High</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card bg-info text-dark mb-2">
+                                        <div class="card-body py-2">
+                                            <h2 class="mb-0">{{ severity_counts.medium }}</h2>
+                                            <div>Medium</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card bg-light text-dark mb-2">
+                                        <div class="card-body py-2">
+                                            <h2 class="mb-0">{{ severity_counts.low }}</h2>
+                                            <div>Low</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5>Detected Vulnerabilities</h5>
+
+                    {% if vulnerabilities %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Severity</th>
+                                    <th>Title</th>
+                                    <th>CVE ID</th>
+                                    <th>Affected Component</th>
+                                    <th>CVSS</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vuln in vulnerabilities %}
+                                <tr>
+                                    <td>
+                                        {% if vuln.severity == 'critical' %}
+                                        <span class="badge bg-danger">Critical</span>
+                                        {% elif vuln.severity == 'high' %}
+                                        <span class="badge bg-warning text-dark">High</span>
+                                        {% elif vuln.severity == 'medium' %}
+                                        <span class="badge bg-info text-dark">Medium</span>
+                                        {% elif vuln.severity == 'low' %}
+                                        <span class="badge bg-light text-dark">Low</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Unknown</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ vuln.title }}</td>
+                                    <td>
+                                        {% if vuln.cve_id %}
+                                        <a href="https://nvd.nist.gov/vuln/detail/{{ vuln.cve_id }}" target="_blank">
+                                            {{ vuln.cve_id }}
+                                            <i class="fas fa-external-link-alt fa-xs"></i>
+                                        </a>
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ vuln.affected_component }}</td>
+                                    <td>
+                                        {% if vuln.cvss_score %}
+                                        {{ vuln.cvss_score }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#vuln{{ vuln.id }}" aria-expanded="false">
+                                            Details
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="collapse" id="vuln{{ vuln.id }}">
+                                    <td colspan="6" class="bg-light text-dark">
+                                        <div class="p-3 vuln-details">
+                                            <h6 class="text-dark">Description:</h6>
+                                            <p class="text-dark">{{ vuln.description }}</p>
+
+                                            <h6 class="text-dark">Remediation Steps:</h6>
+                                            <p class="text-dark">{{ vuln.remediation_steps }}</p>
+
+                                            {% if vuln.port_info %}
+                                            <h6 class="text-dark">Affected Port:</h6>
+                                            <p class="text-dark">{{ vuln.port_info.port_number }} ({{ vuln.port_info.service_name }} {{ vuln.port_info.service_version|default:"" }})</p>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        No vulnerabilities found.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Custom styles for vulnerability details */
+    .vuln-details h6 {
+        color: #000 !important;
+        font-weight: 600;
+    }
+
+    .vuln-details p {
+        color: #333 !important;
+    }
+
+    /* Override any dark theme styles for the vulnerability details */
+    .bg-light.text-dark,
+    .bg-light.text-dark * {
+        color: #333 !important;
+    }
+
+    /* Make sure links in vulnerability details are visible */
+    .vuln-details a {
+        color: #0066cc !important;
+        text-decoration: underline;
+    }
+
+    /* Ensure the background is light enough for dark text */
+    tr.collapse td.bg-light {
+        background-color: #f8f9fa !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Initialize any components if needed
+    });
+</script>
+{% endblock %}

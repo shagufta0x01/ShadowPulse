@@ -1,0 +1,321 @@
+{% extends 'scanner/base.html' %}
+{% load static %}
+
+{% block title %}Port Scanner{% endblock %}
+
+{% block extra_css %}
+<style>
+    .port-scan-card {
+        transition: all 0.3s ease;
+    }
+    .port-scan-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .service-badge {
+        font-size: 0.8rem;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .scan-type-card {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+    }
+    .scan-type-card:hover {
+        background-color: #f8f9fa;
+    }
+    .scan-type-card.selected {
+        border-color: #007bff;
+        background-color: #f0f7ff;
+    }
+    .progress-thin {
+        height: 8px;
+    }
+    #customPortRange {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Port Scanner</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'scanner:index' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Port Scanner</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-radar me-1"></i>
+                    New Port Scan
+                </div>
+                <div class="card-body">
+                    <form id="portScanForm" method="post" action="{% url 'scanner:start_port_scan' %}">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="targetSelect" class="form-label">Select Target</label>
+                            <select class="form-select" id="targetSelect" name="target_id" required>
+                                <option value="" selected disabled>Select a target</option>
+                                {% for target in targets %}
+                                <option value="{{ target.id }}">{{ target.ip_address }} {% if target.hostname %}({{ target.hostname }}){% endif %}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Scan Type</label>
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="card scan-type-card" data-scan-type="quick">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Quick Scan</h5>
+                                            <p class="card-text small">Scans common ports (21-23,25,53,80,443,3389,8080)</p>
+                                            <div class="text-muted small">Duration: ~30 seconds</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card scan-type-card selected" data-scan-type="standard">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Standard Scan</h5>
+                                            <p class="card-text small">Scans all ports from 1-1024</p>
+                                            <div class="text-muted small">Duration: 1-2 minutes</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card scan-type-card" data-scan-type="comprehensive">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Comprehensive</h5>
+                                            <p class="card-text small">Scans all 65535 ports</p>
+                                            <div class="text-muted small">Duration: 5-10 minutes</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card scan-type-card" data-scan-type="custom">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Custom</h5>
+                                            <p class="card-text small">Use custom nmap arguments</p>
+                                            <div class="text-muted small">For advanced users</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="scanType" name="scan_type" value="standard">
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="customPortRangeCheck">
+                                <label class="form-check-label" for="customPortRangeCheck">
+                                    Use custom port range
+                                </label>
+                            </div>
+                            <div id="customPortRange" class="mt-2">
+                                <label for="portRange" class="form-label">Port Range</label>
+                                <input type="text" class="form-control" id="portRange" name="port_range" placeholder="e.g., 1-1024,3389,8080-8090">
+                                <div class="form-text">Specify individual ports (80), ranges (1-1024), or a combination (1-1024,3389,8080-8090)</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="customNmapArgsContainer" style="display: none;">
+                            <label for="customNmapArgs" class="form-label">Custom Nmap Arguments</label>
+                            <input type="text" class="form-control" id="customNmapArgs" name="custom_nmap_args" placeholder="e.g., -sV -O -A -T4 --script=vuln">
+                            <div class="form-text">
+                                <strong>Note:</strong> Only use if nmap is installed on your system. Enter custom nmap arguments for advanced scanning.
+                                <a href="https://nmap.org/book/man-briefoptions.html" target="_blank">Nmap documentation <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Start Scan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-1"></i>
+                    Scan Statistics
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <h3>{{ total_scans }}</h3>
+                            <div class="text-muted">Total Scans</div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <h3>{{ completed_scans }}</h3>
+                            <div class="text-muted">Completed</div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <h3>{{ failed_scans }}</h3>
+                            <div class="text-muted">Failed</div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h5>Most Common Open Ports</h5>
+                    <div class="mt-3">
+                        {% for port in common_ports %}
+                        <span class="badge bg-primary service-badge">
+                            {{ port.port_number }} ({{ port.service_name }}) - {{ port.count }}
+                        </span>
+                        {% empty %}
+                        <div class="text-muted">No port data available</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{% url 'scanner:port_scanner_history' %}" class="btn btn-outline-primary btn-sm">View Full History</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-history me-1"></i>
+                    Recent Scans
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Target</th>
+                                    <th>Scan Type</th>
+                                    <th>Port Range</th>
+                                    <th>Start Time</th>
+                                    <th>Duration</th>
+                                    <th>Open Ports</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for scan in recent_scans %}
+                                <tr>
+                                    <td>{{ scan.target.ip_address }}</td>
+                                    <td>{{ scan.scan_type|title }}</td>
+                                    <td><code>{{ scan.port_range }}</code></td>
+                                    <td>{{ scan.start_time|date:"M d, Y H:i" }}</td>
+                                    <td>{% if scan.duration %}{{ scan.duration }}{% else %}-{% endif %}</td>
+                                    <td>{{ scan.open_ports_count }}</td>
+                                    <td>
+                                        {% if scan.status == 'completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                        {% elif scan.status == 'in_progress' %}
+                                        <span class="badge bg-primary">In Progress</span>
+                                        {% elif scan.status == 'failed' %}
+                                        <span class="badge bg-danger">Failed</span>
+                                        {% elif scan.status == 'cancelled' %}
+                                        <span class="badge bg-warning">Cancelled</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ scan.status|title }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'scanner:port_scanner_results' scan.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center">No recent scans</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Handle scan type selection
+        $('.scan-type-card').click(function() {
+            $('.scan-type-card').removeClass('selected');
+            $(this).addClass('selected');
+
+            const scanType = $(this).data('scan-type');
+            $('#scanType').val(scanType);
+
+            // Show/hide custom nmap arguments field based on scan type
+            if (scanType === 'custom') {
+                $('#customNmapArgsContainer').show();
+                $('#customNmapArgs').prop('required', true);
+            } else {
+                $('#customNmapArgsContainer').hide();
+                $('#customNmapArgs').prop('required', false);
+            }
+        });
+
+        // Handle custom port range toggle
+        $('#customPortRangeCheck').change(function() {
+            if($(this).is(':checked')) {
+                $('#customPortRange').show();
+            } else {
+                $('#customPortRange').hide();
+                $('#portRange').val('');
+            }
+        });
+
+        // Form validation
+        $('#portScanForm').submit(function(event) {
+            const scanType = $('#scanType').val();
+
+            // Validate custom nmap arguments if custom scan type is selected
+            if (scanType === 'custom' && !$('#customNmapArgs').val().trim()) {
+                event.preventDefault();
+                alert('Please enter custom nmap arguments for the custom scan type.');
+                $('#customNmapArgs').focus();
+                return false;
+            }
+
+            // Show loading indicator
+            if ($(this).valid()) {
+                $('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Starting scan...');
+            }
+        });
+
+        // Check if nmap is available
+        $.ajax({
+            url: '{% url "scanner:check_nmap_availability" %}',
+            type: 'GET',
+            success: function(data) {
+                if (!data.nmap_available) {
+                    // Disable custom scan option if nmap is not available
+                    $('[data-scan-type="custom"]').addClass('disabled').css('opacity', '0.5')
+                        .attr('title', 'Nmap is not installed on this system')
+                        .append('<div class="position-absolute top-0 end-0 p-2"><i class="fas fa-ban text-danger"></i></div>');
+
+                    // Add warning message
+                    $('#portScanForm').prepend(
+                        '<div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">' +
+                        '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                        'Nmap is not installed on this system. Custom scan options are disabled. The scanner will use a built-in implementation.' +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                        '</div>'
+                    );
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

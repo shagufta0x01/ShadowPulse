@@ -1,0 +1,173 @@
+{% load scanner_filters %}
+
+<!-- Debug info -->
+<div class="debug-info" style="display: none;">
+    <p>Template rendered at: {{ now }}</p>
+    <p>Scan result ID: {{ scan_result.id }}</p>
+    <p>Port info count: {{ port_info|length }}</p>
+    <p>Services count: {{ services|length }}</p>
+</div>
+
+{% if port_info %}
+<h5>Open Ports by Service</h5>
+
+<div id="servicesAccordion" class="accordion mt-3">
+    {% for service_name, ports in services %}
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+            <button class="accordion-button {% if forloop.counter > 1 %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="{% if forloop.counter == 1 %}true{% else %}false{% endif %}" aria-controls="collapse{{ forloop.counter }}">
+                <strong>{{ service_name|title }}</strong> <span class="badge bg-primary ms-2">{{ ports|length }}</span>
+            </button>
+        </h2>
+        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.counter == 1 %}show{% endif %}" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#servicesAccordion">
+            <div class="accordion-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Port</th>
+                                <th>Protocol</th>
+                                <th>Service</th>
+                                <th>Version</th>
+                                <th>Banner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for port in ports %}
+                            <tr class="port-row">
+                                <td><strong>{{ port.port_number }}</strong></td>
+                                <td>{{ port.protocol }}</td>
+                                <td>{{ port.service_name }}</td>
+                                <td>{{ port.service_version|default:"-" }}</td>
+                                <td>
+                                    {% if port.banner %}
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#banner{{ port.id }}" aria-expanded="false">
+                                        Show Banner
+                                    </button>
+                                    <div class="collapse mt-2" id="banner{{ port.id }}">
+                                        <div class="banner-text">{{ port.banner }}</div>
+                                    </div>
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Port Distribution Chart -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-chart-pie me-1"></i>
+                Port Distribution
+            </div>
+            <div class="card-body">
+                <canvas id="portDistributionChart" width="100%" height="50"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-shield-alt me-1"></i>
+                Security Recommendations
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for port in port_info %}
+                        {% if port.port_number == 21 %}
+                        <li class="list-group-item list-group-item-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            FTP (port 21) is open. Consider using SFTP or FTPS instead for secure file transfers.
+                        </li>
+                        {% endif %}
+                        {% if port.port_number == 23 %}
+                        <li class="list-group-item list-group-item-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Telnet (port 23) is open. This is an insecure protocol. Use SSH instead.
+                        </li>
+                        {% endif %}
+                        {% if port.port_number == 3389 %}
+                        <li class="list-group-item list-group-item-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            RDP (port 3389) is open. Ensure it's properly secured with strong authentication.
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if scan_result.open_ports_count > 10 %}
+                    <li class="list-group-item list-group-item-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Large number of open ports ({{ scan_result.open_ports_count }}). Consider closing unnecessary services.
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Create port distribution chart
+var ctx = document.getElementById('portDistributionChart');
+
+{% if services %}
+var serviceLabels = [{% for service_name, ports in services %}'{{ service_name|title }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+var serviceData = [{% for service_name, ports in services %}{{ ports|length }}{% if not forloop.last %}, {% endif %}{% endfor %}];
+var backgroundColors = [
+    'rgba(54, 162, 235, 0.7)',
+    'rgba(255, 99, 132, 0.7)',
+    'rgba(255, 206, 86, 0.7)',
+    'rgba(75, 192, 192, 0.7)',
+    'rgba(153, 102, 255, 0.7)',
+    'rgba(255, 159, 64, 0.7)',
+    'rgba(199, 199, 199, 0.7)',
+    'rgba(83, 102, 255, 0.7)',
+    'rgba(40, 159, 64, 0.7)',
+    'rgba(210, 199, 199, 0.7)'
+];
+
+var portDistributionChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: serviceLabels,
+        datasets: [{
+            data: serviceData,
+            backgroundColor: backgroundColors,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+            },
+            title: {
+                display: true,
+                text: 'Services Distribution'
+            }
+        }
+    }
+});
+{% endif %}
+</script>
+{% else %}
+<div class="alert alert-info">
+    {% if scan_result.status == 'in_progress' %}
+    Waiting for scan results...
+    {% else %}
+    No open ports found.
+    {% endif %}
+</div>
+{% endif %}

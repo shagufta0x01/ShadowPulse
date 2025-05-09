@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
     <style>
         :root {
             --primary-color: #1a1d29;      /* Dark background */
@@ -264,14 +265,30 @@
             background-color: var(--hover-color) !important;
         }
 
-        /* Ensure text stays white on hover */
+        /* Ensure text stays white on hover (except for vulnerability details) */
         .table-hover tbody tr:hover td {
             color: #ffffff !important;
         }
 
-        /* Force all table text to be white */
+        /* Keep vulnerability details text black on hover */
+        .table-hover tbody tr.collapse:hover td.bg-light,
+        .table-hover tbody tr.collapse:hover td.bg-light * {
+            color: #333 !important;
+            background-color: #f8f9fa !important;
+        }
+
+        /* Force all table text to be white except for vulnerability details */
         .table td, .table th, .table tr {
             color: #ffffff !important;
+        }
+
+        /* Make vulnerability details text black */
+        .bg-light.text-dark,
+        .bg-light.text-dark *,
+        tr.collapse td.bg-light,
+        tr.collapse td.bg-light * {
+            color: #333 !important;
+            background-color: #f8f9fa !important;
         }
 
         /* Add border to tables */
@@ -547,7 +564,6 @@
             opacity: 0.8;
         }
     </style>
-    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navigation -->
@@ -601,6 +617,7 @@
                             </div>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="background-color: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);">
+                            <li><a class="dropdown-item text-white" href="{% url 'scanner:software_vuln_scan_home' %}" style="color: var(--text-color) !important;"><i class="fas fa-laptop-code me-2"></i>Software Vulnerabilities</a></li>
                             <li><a class="dropdown-item text-white" href="{% url 'password_change' %}" style="color: var(--text-color) !important;"><i class="fas fa-key me-2"></i>Change Password</a></li>
                             <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></li>
                             <li>
@@ -658,6 +675,37 @@
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-file-alt"></i>Files
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="px-3 mb-4">
+                    <h6 class="text-uppercase mb-3" style="color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 1px;">Security</h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{% url 'scanner:vulnerability_dashboard' %}" class="nav-link {% if '/vulnerabilities/' in request.path %}active{% endif %}">
+                                <i class="fas fa-shield-alt"></i>Vulnerability Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'scanner:port_scanner_home' %}" class="nav-link {% if '/port-scanner/' in request.path %}active{% endif %}">
+                                <i class="fas fa-radar"></i>Port Scanner
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'scanner:network_monitor_dashboard' %}" class="nav-link {% if '/network-monitor/' in request.path %}active{% endif %}">
+                                <i class="fas fa-chart-line"></i>Network Monitoring
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'scanner:network_alerts' %}" class="nav-link {% if '/network-alerts/' in request.path %}active{% endif %}">
+                                <i class="fas fa-bell"></i>Security Alerts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'scanner:software_vuln_scan_home' %}" class="nav-link {% if '/software-vulnerabilities/' in request.path %}active{% endif %}">
+                                <i class="fas fa-laptop-code"></i>Software Vulnerabilities
                             </a>
                         </li>
                     </ul>

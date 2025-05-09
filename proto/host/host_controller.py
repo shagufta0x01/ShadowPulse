@@ -2,30 +2,69 @@ import socket
 import struct
 import argparse
 import sys
-from pro.protocol import *
-from host.utils import build_request_header
+import os
+
+# Fix imports to use absolute paths
+current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+
+from proto.pro.protocol import *
+from proto.host.utils import build_request_header
 
 def parse_header(data):
     return struct.unpack(">6s B B I B I H", data)
 
-def send_request(cmd_code, target_ip='127.0.0.1', target_port=23033, payload=b''):
+def send_request(cmd_code, target_ip='127.0.0.1', target_port=23033, payload=b'', verbose=False):
+    """
+    Send a request to the agent and return the response.
+
+    Args:
+        cmd_code (int): The command code to send
+        target_ip (str): The IP address of the target agent
+        target_port (int): The port of the target agent
+        payload (bytes): The payload to send with the command
+        verbose (bool): Whether to print debug information
+
+    Returns:
+        bytes: The response from the agent, or None if an error occurred
+    """
     try:
+        print(f"[DEBUG] Connecting to agent at {target_ip}:{target_port}")
+        print(f"[DEBUG] Command code: 0x{cmd_code:02X}")
+        print(f"[DEBUG] Payload: {payload}")
+
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(10)  # Set a timeout for connection attempts
+        s.settimeout(30)  # Increased timeout for vulnerability scans
+
+        print(f"[DEBUG] Attempting connection...")
         s.connect((target_ip, target_port))
+        print(f"[DEBUG] Connection established")
 
         req_id = 1
         header = build_request_header(0x01, req_id, cmd_code, len(payload))
+        print(f"[DEBUG] Sending request header and payload (total {len(header) + len(payload)} bytes)")
         s.sendall(header + payload)
+        print(f"[DEBUG] Request sent successfully")
 
         # Receive response header
+        print(f"[DEBUG] Waiting for response header...")
         response_header = s.recv(HEADER_SIZE)
-        # Parse header but only use status_code and payload_len
-        _, _, _, _, status_code, payload_len, _ = parse_header(response_header)
+        print(f"[DEBUG] Received response header ({len(response_header)} bytes)")
 
-        # For large data responses, receive and print data in chunks for better responsiveness
+        # Parse header but only use status_code and payload_len
+        magic, version, flags, req_id, status_code, payload_len, reserved = parse_header(response_header)
+
+        print(f"[DEBUG] Response header: magic={magic}, version={version}, flags={flags}, req_id={req_id}, status_code={status_code}, payload_len={payload_len}, reserved={reserved}")
+
+        if verbose:
+            print(f"[Response status={status_code}, payload_length={payload_len}]")
+
+        # For large data responses, receive in chunks
         if payload_len > 4096:
-            print(f"\n[Response status={status_code}]")
+            if verbose:
+                print(f"Receiving large response ({payload_len} bytes)...")
+
             received_data = b""
             chunk_size = 4096  # Receive in 4KB chunks
 
@@ -34,30 +73,38 @@ def send_request(cmd_code, target_ip='127.0.0.1', target_port=23033, payload=b''
                 if not chunk:
                     break
                 received_data += chunk
-                # Print the chunk as it's received
-                try:
-                    print(chunk.decode(), end='', flush=True)
-                except UnicodeDecodeError:
-                    pass
+
+                # Print progress if verbose
+                if verbose and payload_len > 10240:  # Only for responses > 10KB
+                    progress = len(received_data) / payload_len * 100
+                    print(f"Progress: {progress:.0f}% - Received {len(received_data)} of {payload_len} bytes")
 
             result = received_data
         else:
             # For other commands, receive all at once
             response_payload = s.recv(payload_len)
-            print(f"\n[Response status={status_code}]\n{response_payload.decode()}")
+            if verbose:
+                try:
+                    print(f"Response: {response_payload.decode()[:100]}...")
+                except UnicodeDecodeError:
+                    print(f"Response: (binary data, {len(response_payload)} bytes)")
+
             result = response_payload
 
         s.close()
         return result
 
     except socket.timeout:
-        print(f"\nError: Connection to {target_ip}:{target_port} timed out")
+        if verbose:
+            print(f"Error: Connection to {target_ip}:{target_port} timed out")
         return None
     except ConnectionRefusedError:
-        print(f"\nError: Connection to {target_ip}:{target_port} refused. Make sure the agent is running.")
+        if verbose:
+            print(f"Error: Connection to {target_ip}:{target_port} refused. Make sure the agent is running.")
         return None
     except Exception as e:
-        print(f"\nError: {str(e)}")
+        if verbose:
+            print(f"Error: {str(e)}")
         return None
 
 def get_command_name(cmd_code):
@@ -157,6 +204,47 @@ def run_all_commands(args):
     print(f"Target: {target_ip}:{target_port}")
     print(f"Scanning IP: {scan_ip}")
     send_request(CMD_FULL_NETWORK_INFO, target_ip, target_port, scan_ip.encode())
+
+def send_command(target_ip, cmd_code, payload='', verbose=False):
+    """
+    Send a command to the agent and return the response.
+
+    Args:
+        target_ip (str): The IP address of the target agent
+        cmd_code (int): The command code to send
+        payload (str, optional): The payload to send with the command
+        verbose (bool, optional): Whether to print debug information
+
+    Returns:
+        str: The response from the agent, or None if an error occurred
+    """
+    try:
+        # Convert string payload to bytes if needed
+        if isinstance(payload, str):
+            payload_bytes = payload.encode()
+        else:
+            payload_bytes = payload
+
+        if verbose:
+            print(f"Sending command {cmd_code} to agent at {target_ip}")
+            print(f"Payload: {payload}")
+
+        # Send the request
+        response = send_request(cmd_code, target_ip, 23033, payload_bytes, verbose)
+
+        # Return the response as a string if it's not None
+        if response is not None:
+            try:
+                return response.decode()
+            except UnicodeDecodeError:
+                if verbose:
+                    print("Warning: Could not decode response as UTF-8, returning raw bytes")
+                return response
+        return None
+    except Exception as e:
+        if verbose:
+            print(f"Error sending command to agent: {str(e)}")
+        return None
 
 def main():
     parser = argparse.ArgumentParser(description='System Vulnerability Assessment Tool - Host Controller')

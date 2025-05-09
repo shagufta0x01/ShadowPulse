@@ -53,6 +53,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Add rate limiting middleware
     'django.middleware.common.BrokenLinkEmailsMiddleware',
+    # Add process state middleware
+    'scanner.middleware.ProcessStateMiddleware',
 ]
 
 # Create logs directory

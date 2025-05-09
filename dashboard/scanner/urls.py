@@ -1,5 +1,8 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from . import views_monitoring
+from . import urls_port_scanner
+from . import views_software_vuln_scanner
 
 app_name = 'scanner'
 
@@ -28,4 +31,36 @@ urlpatterns = [
 
     # Help and support
     path('help-support/', views.help_support, name='help_support'),
+
+    # Network Monitoring
+    path('network-monitor/', views_monitoring.network_monitor_dashboard, name='network_monitor_dashboard'),
+    path('network-monitor/start/', views_monitoring.start_network_monitor, name='start_network_monitor'),
+    path('network-monitor/stop/', views_monitoring.stop_network_monitor, name='stop_network_monitor'),
+    path('network-monitor/stats/', views_monitoring.network_monitor_stats, name='network_monitor_stats'),
+    path('network-alerts/', views_monitoring.network_alerts, name='network_alerts'),
+    path('network-alerts/<int:alert_id>/resolve/', views_monitoring.resolve_alert, name='resolve_alert'),
+
+    # Vulnerability Management
+    path('vulnerabilities/', views_monitoring.vulnerability_dashboard, name='vulnerability_dashboard'),
+    path('vulnerabilities/start-scan/', views_monitoring.start_vulnerability_scan, name='start_vulnerability_scan'),
+    path('vulnerabilities/stop-scan/', views_monitoring.stop_vulnerability_scan, name='stop_vulnerability_scan'),
+    path('vulnerabilities/scan-status/<int:target_id>/', views_monitoring.vulnerability_scan_status, name='vulnerability_scan_status'),
+    path('vulnerabilities/checkup/<int:checkup_id>/', views_monitoring.vulnerability_checkup_detail, name='vulnerability_checkup_detail'),
+    path('vulnerabilities/list/', views_monitoring.vulnerabilities_list, name='vulnerabilities_list'),
+    path('vulnerabilities/<int:vuln_id>/update-status/', views_monitoring.update_vulnerability_status, name='update_vulnerability_status'),
+
+    # Port Scanner
+    path('', include(urls_port_scanner.urlpatterns)),
+
+    # Software Vulnerability Scanner
+    path('software-vulnerabilities/', views_software_vuln_scanner.software_vuln_scan_home, name='software_vuln_scan_home'),
+    path('software-vulnerabilities/start/<int:target_id>/', views_software_vuln_scanner.start_software_vuln_scan, name='start_software_vuln_scan'),
+    path('software-vulnerabilities/status/', views_software_vuln_scanner.software_vuln_scan_status, name='software_vuln_scan_status'),
+    path('software-vulnerabilities/stop/<int:scan_id>/', views_software_vuln_scanner.stop_software_vuln_scan, name='stop_software_vuln_scan'),
+    path('software-vulnerabilities/results/<int:scan_id>/', views_software_vuln_scanner.software_vuln_scan_results, name='software_vuln_scan_results'),
+    path('software-vulnerabilities/detail/<int:vuln_id>/', views_software_vuln_scanner.software_vulnerability_detail, name='software_vulnerability_detail'),
+    path('software-vulnerabilities/software/<int:target_id>/', views_software_vuln_scanner.installed_software_list, name='installed_software_list'),
+
+    # Add the URL pattern that matches the hardcoded URLs in the templates
+    path('installed-software/<int:target_id>/', views_software_vuln_scanner.installed_software_list, name='installed_software_list_alt'),
 ]

@@ -59,6 +59,10 @@ CMD_TCP_UDP_CONNECTIONS = 0x34
 CMD_RPC_SERVICE_CHECK = 0x35
 CMD_PORT_SCANNER = 0x36
 CMD_BANNER_GRABBER = 0x37
+CMD_PORT_SCAN = 0x38  # Comprehensive port scan with service detection
 
 # Memory Protection Analysis
 CMD_ANALYZE_PROCESS_MEMORY = 0x40
+
+# Vulnerability Scanning
+CMD_VULNERABILITY_SCAN = 0x50

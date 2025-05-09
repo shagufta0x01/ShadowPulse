@@ -1,0 +1,288 @@
+{% extends 'scanner/base.html' %}
+{% load static %}
+
+{% block page_title %}Network Security Alerts{% endblock %}
+
+{% block extra_css %}
+<style>
+    .alert-card {
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+    .alert-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .alert-card.high {
+        border-left-color: #dc3545;
+    }
+    .alert-card.medium {
+        border-left-color: #ffc107;
+    }
+    .alert-card.low {
+        border-left-color: #28a745;
+    }
+    .severity-badge {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 10px;
+    }
+    .alert-details {
+        display: none;
+    }
+    .alert-card.expanded .alert-details {
+        display: block;
+    }
+    .alert-card .toggle-icon {
+        transition: transform 0.3s ease;
+    }
+    .alert-card.expanded .toggle-icon {
+        transform: rotate(180deg);
+    }
+    .filter-section {
+        background-color: rgba(138, 86, 255, 0.1);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    .filter-badge {
+        cursor: pointer;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .filter-badge.active {
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+    }
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+    .pagination .page-link {
+        color: var(--accent-color);
+    }
+    .alert-source {
+        font-family: monospace;
+        font-size: 0.9rem;
+    }
+    .alert-time {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+    .resolution-form {
+        background-color: rgba(40, 167, 69, 0.1);
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Network Security Alerts</h5>
+                <div>
+                    <a href="{% url 'scanner:network_monitor_dashboard' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-chart-line me-1"></i> Monitoring Dashboard
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="filter-section">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-filter me-2"></i>Filter by Severity</h6>
+                            <div>
+                                <a href="?{% if current_filters.type %}type={{ current_filters.type }}&{% endif %}{% if current_filters.resolved %}resolved={{ current_filters.resolved }}&{% endif %}" class="badge bg-secondary filter-badge {% if not current_filters.severity %}active{% endif %}">All</a>
+                                <a href="?severity=critical&{% if current_filters.type %}type={{ current_filters.type }}&{% endif %}{% if current_filters.resolved %}resolved={{ current_filters.resolved }}&{% endif %}" class="badge bg-danger filter-badge {% if current_filters.severity == 'critical' %}active{% endif %}">Critical</a>
+                                <a href="?severity=high&{% if current_filters.type %}type={{ current_filters.type }}&{% endif %}{% if current_filters.resolved %}resolved={{ current_filters.resolved }}&{% endif %}" class="badge bg-warning text-dark filter-badge {% if current_filters.severity == 'high' %}active{% endif %}">High</a>
+                                <a href="?severity=medium&{% if current_filters.type %}type={{ current_filters.type }}&{% endif %}{% if current_filters.resolved %}resolved={{ current_filters.resolved }}&{% endif %}" class="badge bg-info text-dark filter-badge {% if current_filters.severity == 'medium' %}active{% endif %}">Medium</a>
+                                <a href="?severity=low&{% if current_filters.type %}type={{ current_filters.type }}&{% endif %}{% if current_filters.resolved %}resolved={{ current_filters.resolved }}&{% endif %}" class="badge bg-success filter-badge {% if current_filters.severity == 'low' %}active{% endif %}">Low</a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-exclamation-triangle me-2"></i>Filter by Type</h6>
+                            <div>
+                                <a href="?{% if current_filters.severity %}severity={{ current_filters.severity }}&{% endif %}{% if current_filters.resolved %}resolved={{ current_filters.resolved }}&{% endif %}" class="badge bg-secondary filter-badge {% if not current_filters.type %}active{% endif %}">All</a>
+                                {% for alert_type in alert_types %}
+                                <a href="?type={{ alert_type.alert_type }}&{% if current_filters.severity %}severity={{ current_filters.severity }}&{% endif %}{% if current_filters.resolved %}resolved={{ current_filters.resolved }}&{% endif %}" class="badge bg-primary filter-badge {% if current_filters.type == alert_type.alert_type %}active{% endif %}">{{ alert_type.alert_type }} ({{ alert_type.count }})</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-check-circle me-2"></i>Filter by Status</h6>
+                            <div>
+                                <a href="?{% if current_filters.severity %}severity={{ current_filters.severity }}&{% endif %}{% if current_filters.type %}type={{ current_filters.type }}&{% endif %}" class="badge bg-secondary filter-badge {% if current_filters.resolved is None %}active{% endif %}">All</a>
+                                <a href="?resolved=false&{% if current_filters.severity %}severity={{ current_filters.severity }}&{% endif %}{% if current_filters.type %}type={{ current_filters.type }}&{% endif %}" class="badge bg-danger filter-badge {% if current_filters.resolved == 'false' %}active{% endif %}">Open</a>
+                                <a href="?resolved=true&{% if current_filters.severity %}severity={{ current_filters.severity }}&{% endif %}{% if current_filters.type %}type={{ current_filters.type }}&{% endif %}" class="badge bg-success filter-badge {% if current_filters.resolved == 'true' %}active{% endif %}">Resolved</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if page_obj %}
+                <div class="alert-list">
+                    {% for alert in page_obj %}
+                    <div class="alert-card card mb-3 {{ alert.severity }}">
+                        <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="severity-badge {% if alert.severity == 'critical' %}bg-danger{% elif alert.severity == 'high' %}bg-warning text-dark{% elif alert.severity == 'medium' %}bg-info text-dark{% else %}bg-success{% endif %}">
+                                    {{ alert.severity|title }}
+                                </span>
+                                <span class="badge {% if alert.resolved %}bg-success{% else %}bg-danger{% endif %} ms-2">
+                                    {{ alert.resolved|yesno:"Resolved,Open" }}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="alert-time me-3">{{ alert.timestamp }}</span>
+                                <button class="btn btn-sm btn-link toggle-details">
+                                    <i class="fas fa-chevron-down toggle-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ alert.alert_type }}</h5>
+                            <p class="card-text">{{ alert.description }}</p>
+                            
+                            <div class="alert-details mt-3">
+                                {% if alert.source_ip or alert.destination_ip %}
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <h6>Network Information</h6>
+                                        <div class="d-flex">
+                                            {% if alert.source_ip %}
+                                            <div class="me-4">
+                                                <strong>Source IP:</strong>
+                                                <span class="alert-source">{{ alert.source_ip }}</span>
+                                            </div>
+                                            {% endif %}
+                                            
+                                            {% if alert.destination_ip %}
+                                            <div>
+                                                <strong>Destination IP:</strong>
+                                                <span class="alert-source">{{ alert.destination_ip }}</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if alert.packet_info %}
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <h6>Packet Information</h6>
+                                        <pre class="bg-dark text-light p-3 rounded"><code>{{ alert.get_packet_info|pprint }}</code></pre>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if not alert.resolved %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="resolution-form">
+                                            <h6><i class="fas fa-check-circle me-2"></i>Resolve Alert</h6>
+                                            <form method="post" action="{% url 'scanner:resolve_alert' alert.id %}">
+                                                {% csrf_token %}
+                                                <div class="mb-3">
+                                                    <label for="resolution_notes_{{ alert.id }}" class="form-label">Resolution Notes</label>
+                                                    <textarea class="form-control" id="resolution_notes_{{ alert.id }}" name="resolution_notes" rows="3" placeholder="Describe how this alert was resolved..."></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-success">
+                                                    <i class="fas fa-check me-1"></i> Mark as Resolved
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h6>Resolution Notes</h6>
+                                        <div class="p-3 bg-light rounded">
+                                            {{ alert.resolution_notes|default:"No resolution notes provided." }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="pagination-container">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if current_filters.severity %}&severity={{ current_filters.severity }}{% endif %}{% if current_filters.type %}&type={{ current_filters.type }}{% endif %}{% if current_filters.resolved %}&resolved={{ current_filters.resolved }}{% endif %}" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_filters.severity %}&severity={{ current_filters.severity }}{% endif %}{% if current_filters.type %}&type={{ current_filters.type }}{% endif %}{% if current_filters.resolved %}&resolved={{ current_filters.resolved }}{% endif %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if current_filters.severity %}&severity={{ current_filters.severity }}{% endif %}{% if current_filters.type %}&type={{ current_filters.type }}{% endif %}{% if current_filters.resolved %}&resolved={{ current_filters.resolved }}{% endif %}">{{ num }}</a>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_filters.severity %}&severity={{ current_filters.severity }}{% endif %}{% if current_filters.type %}&type={{ current_filters.type }}{% endif %}{% if current_filters.resolved %}&resolved={{ current_filters.resolved }}{% endif %}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if current_filters.severity %}&severity={{ current_filters.severity }}{% endif %}{% if current_filters.type %}&type={{ current_filters.type }}{% endif %}{% if current_filters.resolved %}&resolved={{ current_filters.resolved }}{% endif %}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> No alerts found matching your criteria.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle alert details
+        const toggleButtons = document.querySelectorAll('.toggle-details');
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const card = this.closest('.alert-card');
+                card.classList.toggle('expanded');
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -57,6 +57,15 @@
                             <button class="btn btn-info" onclick="sendCommand({{ target.id }}, 6, 'Full Network Report')">
                                 <i class="fas fa-network-wired me-2"></i>Full Network Report
                             </button>
+                            <a href="{% url 'scanner:installed_software_list' target.id %}" class="btn btn-info">
+                                <i class="fas fa-list me-2"></i>View Installed Software
+                            </a>
+                            <a href="{% url 'scanner:software_vuln_scan_home' %}" class="btn btn-danger">
+                                <i class="fas fa-laptop-code me-2"></i>Software Vulnerability Scan
+                            </a>
+                            <a href="{% url 'scanner:port_scanner_home' %}" class="btn btn-secondary">
+                                <i class="fas fa-radar me-2"></i>Port Scanner
+                            </a>
                         </div>
                     </div>
                 </div>

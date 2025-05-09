@@ -56,6 +56,16 @@ The platform combines real-time monitoring, detailed system intelligence gatheri
 - **System Certificates Analysis**: Inspect certificate stores for expired or untrusted certificates
 - **Firewall Rule Analysis**: Comprehensive review of firewall configurations and rule sets
 
+### 🔒 Vulnerability Scanning System
+- **Multi-level Scanning**: Quick, standard, and deep vulnerability scanning options
+- **Service Vulnerability Detection**: Identify vulnerabilities in running services
+- **OS Vulnerability Assessment**: Detect operating system security issues
+- **Web Application Scanning**: Check for common web vulnerabilities
+- **Network Configuration Analysis**: Identify insecure network configurations
+- **CVE Database Integration**: Match findings against known Common Vulnerabilities and Exposures
+- **Remediation Guidance**: Detailed steps for addressing identified vulnerabilities
+- **Vulnerability Tracking**: Monitor the status of vulnerabilities through remediation lifecycle
+
 ### 🔍 System Intelligence
 - **OS Information Collection**: Detailed operating system information and configuration analysis
 - **Software Inventory**: Complete inventory of installed software with version tracking
@@ -73,6 +83,15 @@ The platform combines real-time monitoring, detailed system intelligence gatheri
 - **DNS Cache Inspection**: Analysis of DNS cache for potential security issues
 - **Network Share Mapping**: Discovery and security assessment of network shares
 - **Network Traffic Analysis**: Monitoring of network traffic patterns for anomaly detection
+
+### 🔍 Network Monitoring System
+- **Real-time Traffic Analysis**: Capture and analyze network traffic on the host machine
+- **Protocol Distribution Visualization**: Visual breakdown of network protocols in use
+- **Anomaly Detection**: Identify unusual patterns in network traffic
+- **Security Alert Generation**: Automatic alerts for suspicious network activity
+- **Threat Intelligence Integration**: Detection of known malicious IPs and domains
+- **Traffic Statistics**: Track packets, bytes, and connections over time
+- **Top Talkers Identification**: Identify most active hosts on the network
 
 ### 📊 Reporting & Analytics
 - **Interactive Dashboard**: Real-time security posture visualization
@@ -357,6 +376,15 @@ Rex uses a relational database with the following core tables:
    - `User`: User accounts on target systems
    - `Process`: Running process information
 
+5. **Network Monitoring**
+   - `NetworkMonitorLog`: Log of network monitoring events
+   - `NetworkTrafficStats`: Network traffic statistics
+   - `NetworkAlert`: Security alerts from network monitoring
+
+6. **Vulnerability Management**
+   - `VulnerabilityCheckup`: Vulnerability scan results
+   - `Vulnerability`: Individual vulnerability findings
+
 ### API Reference
 
 Rex provides a RESTful API for integration with other security tools:
@@ -383,6 +411,17 @@ Rex provides a RESTful API for integration with other security tools:
    - `GET /api/vulnerabilities/`: List all vulnerabilities
    - `GET /api/vulnerabilities/{id}/`: Get vulnerability details
    - `PUT /api/vulnerabilities/{id}/status/`: Update vulnerability status
+   - `GET /api/vulnerability-checkups/`: List all vulnerability checkups
+   - `POST /api/vulnerability-checkups/`: Start a new vulnerability checkup
+   - `GET /api/vulnerability-checkups/{id}/`: Get checkup details
+   - `GET /api/vulnerability-checkups/{id}/status/`: Get checkup status
+
+5. **Network Monitoring**
+   - `GET /api/network-monitor/stats/`: Get current network monitoring statistics
+   - `POST /api/network-monitor/start/`: Start network monitoring
+   - `POST /api/network-monitor/stop/`: Stop network monitoring
+   - `GET /api/network-alerts/`: List all network security alerts
+   - `PUT /api/network-alerts/{id}/resolve/`: Resolve a network alert
 
 ## 🔒 Security Considerations
 

@@ -442,6 +442,11 @@
                                                         {% elif section.id == 'windows_updates' %}fa-sync
                                                         {% else %}fa-cube{% endif %}"></i>
                                             {{ section.name }}
+                                            {% if section.has_vuln_scan %}
+                                            <span class="badge bg-danger ms-1 float-end" id="vuln-scan-badge">
+                                                <i class="fas fa-shield-alt"></i>
+                                            </span>
+                                            {% endif %}
                                         </a>
                                     {% endif %}
                                 {% endfor %}
@@ -616,6 +621,9 @@
             const sectionId = $(this).data('section-id');
             const sectionName = $(this).data('section-name');
 
+            // Check if this is the installed software section
+            const isInstalledSoftware = (sectionId === 'installed_software');
+
             // Update the right panel header
             $('.col-md-8 .card-header').text(sectionName);
 
@@ -655,12 +663,134 @@
                             if (data.result_data.trim().startsWith('<div') ||
                                 data.result_data.trim().startsWith('<table') ||
                                 data.result_data.trim().startsWith('<pre')) {
+
                                 // It's already formatted HTML
-                                $('.col-md-8 .card-body').html(data.result_data);
+                                let htmlContent = data.result_data;
+
+                                // If this is the installed software section, add the vulnerability scan button
+                                if (isInstalledSoftware) {
+                                    // Add a vulnerability scan button at the top
+                                    const vulnScanButton = `
+                                    <div class="mb-3">
+                                        <div class="alert alert-info">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <i class="fas fa-info-circle me-2"></i>
+                                                    <strong>Software Management:</strong> Scan installed software for vulnerabilities.
+                                                </div>
+                                                <div>
+                                                    <a href="/scanner/installed-software/${selectedTargetId}/" class="btn btn-info me-2">
+                                                        <i class="fas fa-list me-2"></i>View All Software
+                                                    </a>
+                                                    <button id="scan-software-vulns-btn" class="btn btn-danger">
+                                                        <i class="fas fa-shield-alt me-2"></i>Scan for Vulnerabilities
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`;
+
+                                    // Insert the button at the beginning of the content
+                                    htmlContent = vulnScanButton + htmlContent;
+
+                                    // Add the event handler for the scan button after the content is added to the DOM
+                                    setTimeout(() => {
+                                        $('#scan-software-vulns-btn').click(function() {
+                                            // Show loading indicator
+                                            $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Starting scan...').prop('disabled', true);
+
+                                            // Start the vulnerability scan
+                                            $.ajax({
+                                                url: `/scanner/software-vulnerabilities/start/${selectedTargetId}/`,
+                                                type: 'POST',
+                                                headers: {
+                                                    'X-CSRFToken': getCookie('csrftoken')
+                                                },
+                                                success: function(data) {
+                                                    if (data.scan_id) {
+                                                        // Redirect to the scan results page
+                                                        window.location.href = `/scanner/software-vulnerabilities/results/${data.scan_id}/`;
+                                                    } else {
+                                                        // Show error
+                                                        alert('Failed to start scan. Please try again.');
+                                                        $('#scan-software-vulns-btn').html('<i class="fas fa-shield-alt me-2"></i>Scan for Vulnerabilities').prop('disabled', false);
+                                                    }
+                                                },
+                                                error: function() {
+                                                    // Show error
+                                                    alert('Failed to start scan. Please try again.');
+                                                    $('#scan-software-vulns-btn').html('<i class="fas fa-shield-alt me-2"></i>Scan for Vulnerabilities').prop('disabled', false);
+                                                }
+                                            });
+                                        });
+                                    }, 100);
+                                }
+
+                                $('.col-md-8 .card-body').html(htmlContent);
                             } else {
                                 // Try to format the data in our card-based layout
                                 try {
-                                    const formattedData = formatDataToCards(data.result_data, sectionName);
+                                    let formattedData = formatDataToCards(data.result_data, sectionName);
+
+                                    // If this is the installed software section, add the vulnerability scan button
+                                    if (isInstalledSoftware) {
+                                        // Add a vulnerability scan button at the top
+                                        const vulnScanButton = `
+                                        <div class="mb-3">
+                                            <div class="alert alert-info">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <i class="fas fa-info-circle me-2"></i>
+                                                        <strong>Software Management:</strong> Scan installed software for vulnerabilities.
+                                                    </div>
+                                                    <div>
+                                                        <a href="/scanner/installed-software/${selectedTargetId}/" class="btn btn-info me-2">
+                                                            <i class="fas fa-list me-2"></i>View All Software
+                                                        </a>
+                                                        <button id="scan-software-vulns-btn" class="btn btn-danger">
+                                                            <i class="fas fa-shield-alt me-2"></i>Scan for Vulnerabilities
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`;
+
+                                        // Insert the button at the beginning of the content
+                                        formattedData = vulnScanButton + formattedData;
+
+                                        // Add the event handler for the scan button after the content is added to the DOM
+                                        setTimeout(() => {
+                                            $('#scan-software-vulns-btn').click(function() {
+                                                // Show loading indicator
+                                                $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Starting scan...').prop('disabled', true);
+
+                                                // Start the vulnerability scan
+                                                $.ajax({
+                                                    url: `/scanner/software-vulnerabilities/start/${selectedTargetId}/`,
+                                                    type: 'POST',
+                                                    headers: {
+                                                        'X-CSRFToken': getCookie('csrftoken')
+                                                    },
+                                                    success: function(data) {
+                                                        if (data.scan_id) {
+                                                            // Redirect to the scan results page
+                                                            window.location.href = `/scanner/software-vulnerabilities/results/${data.scan_id}/`;
+                                                        } else {
+                                                            // Show error
+                                                            alert('Failed to start scan. Please try again.');
+                                                            $('#scan-software-vulns-btn').html('<i class="fas fa-shield-alt me-2"></i>Scan for Vulnerabilities').prop('disabled', false);
+                                                        }
+                                                    },
+                                                    error: function() {
+                                                        // Show error
+                                                        alert('Failed to start scan. Please try again.');
+                                                        $('#scan-software-vulns-btn').html('<i class="fas fa-shield-alt me-2"></i>Scan for Vulnerabilities').prop('disabled', false);
+                                                    }
+                                                });
+                                            });
+                                        }, 100);
+                                    }
+
                                     $('.col-md-8 .card-body').html(formattedData);
                                 } catch (e) {
                                     console.error('Error formatting data to cards:', e);
@@ -1109,6 +1239,22 @@
                     });
             }
         });
+
+        // Function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
 
         // Function to send command to target
         function sendCommand(targetId, commandCode, commandName) {

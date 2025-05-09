@@ -9635,7 +9635,36 @@ def command_dispatcher(cmd_code, **kwargs):
             print(f"[!] {error_msg}")
             return error_msg.encode()
         except Exception as e:
-            error_msg = f"Error analyzing process memory: {str(e)}"
+            error_msg = f"Error during memory protection analysis: {str(e)}"
+            print(f"[!] {error_msg}")
+            return error_msg.encode()
+
+    # Vulnerability Scanning
+    elif cmd_code == CMD_VULNERABILITY_SCAN:
+        try:
+            # Parse the scan type from the payload
+            scan_type = "standard"  # Default scan type
+            if ip_to_scan:
+                scan_type = ip_to_scan.lower()
+
+            # Validate scan type
+            if scan_type not in ["quick", "standard", "deep"]:
+                scan_type = "standard"  # Default to standard if invalid
+
+            print(f"[+] Starting vulnerability scan (type: {scan_type})")
+
+            # Import the vulnerability scanner module
+            from proto.agent.vulnerability_scanner import run_vulnerability_scan
+
+            # Run the vulnerability scan
+            results = run_vulnerability_scan(scan_type)
+
+            print(f"[+] Vulnerability scan completed")
+
+            # Return the results as JSON
+            return results.encode()
+        except Exception as e:
+            error_msg = f"Error during vulnerability scan: {str(e)}"
             print(f"[!] {error_msg}")
             return error_msg.encode()
 

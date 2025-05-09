@@ -1,0 +1,460 @@
+{% extends 'scanner/base.html' %}
+{% load static %}
+
+{% block page_title %}Network Monitoring{% endblock %}
+
+{% block extra_css %}
+<style>
+    .monitor-card {
+        transition: all 0.3s ease;
+    }
+    .monitor-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+    .status-active {
+        background-color: #28a745;
+        box-shadow: 0 0 10px #28a745;
+    }
+    .status-inactive {
+        background-color: #dc3545;
+    }
+    .alert-badge {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 10px;
+    }
+    .chart-container {
+        position: relative;
+        height: 250px;
+        width: 100%;
+    }
+    .stats-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+    .stats-label {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+    .protocol-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        font-size: 0.8rem;
+    }
+    .top-talkers-table td, .top-services-table td {
+        padding: 0.5rem;
+    }
+    .progress-sm {
+        height: 4px;
+    }
+    #alertsContainer {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Network Monitor Status</h5>
+                <div>
+                    {% if monitor_status.running %}
+                    <span class="badge bg-success me-2">
+                        <i class="fas fa-circle-notch fa-spin me-1"></i> Running
+                    </span>
+                    <form method="post" action="{% url 'scanner:stop_network_monitor' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="fas fa-stop me-1"></i> Stop Monitoring
+                        </button>
+                    </form>
+                    {% else %}
+                    <span class="badge bg-secondary me-2">Stopped</span>
+                    <form method="post" action="{% url 'scanner:start_network_monitor' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            <i class="fas fa-play me-1"></i> Start Monitoring
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="monitor-card card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="stats-value" id="packetsValue">{{ monitor_status.packets_captured|default:"0" }}</h3>
+                                <p class="stats-label mb-0">Packets Captured</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="monitor-card card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="stats-value" id="ppsValue">0</h3>
+                                <p class="stats-label mb-0">Packets/Second</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="monitor-card card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="stats-value" id="connectionsValue">0</h3>
+                                <p class="stats-label mb-0">Active Connections</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="monitor-card card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="stats-value" id="alertsValue">{{ alert_counts.critical|add:alert_counts.high|add:alert_counts.medium|add:alert_counts.low }}</h3>
+                                <p class="stats-label mb-0">Security Alerts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card bg-dark">
+                            <div class="card-header">
+                                <h6 class="mb-0">Traffic Overview</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="trafficChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark">
+                            <div class="card-header">
+                                <h6 class="mb-0">Protocol Distribution</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="protocolChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Security Alerts</h5>
+                <a href="{% url 'scanner:network_alerts' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div id="alertsContainer">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Severity</th>
+                                <th>Description</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alertsTableBody">
+                            {% for alert in recent_alerts %}
+                            <tr>
+                                <td>{{ alert.alert_type }}</td>
+                                <td>
+                                    <span class="badge {% if alert.severity == 'critical' %}bg-danger{% elif alert.severity == 'high' %}bg-warning text-dark{% elif alert.severity == 'medium' %}bg-info text-dark{% else %}bg-success{% endif %}">
+                                        {{ alert.severity|title }}
+                                    </span>
+                                </td>
+                                <td>{{ alert.description }}</td>
+                                <td>{{ alert.timestamp|date:"M d, H:i" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No alerts found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Top Network Talkers</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0 top-talkers-table">
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Traffic</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topTalkersTableBody">
+                                <tr>
+                                    <td colspan="2" class="text-center">No data available</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Top Services</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0 top-services-table">
+                            <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topServicesTableBody">
+                                <tr>
+                                    <td colspan="2" class="text-center">No data available</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Initialize charts
+    let trafficChart = null;
+    let protocolChart = null;
+    
+    // Traffic data points
+    const trafficData = {
+        labels: [],
+        packetsData: [],
+        bytesData: []
+    };
+    
+    // Function to initialize charts
+    function initCharts() {
+        // Traffic chart
+        const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+        trafficChart = new Chart(trafficCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Packets/s',
+                    data: [],
+                    borderColor: '#8a56ff',
+                    backgroundColor: 'rgba(138, 86, 255, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
+            }
+        });
+        
+        // Protocol chart
+        const protocolCtx = document.getElementById('protocolChart').getContext('2d');
+        protocolChart = new Chart(protocolCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [],
+                datasets: [{
+                    data: [],
+                    backgroundColor: [
+                        '#8a56ff',
+                        '#ff5656',
+                        '#56c1ff',
+                        '#56ff7a',
+                        '#ffb156',
+                        '#c156ff'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    }
+    
+    // Function to update dashboard with latest stats
+    function updateStats() {
+        if (!{{ monitor_status.running|yesno:"true,false" }}) {
+            return;
+        }
+        
+        fetch('{% url "scanner:network_monitor_stats" %}')
+            .then(response => response.json())
+            .then(data => {
+                // Update stats values
+                document.getElementById('packetsValue').textContent = data.packets_captured.toLocaleString();
+                document.getElementById('ppsValue').textContent = data.packets_per_second.toFixed(2);
+                document.getElementById('connectionsValue').textContent = data.active_connections;
+                
+                // Update traffic chart
+                const now = new Date();
+                const timeLabel = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+                
+                trafficData.labels.push(timeLabel);
+                trafficData.packetsData.push(data.packets_per_second);
+                
+                // Keep only the last 20 data points
+                if (trafficData.labels.length > 20) {
+                    trafficData.labels.shift();
+                    trafficData.packetsData.shift();
+                }
+                
+                trafficChart.data.labels = trafficData.labels;
+                trafficChart.data.datasets[0].data = trafficData.packetsData;
+                trafficChart.update();
+                
+                // Update protocol chart
+                if (data.protocol_distribution) {
+                    const labels = Object.keys(data.protocol_distribution);
+                    const values = Object.values(data.protocol_distribution);
+                    
+                    protocolChart.data.labels = labels;
+                    protocolChart.data.datasets[0].data = values;
+                    protocolChart.update();
+                }
+                
+                // Update top talkers
+                if (data.top_talkers && data.top_talkers.length > 0) {
+                    const topTalkersHtml = data.top_talkers.map(([ip, count]) => `
+                        <tr>
+                            <td>${ip}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-grow-1 me-2">
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar bg-primary" style="width: ${Math.min(100, count / data.top_talkers[0][1] * 100)}%"></div>
+                                        </div>
+                                    </div>
+                                    <span>${count}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                    
+                    document.getElementById('topTalkersTableBody').innerHTML = topTalkersHtml;
+                }
+                
+                // Update top services
+                if (data.top_services && data.top_services.length > 0) {
+                    const topServicesHtml = data.top_services.map(([service, count]) => `
+                        <tr>
+                            <td>${service[0]}/${service[1]}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-grow-1 me-2">
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar bg-info" style="width: ${Math.min(100, count / data.top_services[0][1] * 100)}%"></div>
+                                        </div>
+                                    </div>
+                                    <span>${count}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                    
+                    document.getElementById('topServicesTableBody').innerHTML = topServicesHtml;
+                }
+                
+                // Update alerts
+                if (data.recent_alerts && data.recent_alerts.length > 0) {
+                    const alertsHtml = data.recent_alerts.map(alert => `
+                        <tr>
+                            <td>${alert.type}</td>
+                            <td>
+                                <span class="badge ${alert.severity === 'high' ? 'bg-warning text-dark' : 
+                                                    alert.severity === 'medium' ? 'bg-info text-dark' : 
+                                                    alert.severity === 'critical' ? 'bg-danger' : 'bg-success'}">
+                                    ${alert.severity.charAt(0).toUpperCase() + alert.severity.slice(1)}
+                                </span>
+                            </td>
+                            <td>${alert.description}</td>
+                            <td>${new Date(alert.timestamp).toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                    
+                    document.getElementById('alertsTableBody').innerHTML = alertsHtml;
+                }
+            })
+            .catch(error => console.error('Error fetching stats:', error));
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        initCharts();
+        
+        // Update stats every 5 seconds if monitoring is active
+        if ({{ monitor_status.running|yesno:"true,false" }}) {
+            updateStats();
+            setInterval(updateStats, 5000);
+        }
+    });
+</script>
+{% endblock %}

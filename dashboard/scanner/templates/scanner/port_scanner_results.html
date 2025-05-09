@@ -1,0 +1,701 @@
+{% extends 'scanner/base.html' %}
+{% load static %}
+{% load scanner_filters %}
+
+{% block title %}Port Scan Results - {{ scan_result.target.ip_address }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .port-badge {
+        font-size: 0.85rem;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .service-section {
+        margin-bottom: 20px;
+    }
+    .service-header {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    .port-row:hover {
+        background-color: #f8f9fa;
+    }
+    .port-details {
+        font-family: monospace;
+        white-space: pre-wrap;
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 5px;
+    }
+    .banner-text {
+        font-family: monospace;
+        white-space: pre-wrap;
+        max-height: 100px;
+        overflow-y: auto;
+    }
+    .export-btn {
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Port Scan Results</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'scanner:index' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'scanner:port_scanner_home' %}">Port Scanner</a></li>
+        <li class="breadcrumb-item active">Scan Results</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-radar me-1"></i>
+                        Scan Results for {{ scan_result.target.ip_address }}
+                    </div>
+                    <div class="d-flex">
+                        {% if scan_result.status == 'completed' %}
+                        <button id="runVulnScanBtn" class="btn btn-sm btn-warning me-2">
+                            <i class="fas fa-shield-alt me-1"></i> Check Vulnerabilities
+                        </button>
+                        {% endif %}
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Export
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                                <li><a class="dropdown-item" href="{% url 'scanner:export_scan_results' scan_result.id %}?format=json">JSON</a></li>
+                                <li><a class="dropdown-item" href="{% url 'scanner:export_scan_results' scan_result.id %}?format=csv">CSV</a></li>
+                                <li><a class="dropdown-item" href="{% url 'scanner:export_scan_results' scan_result.id %}?format=nmap">Nmap Format</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if scan_result.status == 'in_progress' %}
+                    <div class="scan-progress-section">
+                        <div class="alert alert-info">
+                            <i class="fas fa-spinner fa-spin me-2"></i>
+                            Scan is still in progress. Results will update automatically.
+                        </div>
+                        <div class="progress mb-2">
+                            <div id="scanProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted mb-2">
+                            <span id="portsScanned">0</span>
+                            <span id="scanMethodIndicator"></span>
+                            <span id="totalPorts">0</span>
+                        </div>
+                        <div id="statusMessage" class="text-center mb-4">Initializing scan...</div>
+                    </div>
+                    {% endif %}
+
+                    <div id="scanResults" class="mt-4">
+                        {% if scan_result.status != 'in_progress' %}
+                            {% include 'scanner/port_scanner_results_partial.html' %}
+                        {% else %}
+                            <!-- Scan results will be loaded here dynamically -->
+                            <div class="text-center">
+                                <p>Waiting for scan results...</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Scan Information</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Target:</th>
+                                    <td>{{ scan_result.target.ip_address }} {% if scan_result.target.hostname %}({{ scan_result.target.hostname }}){% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Scan Type:</th>
+                                    <td>{{ scan_result.scan_type|title }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Scan Method:</th>
+                                    <td id="scanMethod">{% if scan_result.status == 'in_progress' %}Determining...{% else %}{% if scan_result.notes and 'Method:' in scan_result.notes %}{{ scan_result.notes|split:'Method:'|last|split:'\n'|first|trim }}{% else %}Unknown{% endif %}{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Port Range:</th>
+                                    <td><code>{{ scan_result.port_range }}</code></td>
+                                </tr>
+                                <tr>
+                                    <th>Start Time:</th>
+                                    <td>{{ scan_result.start_time }}</td>
+                                </tr>
+                                <tr>
+                                    <th>End Time:</th>
+                                    <td>{% if scan_result.end_time %}{{ scan_result.end_time }}{% else %}-{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Duration:</th>
+                                    <td>{% if scan_result.duration %}{{ scan_result.duration }}{% else %}-{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td>
+                                        {% if scan_result.status == 'completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                        {% elif scan_result.status == 'in_progress' %}
+                                        <span class="badge bg-primary">In Progress</span>
+                                        {% elif scan_result.status == 'failed' %}
+                                        <span class="badge bg-danger">Failed</span>
+                                        {% elif scan_result.status == 'cancelled' %}
+                                        <span class="badge bg-warning">Cancelled</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ scan_result.status|title }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Vulnerabilities:</th>
+                                    <td>
+                                        {% if scan_result.target.vulnerabilities.exists %}
+                                        <a href="{% url 'scanner:port_vuln_scan_results' scan_result.id %}" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-shield-alt me-1"></i> View {{ scan_result.target.vulnerabilities.count }} Vulnerabilities
+                                        </a>
+                                        {% elif scan_result.status == 'completed' %}
+                                        <button id="runVulnScanBtn" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-search me-1"></i> Check for Vulnerabilities
+                                        </button>
+                                        {% else %}
+                                        <span class="text-muted">Complete scan to check vulnerabilities</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Summary</h5>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h1 class="display-4 text-center">{{ scan_result.open_ports_count }}</h1>
+                                    <p class="text-center">Open Ports</p>
+
+                                    {% if scan_result.notes %}
+                                    <hr>
+                                    <h6>Notes:</h6>
+                                    <p>{{ scan_result.notes }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5>Open Ports by Service</h5>
+
+                    {% if port_info %}
+                    <div id="servicesAccordion" class="accordion mt-3">
+                        {% for service_name, ports in services %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                                <button class="accordion-button {% if forloop.counter > 1 %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="{% if forloop.counter == 1 %}true{% else %}false{% endif %}" aria-controls="collapse{{ forloop.counter }}">
+                                    <strong>{{ service_name|title }}</strong> <span class="badge bg-primary ms-2">{{ ports|length }}</span>
+                                </button>
+                            </h2>
+                            <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.counter == 1 %}show{% endif %}" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#servicesAccordion">
+                                <div class="accordion-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Port</th>
+                                                    <th>Protocol</th>
+                                                    <th>Service</th>
+                                                    <th>Version</th>
+                                                    <th>Banner</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for port in ports %}
+                                                <tr class="port-row">
+                                                    <td><strong>{{ port.port_number }}</strong></td>
+                                                    <td>{{ port.protocol }}</td>
+                                                    <td>{{ port.service_name }}</td>
+                                                    <td>{{ port.service_version|default:"-" }}</td>
+                                                    <td>
+                                                        {% if port.banner %}
+                                                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#banner{{ port.id }}" aria-expanded="false">
+                                                            Show Banner
+                                                        </button>
+                                                        <div class="collapse mt-2" id="banner{{ port.id }}">
+                                                            <div class="banner-text">{{ port.banner }}</div>
+                                                        </div>
+                                                        {% else %}
+                                                        -
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        {% if scan_result.status == 'in_progress' %}
+                        Waiting for scan results...
+                        {% else %}
+                        No open ports found.
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-1"></i>
+                    Port Distribution
+                </div>
+                <div class="card-body">
+                    <canvas id="portDistributionChart" width="100%" height="50"></canvas>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-shield-alt me-1"></i>
+                    Security Recommendations
+                </div>
+                <div class="card-body">
+                    {% if scan_result.target.vulnerabilities.exists %}
+                    <div class="alert alert-warning mb-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>{{ scan_result.target.vulnerabilities.count }} vulnerabilities</strong> detected for this target.
+                        <a href="{% url 'scanner:port_vuln_scan_results' scan_result.id %}" class="btn btn-sm btn-warning ms-2">
+                            View Vulnerabilities
+                        </a>
+                    </div>
+                    {% endif %}
+                    <ul class="list-group">
+                        {% if port_info %}
+                            {% for port in port_info %}
+                                {% if port.port_number == 21 %}
+                                <li class="list-group-item list-group-item-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    FTP (port 21) is open. Consider using SFTP or FTPS instead for secure file transfers.
+                                </li>
+                                {% endif %}
+                                {% if port.port_number == 23 %}
+                                <li class="list-group-item list-group-item-danger">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    Telnet (port 23) is open. This is an insecure protocol. Use SSH instead.
+                                </li>
+                                {% endif %}
+                                {% if port.port_number == 3389 %}
+                                <li class="list-group-item list-group-item-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    RDP (port 3389) is open. Ensure it's properly secured with strong authentication.
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if scan_result.open_ports_count > 10 %}
+                            <li class="list-group-item list-group-item-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Large number of open ports ({{ scan_result.open_ports_count }}). Consider closing unnecessary services.
+                            </li>
+                            {% endif %}
+                        {% else %}
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle me-2 text-success"></i>
+                                No immediate security concerns identified.
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    $(document).ready(function() {
+        {% if scan_result.status == 'in_progress' %}
+        // Flag to track if we've loaded results
+        let resultsLoaded = false;
+        let lastProgress = 0;
+
+        // Poll for scan status updates
+        function updateScanStatus() {
+            $.ajax({
+                url: '{% url "scanner:scan_status" scan_result.target.id %}',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    // Update progress bar and status message
+                    $('#scanProgress').css('width', data.progress + '%');
+                    $('#statusMessage').text(data.status_message);
+
+                    // Update ports scanned and total ports
+                    if (data.ports_scanned !== undefined && data.total_ports !== undefined) {
+                        $('#portsScanned').text(`Ports scanned: ${data.ports_scanned}`);
+                        $('#totalPorts').text(`Total ports: ${data.total_ports}`);
+                    }
+
+                    // Update scan method if available
+                    if (data.scan_method && data.scan_method !== 'unknown') {
+                        let methodText = '';
+                        let methodBadgeClass = '';
+
+                        if (data.scan_method === 'nmap') {
+                            methodText = 'Nmap (External Tool)';
+                            methodBadgeClass = 'bg-success';
+                        } else if (data.scan_method === 'builtin') {
+                            methodText = 'Built-in Scanner';
+                            methodBadgeClass = 'bg-primary';
+                        } else {
+                            methodText = data.scan_method;
+                            methodBadgeClass = 'bg-secondary';
+                        }
+
+                        $('#scanMethodIndicator').html(`<span class="badge ${methodBadgeClass}">${methodText}</span>`);
+                        $('#scanMethod').text(methodText);
+
+                        // Also update the scan result notes to store this information
+                        if (data.scan_result_id) {
+                            $.ajax({
+                                url: '{% url "scanner:update_scan_notes" %}',
+                                type: 'POST',
+                                data: {
+                                    'scan_id': data.scan_result_id,
+                                    'notes': 'Method: ' + methodText,
+                                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                                },
+                                success: function() {
+                                    console.log('Scan method saved to notes');
+                                }
+                            });
+                        }
+                    }
+
+                    // Log debug info
+                    if (data.debug_info) {
+                        console.log('Debug info:', data.debug_info);
+                    }
+
+                    // Only reload content when progress changes significantly or scan completes
+                    if (data.progress >= 100 || !data.running) {
+                        // Scan completed, load results via AJAX instead of full page reload
+                        console.log('Scan completed or not running. Progress:', data.progress, 'Running:', data.running);
+
+                        // Always load results when scan completes
+                        loadScanResults();
+                        resultsLoaded = true;
+
+                        // If scan is complete, stop polling
+                        if (data.progress >= 100) {
+                            console.log('Scan is complete. Stopping polling.');
+                            return;
+                        }
+                    } else if (Math.abs(data.progress - lastProgress) >= 10) {
+                        // Progress changed by at least 10%, update last progress
+                        console.log('Progress changed significantly:', lastProgress, '->', data.progress);
+                        lastProgress = data.progress;
+
+                        // If we're at least 50% done, start loading partial results
+                        if (data.progress >= 50) {
+                            console.log('Progress >= 50%, loading partial results');
+                            loadScanResults();
+                        }
+                    }
+
+                    // Continue polling if scan is still running
+                    if (data.running) {
+                        setTimeout(updateScanStatus, 2000);
+                    }
+                },
+                error: function() {
+                    // Error occurred, retry after a delay
+                    setTimeout(updateScanStatus, 5000);
+                }
+            });
+        }
+
+        // Function to load scan results via AJAX
+        function loadScanResults() {
+            console.log('Loading scan results via AJAX...');
+            $.ajax({
+                url: '{% url "scanner:port_scanner_results_ajax" scan_result.id %}',
+                type: 'GET',
+                success: function(data) {
+                    console.log('Received scan results data:', data.length > 100 ? data.substring(0, 100) + '...' : data);
+
+                    // Update the results section with the new content
+                    $('#scanResults').html(data);
+
+                    // Initialize any new charts or components
+                    initializeCharts();
+
+                    // If the scan is complete, hide the progress section and show the results
+                    if ($('#scanProgress').css('width') === '100%') {
+                        $('.scan-progress-section').hide();
+                        $('#scanResults').show();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to load scan results:', status, error);
+                    console.error('Response:', xhr.responseText);
+
+                    // If AJAX fails and the scan is complete, reload the page as a fallback
+                    if ($('#scanProgress').css('width') === '100%') {
+                        console.log('AJAX failed and scan is complete. Reloading page as fallback...');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 3000);
+                    }
+                }
+            });
+        }
+
+        // Start polling
+        updateScanStatus();
+        {% endif %}
+
+        // Function to initialize charts
+        function initializeCharts() {
+            var ctx = document.getElementById('portDistributionChart');
+
+            // Only initialize if the element exists and doesn't already have a chart
+            if (ctx && !ctx._chart) {
+                {% if services %}
+                var serviceLabels = [{% for service_name, ports in services %}'{{ service_name|title }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+                var serviceData = [{% for service_name, ports in services %}{{ ports|length }}{% if not forloop.last %}, {% endif %}{% endfor %}];
+                var backgroundColors = [
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 159, 64, 0.7)',
+                    'rgba(199, 199, 199, 0.7)',
+                    'rgba(83, 102, 255, 0.7)',
+                    'rgba(40, 159, 64, 0.7)',
+                    'rgba(210, 199, 199, 0.7)'
+                ];
+
+                ctx._chart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: serviceLabels,
+                        datasets: [{
+                            data: serviceData,
+                            backgroundColor: backgroundColors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Services Distribution'
+                            }
+                        }
+                    }
+                });
+                {% endif %}
+            }
+        }
+
+        // Initialize charts on page load
+        initializeCharts();
+
+        // Handle vulnerability scan button click
+        $('#runVulnScanBtn').on('click', function() {
+            // Disable the button to prevent multiple clicks
+            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Starting scan...');
+
+            // Show a modal or alert to inform the user
+            if (!$('#vulnScanModal').length) {
+                $('body').append(`
+                    <div class="modal fade" id="vulnScanModal" tabindex="-1" aria-labelledby="vulnScanModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="vulnScanModalLabel">Vulnerability Scan</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="progress mb-3">
+                                        <div id="vulnScanProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <div id="vulnScanStatus" class="text-center">Initializing vulnerability scan...</div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            }
+
+            // Show the modal
+            var vulnScanModal = new bootstrap.Modal(document.getElementById('vulnScanModal'));
+            vulnScanModal.show();
+
+            // Start the vulnerability scan
+            $.ajax({
+                url: '{% url "scanner:start_port_vuln_scan" scan_result.id %}',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        // Start polling for scan status
+                        pollVulnScanStatus(data.process_id);
+                    } else {
+                        $('#vulnScanStatus').html(`<div class="alert alert-danger">${data.message}</div>`);
+                        $('#runVulnScanBtn').prop('disabled', false).html('<i class="fas fa-shield-alt me-1"></i> Check Vulnerabilities');
+                    }
+                },
+                error: function() {
+                    $('#vulnScanStatus').html('<div class="alert alert-danger">Failed to start vulnerability scan</div>');
+                    $('#runVulnScanBtn').prop('disabled', false).html('<i class="fas fa-shield-alt me-1"></i> Check Vulnerabilities');
+                }
+            });
+        });
+
+        // Function to poll vulnerability scan status
+        let vulnScanPollCount = 0;
+        let vulnScanLastProgress = 0;
+
+        function pollVulnScanStatus(processId) {
+            // Only poll if the modal is visible to reduce unnecessary requests
+            if (!$('#vulnScanModal').hasClass('show')) {
+                console.log('Vulnerability scan modal closed, stopping polling');
+                return;
+            }
+
+            // Increment poll count
+            vulnScanPollCount++;
+
+            // Determine polling interval based on poll count
+            // Start with frequent polls, then slow down to reduce server load
+            let pollInterval = 2000; // Default 2 seconds
+            if (vulnScanPollCount > 10) {
+                pollInterval = 5000; // After 10 polls, check every 5 seconds
+            }
+
+            $.ajax({
+                url: '{% url "scanner:port_vuln_scan_status" %}',
+                type: 'GET',
+                data: {
+                    'process_id': processId,
+                    'minimal': vulnScanPollCount > 5 && vulnScanPollCount % 5 !== 0 ? 'true' : 'false'
+                },
+                success: function(data) {
+                    // Only update UI if progress has changed significantly (at least 5%)
+                    // or if this is the first few polls, or if scan is complete
+                    const progressChanged = Math.abs(data.progress - vulnScanLastProgress) >= 5;
+                    const isEarlyPoll = vulnScanPollCount <= 5;
+                    const isComplete = data.completed || data.failed;
+
+                    if (progressChanged || isEarlyPoll || isComplete) {
+                        // Update progress and status
+                        $('#vulnScanProgress').css('width', data.progress + '%');
+                        $('#vulnScanStatus').text(data.status_message);
+
+                        // Update last progress
+                        vulnScanLastProgress = data.progress;
+                    }
+
+                    // If scan is complete or failed
+                    if (data.completed || data.failed) {
+                        if (data.completed) {
+                            $('#vulnScanStatus').html(`
+                                <div class="alert alert-success">
+                                    Scan completed successfully. Found ${data.vulnerabilities_found} potential vulnerabilities.
+                                </div>
+                                <p>
+                                    <a href="{% url 'scanner:port_vuln_scan_results' scan_result.id %}" class="btn btn-primary">
+                                        <i class="fas fa-shield-alt me-1"></i> View Vulnerabilities
+                                    </a>
+                                </p>
+                            `);
+
+                            // Add reload button
+                            $('.modal-footer').prepend(`
+                                <button type="button" class="btn btn-primary" onclick="location.reload()">
+                                    <i class="fas fa-sync me-1"></i> Reload Page
+                                </button>
+                            `);
+
+                            // Update the vulnerability count in the UI without reloading
+                            updateVulnerabilityUI(data.vulnerabilities_found);
+                        } else {
+                            $('#vulnScanStatus').html(`<div class="alert alert-danger">Scan failed: ${data.error}</div>`);
+                        }
+
+                        // Re-enable the button
+                        $('#runVulnScanBtn').prop('disabled', false).html('<i class="fas fa-search me-1"></i> Check for Vulnerabilities');
+                    } else {
+                        // Continue polling with adaptive interval
+                        setTimeout(function() {
+                            pollVulnScanStatus(processId);
+                        }, pollInterval);
+                    }
+                },
+                error: function() {
+                    $('#vulnScanStatus').html('<div class="alert alert-danger">Failed to get scan status</div>');
+                    $('#runVulnScanBtn').prop('disabled', false).html('<i class="fas fa-search me-1"></i> Check for Vulnerabilities');
+
+                    // Try again after a longer delay
+                    setTimeout(function() {
+                        pollVulnScanStatus(processId);
+                    }, 5000);
+                }
+            });
+        }
+
+        // Function to update vulnerability UI without page reload
+        function updateVulnerabilityUI(vulnCount) {
+            if (vulnCount > 0) {
+                // Update the vulnerabilities row in the table
+                $('tr:has(th:contains("Vulnerabilities")) td').html(`
+                    <a href="{% url 'scanner:port_vuln_scan_results' scan_result.id %}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-shield-alt me-1"></i> View ${vulnCount} Vulnerabilities
+                    </a>
+                `);
+
+                // Add vulnerability alert to security recommendations if not already there
+                if ($('.alert-warning:contains("vulnerabilities detected")').length === 0) {
+                    $('.card-header:contains("Security Recommendations")').next('.card-body').prepend(`
+                        <div class="alert alert-warning mb-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>${vulnCount} vulnerabilities</strong> detected for this target.
+                            <a href="{% url 'scanner:port_vuln_scan_results' scan_result.id %}" class="btn btn-sm btn-warning ms-2">
+                                View Vulnerabilities
+                            </a>
+                        </div>
+                    `);
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
+from django.db.models import Count, Sum
 import logging
 import html
 
@@ -37,7 +38,7 @@ OS_INFO_SECTIONS = [
     {"id": "running_processes", "name": "Running Processes", "category": "System Information"},
 
     # Software & Updates
-    {"id": "installed_software", "name": "Installed Software", "category": "Software & Updates"},
+    {"id": "installed_software", "name": "Installed Software", "category": "Software & Updates", "has_vuln_scan": True},
     {"id": "installed_hotfixes", "name": "Installed Hotfixes", "category": "Software & Updates"},
     {"id": "windows_updates", "name": "Windows Updates", "category": "Software & Updates"},
 
@@ -76,7 +77,7 @@ def build_request_header(version, req_id, cmd_code, payload_len):
 
 # Import the arp_scan function from network_utils
 from proto.host.network_utils import arp_scan
-from .models import Target, ScanResult, NetworkDevice
+from .models import Target, ScanResult, NetworkDevice, SoftwareVulnerability, SoftwareVulnerabilityScan
 
 @login_required
 def index(request):
@@ -148,6 +149,12 @@ def index(request):
     vendor_labels = list(vendor_counts.keys())
     vendor_data = list(vendor_counts.values())
 
+    # Get security statistics
+    port_scan_count = ScanResult.objects.filter(scan_type__contains="Port Scan").count()
+    network_alert_count = ScanResult.objects.filter(scan_type__contains="Network Alert").count()
+    software_vuln_count = SoftwareVulnerability.objects.count()
+    system_vuln_count = ScanResult.objects.filter(scan_type__contains="Vulnerability").count()
+
     context = {
         'targets': targets,
         'devices': devices,
@@ -165,7 +172,12 @@ def index(request):
         # Summary statistics
         'total_targets': targets.count(),
         'total_devices': devices.count(),
-        'total_scans': scan_results.count()
+        'total_scans': scan_results.count(),
+        # Security statistics
+        'port_scan_count': port_scan_count,
+        'network_alert_count': network_alert_count,
+        'software_vuln_count': software_vuln_count,
+        'system_vuln_count': system_vuln_count
     }
     return render(request, 'scanner/index.html', context)
 
@@ -377,6 +389,45 @@ def get_os_info_section(request, target_id, section_id):
         # Update the target's last scan time
         target.last_scan = timezone.now()
         target.save()
+
+        # Special handling for installed software section
+        if section_id == 'installed_software':
+            try:
+                # Import the software vulnerability scanner
+                from .software_vulnerability_scanner import SoftwareVulnerabilityScanner
+                from .models import InstalledSoftware
+
+                # Create a scanner instance
+                scanner = SoftwareVulnerabilityScanner(target.id)
+
+                # Parse the installed software
+                if "Windows" in result_data:
+                    software_list = scanner._parse_windows_installed_software(result_data)
+                else:
+                    software_list = scanner._parse_linux_installed_software(result_data)
+
+                # Log the number of software items found
+                print(f"Found {len(software_list)} software items for target {target.id}")
+
+                # Save each software item
+                for sw in software_list:
+                    _, created = InstalledSoftware.objects.update_or_create(
+                        target=target,
+                        name=sw['name'],
+                        version=sw.get('version'),
+                        defaults={
+                            'vendor': sw.get('vendor'),
+                            'install_date': sw.get('install_date'),
+                            'install_location': sw.get('install_location'),
+                            'last_checked': timezone.now()
+                        }
+                    )
+                    if created:
+                        print(f"Created new software: {sw['name']} {sw.get('version')}")
+            except Exception as e:
+                print(f"Error parsing installed software: {str(e)}")
+                import traceback
+                print(traceback.format_exc())
 
         # Don't show a success message for every section retrieval
         # This prevents cluttering the UI with too many notifications

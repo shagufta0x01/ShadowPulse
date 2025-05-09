@@ -1,0 +1,475 @@
+{% extends 'scanner/base.html' %}
+{% load scanner_filters %}
+
+{% block title %}Software Vulnerability Scan Results{% endblock %}
+
+{% block page_title %}Software Vulnerability Scan Results{% endblock %}
+
+{% block extra_css %}
+<style>
+    .vuln-card {
+        transition: all 0.3s ease;
+        border-left: 4px solid #ccc;
+    }
+
+    .vuln-card.critical {
+        border-left-color: #dc3545;
+    }
+
+    .vuln-card.high {
+        border-left-color: #fd7e14;
+    }
+
+    .vuln-card.medium {
+        border-left-color: #ffc107;
+    }
+
+    .vuln-card.low {
+        border-left-color: #17a2b8;
+    }
+
+    .vuln-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .severity-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+    }
+
+    .cvss-score {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .vuln-details {
+        color: #333 !important;
+    }
+
+    .vuln-details h6 {
+        color: #000 !important;
+        font-weight: 600;
+    }
+
+    .vuln-details p {
+        color: #333 !important;
+    }
+
+    .bg-light.text-dark,
+    .bg-light.text-dark * {
+        color: #333 !important;
+    }
+
+    .software-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .software-section:last-child {
+        border-bottom: none;
+    }
+
+    .software-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .software-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .software-version {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    .scan-info {
+        font-size: 0.9rem;
+    }
+
+    .scan-info-item {
+        display: flex;
+        margin-bottom: 0.5rem;
+    }
+
+    .scan-info-label {
+        width: 120px;
+        font-weight: 600;
+        opacity: 0.8;
+    }
+
+    .scan-info-value {
+        flex: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Scan Information</h5>
+                <a href="{% url 'scanner:software_vuln_scan_home' %}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Scanner
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="scan-info">
+                            <div class="scan-info-item">
+                                <div class="scan-info-label">Target:</div>
+                                <div class="scan-info-value">{{ scan.target.ip_address }} ({{ scan.target.hostname|default:"Unknown" }})</div>
+                            </div>
+                            <div class="scan-info-item">
+                                <div class="scan-info-label">Scan Date:</div>
+                                <div class="scan-info-value">{{ scan.start_time|date:"F j, Y, g:i a" }}</div>
+                            </div>
+                            <div class="scan-info-item">
+                                <div class="scan-info-label">Duration:</div>
+                                <div class="scan-info-value">
+                                    {% if scan.end_time %}
+                                    {{ scan.end_time|timeuntil:scan.start_time }}
+                                    {% else %}
+                                    In progress
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="scan-info">
+                            <div class="scan-info-item">
+                                <div class="scan-info-label">Status:</div>
+                                <div class="scan-info-value">
+                                    {% if scan.status == 'pending' %}
+                                    <span class="badge bg-secondary">Pending</span>
+                                    {% elif scan.status == 'in_progress' %}
+                                    <span class="badge bg-info">In Progress</span>
+                                    {% elif scan.status == 'completed' %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% elif scan.status == 'failed' %}
+                                    <span class="badge bg-danger">Failed</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ scan.status|title }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="scan-info-item">
+                                <div class="scan-info-label">Software Scanned:</div>
+                                <div class="scan-info-value">{{ scan.total_software }}</div>
+                            </div>
+                            <div class="scan-info-item">
+                                <div class="scan-info-label">Vulnerabilities:</div>
+                                <div class="scan-info-value">
+                                    <span class="badge bg-danger me-1">{{ scan.high_vulnerabilities }} High</span>
+                                    <span class="badge bg-warning text-dark me-1">{{ scan.medium_vulnerabilities }} Medium</span>
+                                    <span class="badge bg-info text-dark">{{ scan.low_vulnerabilities }} Low</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if vulnerabilities %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Detected Vulnerabilities</h5>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-3" id="vulnerabilityTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="by-severity-tab" data-bs-toggle="tab" data-bs-target="#by-severity" type="button" role="tab" aria-controls="by-severity" aria-selected="true">
+                            By Severity
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="by-software-tab" data-bs-toggle="tab" data-bs-target="#by-software" type="button" role="tab" aria-controls="by-software" aria-selected="false">
+                            By Software
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="vulnerabilityTabsContent">
+                    <!-- By Severity Tab -->
+                    <div class="tab-pane fade show active" id="by-severity" role="tabpanel" aria-labelledby="by-severity-tab">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Severity</th>
+                                        <th>Title</th>
+                                        <th>CVE ID</th>
+                                        <th>Affected Software</th>
+                                        <th>CVSS</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for vuln in vulnerabilities %}
+                                    <tr>
+                                        <td>
+                                            {% if vuln.severity == 'critical' %}
+                                            <span class="badge bg-danger severity-badge">Critical</span>
+                                            {% elif vuln.severity == 'high' %}
+                                            <span class="badge bg-danger severity-badge">High</span>
+                                            {% elif vuln.severity == 'medium' %}
+                                            <span class="badge bg-warning text-dark severity-badge">Medium</span>
+                                            {% elif vuln.severity == 'low' %}
+                                            <span class="badge bg-info text-dark severity-badge">Low</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary severity-badge">Unknown</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ vuln.title }}</td>
+                                        <td>
+                                            {% if vuln.cve_id %}
+                                            <a href="https://nvd.nist.gov/vuln/detail/{{ vuln.cve_id }}" target="_blank" class="text-info">
+                                                {{ vuln.cve_id }}
+                                                <i class="fas fa-external-link-alt ms-1 small"></i>
+                                            </a>
+                                            {% else %}
+                                            -
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ vuln.software.name }} {{ vuln.software.version|default:"" }}</td>
+                                        <td>
+                                            {% if vuln.cvss_score > 0 %}
+                                            <span class="cvss-score">{{ vuln.cvss_score }}</span>
+                                            {% else %}
+                                            -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#vuln{{ vuln.id }}" aria-expanded="false" aria-controls="vuln{{ vuln.id }}">
+                                                Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="collapse" id="vuln{{ vuln.id }}">
+                                        <td colspan="6" class="bg-light text-dark">
+                                            <div class="p-3 vuln-details">
+                                                <h6 class="text-dark">Description:</h6>
+                                                <p class="text-dark">{{ vuln.description }}</p>
+
+                                                <h6 class="text-dark">Remediation Steps:</h6>
+                                                <p class="text-dark">{{ vuln.remediation_steps|default:"Update to the latest version of the software." }}</p>
+
+                                                <h6 class="text-dark">Affected Software:</h6>
+                                                <p class="text-dark">{{ vuln.software.name }} {{ vuln.software.version|default:"" }}</p>
+
+                                                {% if vuln.affected_versions %}
+                                                <h6 class="text-dark">Affected Versions:</h6>
+                                                <p class="text-dark">{{ vuln.affected_versions }}</p>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- By Software Tab -->
+                    <div class="tab-pane fade" id="by-software" role="tabpanel" aria-labelledby="by-software-tab">
+                        {% for software_name, vulns in software_vulnerabilities.items %}
+                        <div class="software-section">
+                            <div class="software-header">
+                                <div>
+                                    <span class="software-name">{{ software_name }}</span>
+                                    {% if vulns.0.software.version %}
+                                    <span class="software-version ms-2">({{ vulns.0.software.version }})</span>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <span class="badge bg-danger me-1">{{ software_severity_counts|get_item:software_name|get_item:'high' }} High</span>
+                                    <span class="badge bg-warning text-dark me-1">{{ software_severity_counts|get_item:software_name|get_item:'medium' }} Medium</span>
+                                    <span class="badge bg-info text-dark">{{ software_severity_counts|get_item:software_name|get_item:'low' }} Low</span>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Severity</th>
+                                            <th>Title</th>
+                                            <th>CVE ID</th>
+                                            <th>CVSS</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for vuln in vulns %}
+                                        <tr>
+                                            <td>
+                                                {% if vuln.severity == 'critical' %}
+                                                <span class="badge bg-danger severity-badge">Critical</span>
+                                                {% elif vuln.severity == 'high' %}
+                                                <span class="badge bg-danger severity-badge">High</span>
+                                                {% elif vuln.severity == 'medium' %}
+                                                <span class="badge bg-warning text-dark severity-badge">Medium</span>
+                                                {% elif vuln.severity == 'low' %}
+                                                <span class="badge bg-info text-dark severity-badge">Low</span>
+                                                {% else %}
+                                                <span class="badge bg-secondary severity-badge">Unknown</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ vuln.title }}</td>
+                                            <td>
+                                                {% if vuln.cve_id %}
+                                                <a href="https://nvd.nist.gov/vuln/detail/{{ vuln.cve_id }}" target="_blank" class="text-info">
+                                                    {{ vuln.cve_id }}
+                                                    <i class="fas fa-external-link-alt ms-1 small"></i>
+                                                </a>
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if vuln.cvss_score > 0 %}
+                                                <span class="cvss-score">{{ vuln.cvss_score }}</span>
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#vuln{{ vuln.id }}_sw" aria-expanded="false" aria-controls="vuln{{ vuln.id }}_sw">
+                                                    Details
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr class="collapse" id="vuln{{ vuln.id }}_sw">
+                                            <td colspan="5" class="bg-light text-dark">
+                                                <div class="p-3 vuln-details">
+                                                    <h6 class="text-dark">Description:</h6>
+                                                    <p class="text-dark">{{ vuln.description }}</p>
+
+                                                    <h6 class="text-dark">Remediation Steps:</h6>
+                                                    <p class="text-dark">{{ vuln.remediation_steps|default:"Update to the latest version of the software." }}</p>
+
+                                                    {% if vuln.affected_versions %}
+                                                    <h6 class="text-dark">Affected Versions:</h6>
+                                                    <p class="text-dark">{{ vuln.affected_versions }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {% if scan.status == 'completed' %}
+                    No vulnerabilities were found in the installed software.
+                    {% elif scan.status == 'in_progress' %}
+                    <div>
+                        <p class="mb-2">Scan is in progress. Please wait for it to complete.</p>
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div id="scan-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+                                 role="progressbar" style="width: 0%;"
+                                 aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                        <p id="scan-status-message" class="small text-muted mb-0">Initializing scan...</p>
+                    </div>
+                    {% else %}
+                    No vulnerability data available for this scan.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if scan.status == 'in_progress' %}
+<script>
+    $(document).ready(function() {
+        // Function to update the progress bar
+        function updateProgress() {
+            $.ajax({
+                url: '{% url "scanner:software_vuln_scan_status" %}',
+                type: 'GET',
+                data: {
+                    'process_id': '{{ process_id }}',
+                    'minimal': 'true'
+                },
+                success: function(data) {
+                    // Update progress bar
+                    const progress = data.progress || 0;
+                    $('#scan-progress-bar').css('width', progress + '%');
+                    $('#scan-progress-bar').attr('aria-valuenow', progress);
+                    $('#scan-progress-bar').text(progress + '%');
+
+                    // Update status message
+                    if (data.status_message) {
+                        $('#scan-status-message').text(data.status_message);
+                    }
+
+                    // If scan is complete or failed, reload the page
+                    if (data.completed || data.failed) {
+                        location.reload();
+                    } else {
+                        // Continue polling
+                        setTimeout(updateProgress, 3000);
+                    }
+                },
+                error: function() {
+                    // On error, try again after a longer delay
+                    $('#scan-status-message').text('Error checking status. Retrying...');
+                    setTimeout(updateProgress, 5000);
+                }
+            });
+        }
+
+        // Start polling for progress updates
+        updateProgress();
+
+        // Add auto-refresh functionality
+        let refreshCount = 0;
+        const maxRefreshes = 20; // Maximum number of page refreshes
+
+        function autoRefresh() {
+            refreshCount++;
+            if (refreshCount <= maxRefreshes) {
+                location.reload();
+            }
+        }
+
+        // Set a fallback auto-refresh every 30 seconds
+        // This ensures the page will eventually show results even if the AJAX polling fails
+        setTimeout(autoRefresh, 30000);
+    });
+</script>
+{% endif %}
+{% endblock %}

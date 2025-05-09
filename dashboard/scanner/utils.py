@@ -20,6 +20,111 @@ def format_command_output(output_text, command_name=None):
     if output_text.strip().startswith('<') and ('<table' in output_text or '<div' in output_text):
         return output_text
 
+    # Special handling for installed software section
+    if command_name == "Installed Software":
+        # Add a button to scan for vulnerabilities and view installed software
+        vuln_scan_button = '''
+        <div class="mb-3">
+            <div class="alert alert-info">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Software Management:</strong> View detailed software list or scan for vulnerabilities.
+                    </div>
+                    <div>
+                        <button id="view-software-btn" class="btn btn-info me-2">
+                            <i class="fas fa-list me-2"></i>View All Software
+                        </button>
+                        <button id="scan-software-vulns-btn" class="btn btn-danger">
+                            <i class="fas fa-shield-alt me-2"></i>Scan for Vulnerabilities
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        '''
+
+        # Format the output
+        formatted_output = None
+        if is_table_output(output_text):
+            formatted_output = format_table_output(output_text)
+        elif is_key_value_output(output_text):
+            formatted_output = format_key_value_output(output_text)
+        elif is_list_output(output_text):
+            formatted_output = format_list_output(output_text)
+        else:
+            formatted_output = format_generic_output(output_text)
+
+        # Add the scan button and JavaScript
+        result = vuln_scan_button + formatted_output
+        result += '''
+        <script>
+            $(document).ready(function() {
+                // Get the target ID from the URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const targetId = urlParams.get('target_id');
+
+                // Handle scan button click
+                $("#scan-software-vulns-btn").click(function() {
+                    if (!targetId) {
+                        alert("No target selected. Please select a target first.");
+                        return;
+                    }
+
+                    // Start a vulnerability scan for the target and redirect to results
+                    $.ajax({
+                        url: `/scanner/software-vulnerabilities/start/${targetId}/`,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        success: function(response) {
+                            if (response.scan_id) {
+                                // Redirect to the scan results page
+                                window.location.href = `/scanner/software-vulnerabilities/results/${response.scan_id}/`;
+                            } else {
+                                // Fallback to the main vulnerability scanner page
+                                window.location.href = `/scanner/software-vulnerabilities/`;
+                            }
+                        },
+                        error: function() {
+                            // Fallback to the main vulnerability scanner page
+                            window.location.href = `/scanner/software-vulnerabilities/`;
+                        }
+                    });
+
+                    // Helper function to get CSRF token
+                    function getCookie(name) {
+                        let cookieValue = null;
+                        if (document.cookie && document.cookie !== '') {
+                            const cookies = document.cookie.split(';');
+                            for (let i = 0; i < cookies.length; i++) {
+                                const cookie = cookies[i].trim();
+                                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                });
+
+                // Handle view software button click
+                $("#view-software-btn").click(function() {
+                    if (!targetId) {
+                        alert("No target selected. Please select a target first.");
+                        return;
+                    }
+
+                    // Redirect to the installed software list
+                    window.location.href = `/scanner/installed-software/${targetId}/`;
+                });
+            });
+        </script>
+        '''
+        return result
+
     # Detect the type of output and format accordingly
     if is_table_output(output_text):
         return format_table_output(output_text)

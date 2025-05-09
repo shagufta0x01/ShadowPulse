@@ -1,0 +1,289 @@
+{% extends 'scanner/base.html' %}
+{% load static %}
+
+{% block title %}Port Scanner History{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-card {
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        margin-bottom: 20px;
+    }
+    .scan-badge {
+        font-size: 0.85rem;
+        padding: 5px 10px;
+        border-radius: 20px;
+    }
+    .scan-row:hover {
+        background-color: var(--hover-color);
+        cursor: pointer;
+    }
+    .date-range-picker {
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Port Scanner History</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'scanner:index' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'scanner:port_scanner_home' %}">Port Scanner</a></li>
+        <li class="breadcrumb-item active">History</li>
+    </ol>
+    
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-history me-1"></i>
+                        Scan History
+                    </div>
+                    <div>
+                        <a href="{% url 'scanner:port_scanner_home' %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus me-1"></i>New Scan
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Filters -->
+                    <div class="filter-card p-3 mb-4">
+                        <form method="get" action="{% url 'scanner:port_scanner_history' %}" class="row g-3">
+                            <div class="col-md-3">
+                                <label for="targetFilter" class="form-label">Target</label>
+                                <select class="form-select" id="targetFilter" name="target_id">
+                                    <option value="">All Targets</option>
+                                    {% for target in targets %}
+                                    <option value="{{ target.id }}" {% if selected_target == target.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ target.ip_address }} {% if target.hostname %}({{ target.hostname }}){% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="statusFilter" class="form-label">Status</label>
+                                <select class="form-select" id="statusFilter" name="status">
+                                    <option value="">All Statuses</option>
+                                    <option value="completed" {% if selected_status == 'completed' %}selected{% endif %}>Completed</option>
+                                    <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                    <option value="failed" {% if selected_status == 'failed' %}selected{% endif %}>Failed</option>
+                                    <option value="cancelled" {% if selected_status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="scanTypeFilter" class="form-label">Scan Type</label>
+                                <select class="form-select" id="scanTypeFilter" name="scan_type">
+                                    <option value="">All Types</option>
+                                    <option value="quick" {% if selected_scan_type == 'quick' %}selected{% endif %}>Quick</option>
+                                    <option value="standard" {% if selected_scan_type == 'standard' %}selected{% endif %}>Standard</option>
+                                    <option value="comprehensive" {% if selected_scan_type == 'comprehensive' %}selected{% endif %}>Comprehensive</option>
+                                    <option value="custom" {% if selected_scan_type == 'custom' %}selected{% endif %}>Custom</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-filter me-1"></i>Apply Filters
+                                </button>
+                                <a href="{% url 'scanner:port_scanner_history' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i>Clear
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Scan Results Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Target</th>
+                                    <th>Scan Type</th>
+                                    <th>Port Range</th>
+                                    <th>Start Time</th>
+                                    <th>Duration</th>
+                                    <th>Open Ports</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for scan in page_obj %}
+                                <tr class="scan-row" onclick="window.location='{% url 'scanner:port_scanner_results' scan.id %}'">
+                                    <td>{{ scan.id }}</td>
+                                    <td>{{ scan.target.ip_address }}</td>
+                                    <td>{{ scan.scan_type|title }}</td>
+                                    <td><code>{{ scan.port_range }}</code></td>
+                                    <td>{{ scan.start_time|date:"M d, Y H:i" }}</td>
+                                    <td>{% if scan.duration %}{{ scan.duration }}{% else %}-{% endif %}</td>
+                                    <td>{{ scan.open_ports_count }}</td>
+                                    <td>
+                                        {% if scan.status == 'completed' %}
+                                        <span class="badge bg-success scan-badge">Completed</span>
+                                        {% elif scan.status == 'in_progress' %}
+                                        <span class="badge bg-primary scan-badge">In Progress</span>
+                                        {% elif scan.status == 'failed' %}
+                                        <span class="badge bg-danger scan-badge">Failed</span>
+                                        {% elif scan.status == 'cancelled' %}
+                                        <span class="badge bg-warning scan-badge">Cancelled</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary scan-badge">{{ scan.status|title }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'scanner:port_scanner_results' scan.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        <a class="dropdown-item" href="{% url 'scanner:export_scan_results' scan.id %}?format=json">
+                                                            <i class="fas fa-file-code me-2"></i>Export as JSON
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="{% url 'scanner:export_scan_results' scan.id %}?format=csv">
+                                                            <i class="fas fa-file-csv me-2"></i>Export as CSV
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="{% url 'scanner:export_scan_results' scan.id %}?format=nmap">
+                                                            <i class="fas fa-file-alt me-2"></i>Export as Nmap Format
+                                                        </a>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteScanModal{{ scan.id }}">
+                                                            <i class="fas fa-trash-alt me-2"></i>Delete
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Delete Confirmation Modal -->
+                                        <div class="modal fade" id="deleteScanModal{{ scan.id }}" tabindex="-1" aria-labelledby="deleteScanModalLabel{{ scan.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteScanModalLabel{{ scan.id }}">Confirm Deletion</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you sure you want to delete this scan result? This action cannot be undone.
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <form method="post" action="{% url 'scanner:delete_scan_result' scan.id %}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center">No scan results found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    {% if page_obj.has_other_pages %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-4">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if selected_target %}&target_id={{ selected_target }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_scan_type %}&scan_type={{ selected_scan_type }}{% endif %}" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_target %}&target_id={{ selected_target }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_scan_type %}&scan_type={{ selected_scan_type }}{% endif %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% for i in page_obj.paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ i }}{% if selected_target %}&target_id={{ selected_target }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_scan_type %}&scan_type={{ selected_scan_type }}{% endif %}">{{ i }}</a>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_target %}&target_id={{ selected_target }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_scan_type %}&scan_type={{ selected_scan_type }}{% endif %}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if selected_target %}&target_id={{ selected_target }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_scan_type %}&scan_type={{ selected_scan_type }}{% endif %}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Make entire row clickable except for action buttons
+        $('.scan-row').click(function(event) {
+            // Don't trigger row click if clicking on buttons or links
+            if ($(event.target).closest('a, button, .dropdown-menu').length === 0) {
+                window.location = $(this).data('href');
+            }
+        });
+    });
+</script>
+{% endblock %}

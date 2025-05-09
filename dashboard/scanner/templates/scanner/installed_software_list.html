@@ -1,0 +1,462 @@
+{% extends 'scanner/base.html' %}
+
+{% block title %}Installed Software{% endblock %}
+
+{% block page_title %}Installed Software - {{ target.ip_address }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .software-card {
+        transition: all 0.3s ease;
+    }
+
+    .software-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .software-card.vulnerable {
+        border-left: 4px solid #dc3545;
+    }
+
+    .software-name {
+        font-weight: 600;
+    }
+
+    .software-version {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    .software-vendor {
+        font-size: 0.85rem;
+        opacity: 0.7;
+    }
+
+    .software-date {
+        font-size: 0.8rem;
+        opacity: 0.6;
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+    .search-box .form-control {
+        padding-left: 2.5rem;
+    }
+
+    .search-box .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Target Information</h5>
+                <div>
+                    <a href="{% url 'scanner:target_detail' target.id %}" class="btn btn-sm btn-outline-secondary me-2">
+                        <i class="fas fa-server me-1"></i> Target Details
+                    </a>
+                    <a href="{% url 'scanner:software_vuln_scan_home' %}" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Scanner
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>IP Address:</strong> {{ target.ip_address }}</p>
+                        <p><strong>Hostname:</strong> {{ target.hostname|default:"Unknown" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Total Software:</strong> {{ total_software }}</p>
+                        <p><strong>Vulnerable Software:</strong> {{ vulnerable_software }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Vulnerability Scan</h5>
+            </div>
+            <div class="card-body">
+                <p>Scan the installed software for known security vulnerabilities.</p>
+                <p class="small text-muted mb-3">This will check each software package against vulnerability databases to identify potential security risks.</p>
+
+                {% if software %}
+                <div class="alert alert-success mb-3">
+                    <i class="fas fa-check-circle me-2"></i> <strong>{{ software|length }} software packages</strong> found and ready to scan!
+                </div>
+                <div class="d-grid gap-2">
+                    <button id="scanBtn" class="btn btn-danger" data-target-id="{{ target.id }}">
+                        <i class="fas fa-shield-alt me-1"></i> Start Vulnerability Scan
+                    </button>
+                    <a href="{% url 'scanner:software_vuln_scan_home' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-search me-1"></i> View Previous Scans
+                    </a>
+                </div>
+                {% else %}
+                <div class="alert alert-warning mb-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i> No software packages found yet. Please wait for the software list to load.
+                </div>
+                <div class="d-grid gap-2">
+                    <button id="scanBtn" class="btn btn-danger" data-target-id="{{ target.id }}" disabled>
+                        <i class="fas fa-shield-alt me-1"></i> Start Vulnerability Scan
+                    </button>
+                    <a href="{% url 'scanner:software_vuln_scan_home' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-search me-1"></i> View Previous Scans
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Installed Software</h5>
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="softwareSearch" class="form-control form-control-sm" placeholder="Search software...">
+                </div>
+            </div>
+            <div class="card-body">
+                {% if fetching %}
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5>Fetching installed software...</h5>
+                    <p class="text-muted">This may take a few moments. Please wait.</p>
+                </div>
+                {% elif fetch_error %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i> Error fetching software: {{ fetch_error }}
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'scanner:installed_software_list' target.id %}?refresh=true" class="btn btn-primary">
+                        <i class="fas fa-sync me-1"></i> Try Again
+                    </a>
+                </div>
+                {% elif software and software.exists %}
+                <div class="d-flex justify-content-end mb-3">
+                    <a href="{% url 'scanner:installed_software_list' target.id %}?refresh=true" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-sync me-1"></i> Refresh Software List
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="softwareTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Version</th>
+                                <th>Vendor</th>
+                                <th>Install Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sw in software %}
+                            <tr class="{% if sw.is_vulnerable %}table-danger{% endif %}">
+                                <td>{{ sw.name }}</td>
+                                <td>{{ sw.version|default:"-" }}</td>
+                                <td>{{ sw.vendor|default:"-" }}</td>
+                                <td>{{ sw.install_date|date:"Y-m-d"|default:"-" }}</td>
+                                <td>
+                                    {% if sw.is_vulnerable %}
+                                    <span class="badge bg-danger">Vulnerable</span>
+                                    {% else %}
+                                    <span class="badge bg-success">Secure</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> No software information available for this target.
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Why am I not seeing any software?</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>The software list is retrieved from the agent running on the target machine. There are a few reasons why you might not see any software:</p>
+                        <ol>
+                            <li>The agent hasn't sent the software list yet</li>
+                            <li>The agent is not running on the target</li>
+                            <li>There was an error parsing the software list</li>
+                        </ol>
+
+                        <h6 class="mt-4">What can I do?</h6>
+                        <ol>
+                            <li>Click the "Refresh Software List" button below to try again</li>
+                            <li>Go to the target details page and run an OS Info scan</li>
+                            <li>Select the "Installed Software" section from the OS Info page</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-3">
+                    <a href="{% url 'scanner:installed_software_list' target.id %}?refresh=true" class="btn btn-primary">
+                        <i class="fas fa-sync me-1"></i> Refresh Software List
+                    </a>
+                    <a href="{% url 'scanner:target_detail' target.id %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-server me-1"></i> Go to Target Details
+                    </a>
+                    <a href="{% url 'scanner:os_info' %}?target_id={{ target.id }}" class="btn btn-outline-info">
+                        <i class="fas fa-info-circle me-1"></i> OS Info
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scan Modal -->
+<div class="modal fade" id="scanModal" tabindex="-1" aria-labelledby="scanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scanModalLabel">Software Vulnerability Scan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="scanStatus" class="mb-3">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Preparing to scan for software vulnerabilities...
+                    </div>
+                </div>
+                <div class="progress mb-3">
+                    <div id="scanProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                </div>
+                <div id="scanMessage" class="small text-muted">Initializing scan...</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Handle search
+        $('#softwareSearch').on('keyup', function() {
+            const value = $(this).val().toLowerCase();
+            $('#softwareTable tbody tr').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+        // Handle scan button click
+        $('#scanBtn').click(function() {
+            const targetId = $(this).data('target-id');
+            startScan(targetId);
+        });
+
+        // Auto-refresh if fetching
+        {% if fetching %}
+        setTimeout(function() {
+            window.location.reload();
+        }, 5000); // Refresh after 5 seconds
+        {% endif %}
+    });
+
+    // Function to start a scan
+    function startScan(targetId) {
+        // Show the scan modal
+        const scanModal = new bootstrap.Modal(document.getElementById('scanModal'));
+        scanModal.show();
+
+        // Reset the progress bar and message
+        $('#scanProgress').css('width', '0%');
+        $('#scanMessage').text('Initializing scan...');
+
+        // Start the scan
+        $.ajax({
+            url: `/scanner/software-vulnerabilities/start/${targetId}/`,
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            success: function(data) {
+                if (data.scan_id) {
+                    // Update the modal
+                    $('#scanStatus').html(`
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i> Scan started successfully!
+                        </div>
+                    `);
+
+                    // Add view results button
+                    $('.modal-footer').prepend(`
+                        <a href="/scanner/software-vulnerabilities/results/${data.scan_id}/" class="btn btn-primary">
+                            <i class="fas fa-eye me-1"></i> View Results
+                        </a>
+                    `);
+
+                    // Redirect to results page after a short delay
+                    setTimeout(function() {
+                        window.location.href = `/scanner/software-vulnerabilities/results/${data.scan_id}/`;
+                    }, 2000);
+                } else if (data.status === 'success' && data.process_id) {
+                    // Update the modal
+                    $('#scanStatus').html(`
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i> Scan started successfully!
+                        </div>
+                    `);
+
+                    // Start polling for status
+                    pollScanStatus(data.process_id);
+                } else {
+                    // Show error
+                    $('#scanStatus').html(`
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i> ${data.message || 'Failed to start scan'}
+                        </div>
+                    `);
+                }
+            },
+            error: function() {
+                // Show error
+                $('#scanStatus').html(`
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i> Failed to start scan. Please try again.
+                    </div>
+                `);
+            }
+        });
+    }
+
+    // Function to poll scan status
+    let pollCount = 0;
+    let lastProgress = 0;
+
+    function pollScanStatus(processId) {
+        // Increment poll count
+        pollCount++;
+
+        // Determine polling interval based on poll count
+        let pollInterval = 2000; // Default 2 seconds
+        if (pollCount > 10) {
+            pollInterval = 5000; // After 10 polls, check every 5 seconds
+        }
+
+        $.ajax({
+            url: '{% url "scanner:software_vuln_scan_status" %}',
+            type: 'GET',
+            data: {
+                'process_id': processId,
+                'minimal': pollCount > 5 && pollCount % 5 !== 0 ? 'true' : 'false'
+            },
+            success: function(data) {
+                // Only update UI if progress has changed significantly (at least 5%)
+                // or if this is the first few polls, or if scan is complete
+                const progressChanged = Math.abs(data.progress - lastProgress) >= 5;
+                const isEarlyPoll = pollCount <= 5;
+                const isComplete = data.completed || data.failed;
+
+                if (progressChanged || isEarlyPoll || isComplete) {
+                    // Update progress bar
+                    $('#scanProgress').css('width', data.progress + '%');
+
+                    // Update last progress
+                    lastProgress = data.progress;
+
+                    // Update message if available
+                    if (data.status_message) {
+                        $('#scanMessage').text(data.status_message);
+                    }
+                }
+
+                // If scan is complete or failed
+                if (data.completed || data.failed) {
+                    if (data.completed) {
+                        // Show success message
+                        $('#scanStatus').html(`
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i> Scan completed successfully!
+                            </div>
+                        `);
+
+                        // Add view results button
+                        $('.modal-footer').prepend(`
+                            <a href="/scanner/software-vulnerabilities/results/${data.scan_id}/" class="btn btn-primary">
+                                <i class="fas fa-eye me-1"></i> View Results
+                            </a>
+                        `);
+
+                        // Add reload button
+                        $('.modal-footer').prepend(`
+                            <button type="button" class="btn btn-info" onclick="location.reload()">
+                                <i class="fas fa-sync me-1"></i> Reload Page
+                            </button>
+                        `);
+                    } else {
+                        // Show error message
+                        $('#scanStatus').html(`
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2"></i> Scan failed: ${data.error || 'Unknown error'}
+                            </div>
+                        `);
+                    }
+
+                    // Stop the progress bar animation
+                    $('#scanProgress').removeClass('progress-bar-animated');
+                } else {
+                    // Continue polling
+                    setTimeout(function() {
+                        pollScanStatus(processId);
+                    }, pollInterval);
+                }
+            },
+            error: function() {
+                // Show error
+                $('#scanStatus').html(`
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i> Failed to get scan status. Please try again.
+                    </div>
+                `);
+            }
+        });
+    }
+
+    // Function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

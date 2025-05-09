@@ -256,6 +256,81 @@
     </div>
 </div>
 
+<!-- Security Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card risk-card">
+            <div class="card-body">
+                <div class="risk-type">Port Scan</div>
+                <div class="risk-value">{{ port_scan_count|default:"0" }}</div>
+                <div class="risk-label">Open Ports</div>
+                <div class="risk-icon">
+                    <i class="fas fa-radar"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="{% url 'scanner:port_scanner_home' %}" class="text-white">
+                    <i class="fas fa-search me-1"></i>Scan Ports
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card risk-card">
+            <div class="card-body">
+                <div class="risk-type">Network</div>
+                <div class="risk-value">{{ network_alert_count|default:"0" }}</div>
+                <div class="risk-label">Security Alerts</div>
+                <div class="risk-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="{% url 'scanner:network_alerts' %}" class="text-white">
+                    <i class="fas fa-exclamation-triangle me-1"></i>View Alerts
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card risk-card">
+            <div class="card-body">
+                <div class="risk-type">Software</div>
+                <div class="risk-value">{{ software_vuln_count|default:"0" }}</div>
+                <div class="risk-label">Vulnerabilities</div>
+                <div class="risk-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="{% url 'scanner:software_vuln_scan_home' %}" class="text-white">
+                    <i class="fas fa-shield-alt me-1"></i>Scan Software
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card risk-card">
+            <div class="card-body">
+                <div class="risk-type">System</div>
+                <div class="risk-value">{{ system_vuln_count|default:"0" }}</div>
+                <div class="risk-label">System Issues</div>
+                <div class="risk-icon">
+                    <i class="fas fa-desktop"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="{% url 'scanner:os_info' %}" class="text-white">
+                    <i class="fas fa-search me-1"></i>System Info
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Charts Row -->
 <div class="row mb-4">
     <div class="col-md-6 mb-4">
