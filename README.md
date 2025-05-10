@@ -25,6 +25,10 @@
   - [Target Management](#target-management)
   - [Scanning Operations](#scanning-operations)
   - [Report Generation](#report-generation)
+- [Agent Deployment](#-agent-deployment)
+  - [Building the Agent Executable](#building-the-agent-executable)
+  - [Running the Agent](#running-the-agent)
+  - [Agent Configuration](#agent-configuration)
 - [Technical Documentation](#-technical-documentation)
   - [Agent-Controller Protocol](#agent-controller-protocol)
   - [Database Schema](#database-schema)
@@ -182,22 +186,112 @@ Rex Security Scanner employs a distributed architecture consisting of three main
 7. **Access the dashboard**
    Open your browser and navigate to `http://127.0.0.1:8000/`
 
-#### Agent Deployment
+### Running the Web Application
 
-1. **Build the agent package**
+The ShadowPulse Scanner web application is built with Django and provides a comprehensive interface for security assessment and vulnerability management.
+
+#### Development Mode
+
+1. **Start the Django Development Server**
    ```bash
-   cd agent
-   python setup.py build
+   cd dashboard
+   python manage.py runserver
+   ```
+   This will start the development server on http://127.0.0.1:8000/
+
+2. **Access the Web Interface**
+   - Open your browser and navigate to http://127.0.0.1:8000/
+   - Log in with your administrator account
+   - You'll be redirected to the main dashboard
+
+#### Production Mode
+
+1. **Configure Production Settings**
+   - Copy `.env.example` to `.env` and configure settings
+   - Set `DJANGO_SETTINGS_MODULE=dashboard.settings_prod`
+   - Configure database and other production settings
+
+2. **Using Docker Compose (Recommended)**
+   ```bash
+   docker-compose up -d
+   ```
+   This will start the web server, database, and Redis cache
+
+3. **Manual Production Deployment**
+   ```bash
+   cd dashboard
+   python manage.py collectstatic
+   gunicorn dashboard.wsgi_prod:application
    ```
 
-2. **Deploy to target systems**
-   - Copy the built package to the target system
-   - Install with administrative privileges
-   - Configure the agent to connect to your controller
+4. **Accessing Production Instance**
+   - Configure your web server (Nginx, Apache) to proxy to the Gunicorn instance
+   - Access the application through your configured domain
 
-3. **Verify agent connectivity**
-   - From the dashboard, navigate to Target Management
-   - Confirm the agent appears as "Connected"
+## 🤖 Agent Deployment
+
+The ShadowPulse Scanner uses an agent-based architecture where the agent component runs on target systems and communicates with the central dashboard. The agent can be deployed as either a Python module or a standalone executable.
+
+### Building the Agent Executable
+
+The agent can now be built as a standalone executable, eliminating the need for Python to be installed on target systems.
+
+1. **Using the Build Script**
+   ```bash
+   # Run the build script
+   python build_agent_exe.py
+
+   # Or use the batch file on Windows
+   build_agent.bat
+   ```
+
+2. **What the Build Process Does**
+   - Checks for and installs required dependencies (PyInstaller, scapy, mac_vendor_lookup, wmi)
+   - Creates a temporary entry point script
+   - Packages all necessary files into a single executable
+   - Places the executable in the current directory
+
+3. **Build Requirements**
+   - Python 3.8 or higher
+   - Internet connection (for downloading dependencies)
+   - PyInstaller (installed automatically if missing)
+   - Sufficient disk space (~50-100MB for the build process)
+
+### Running the Agent
+
+1. **Using the Executable**
+   ```bash
+   # Simply run the executable
+   agent_listener.exe
+   ```
+
+2. **Using Python Module (Alternative)**
+   ```bash
+   # Run as a Python module
+   python -m proto.agent.agent_listener
+   ```
+
+3. **Verifying Operation**
+   - The agent will display `[+] Agent listening on 0.0.0.0:23033` when started successfully
+   - The HTTP server will show `[HTTP] Server started on http://0.0.0.0:23033`
+   - The agent is now ready to accept connections from the dashboard
+
+### Agent Configuration
+
+1. **Network Configuration**
+   - The agent listens on port 23033 by default (both TCP socket and HTTP)
+   - Ensure this port is accessible from the dashboard system
+   - Firewall rules may need to be adjusted to allow incoming connections
+
+2. **Security Considerations**
+   - The agent provides access to system information and should only be run on trusted systems
+   - Consider network segmentation to limit access to the agent
+   - The agent does not implement authentication by default; use network security measures
+
+3. **Connecting from Dashboard**
+   - Add the agent's IP address as a target in the dashboard
+   - The dashboard will automatically connect to the agent on port 23033
+   - Verify connectivity by running a basic scan from the dashboard
 
 ### Configuration
 
@@ -221,7 +315,7 @@ Edit `agent/config.ini` on target systems to set:
 
 ### Dashboard Overview
 
-The Rex Security dashboard provides a comprehensive view of your security posture:
+The ShadowPulse Scanner dashboard provides a comprehensive view of your security posture:
 
 1. **Home Dashboard**
    - Security score overview
@@ -234,6 +328,53 @@ The Rex Security dashboard provides a comprehensive view of your security postur
    - Left sidebar menu organizes key functions
    - Top navigation for user settings and global actions
    - Breadcrumb navigation for deep pages
+
+### Web Application Features
+
+The ShadowPulse Scanner web application provides a comprehensive set of security assessment and monitoring features:
+
+#### OS Information
+
+The OS Information module provides detailed information about target systems:
+
+- **System Overview**: Basic system information including OS version, hostname, and architecture
+- **Operating System Details**: Detailed OS configuration and settings
+- **Environment Variables**: System and user environment variables
+- **User Folders**: List of user folders and permissions
+- **Installed Software**: Comprehensive inventory of installed applications
+- **Windows Updates**: Status of installed updates and patches
+- **Audit Policy**: System audit policy configuration
+- **Full System Report**: Generate a complete system report with all sections
+
+#### Network Monitoring
+
+The Network Monitoring module provides real-time network analysis:
+
+- **Network Devices**: Discovery of devices on the network
+- **Traffic Analysis**: Monitoring of network traffic patterns
+- **Connection Tracking**: Active network connections
+- **Security Alerts**: Detection of suspicious network activity
+- **Network Visualization**: Visual representation of network topology
+
+#### Port Scanner
+
+The Port Scanner module provides comprehensive port scanning capabilities:
+
+- **Standard Scan**: Quick scan of common ports
+- **Full Scan**: Comprehensive scan of all ports
+- **Service Detection**: Identification of services running on open ports
+- **Banner Grabbing**: Collection of service banners for fingerprinting
+- **Vulnerability Correlation**: Linking open ports to potential vulnerabilities
+
+#### Vulnerability Management
+
+The Vulnerability Management module identifies and tracks security vulnerabilities:
+
+- **Software Vulnerability Scanning**: Check installed software against known vulnerabilities
+- **System Configuration Analysis**: Identify security misconfigurations
+- **Vulnerability Tracking**: Monitor the status of identified vulnerabilities
+- **Remediation Guidance**: Recommendations for addressing vulnerabilities
+- **Risk Scoring**: Prioritization based on severity and impact
 
 ### Target Management
 
@@ -298,9 +439,58 @@ The Rex Security dashboard provides a comprehensive view of your security postur
 
 ## 📚 Technical Documentation
 
+### How the System Works
+
+ShadowPulse Scanner operates as a client-server system with three main components:
+
+1. **Dashboard (Web Interface)**
+   - Django-based web application that provides the user interface
+   - Manages targets, scans, and results
+   - Visualizes security data and generates reports
+   - Communicates with agents through the host controller
+
+2. **Host Controller**
+   - Manages communication between the dashboard and agents
+   - Sends commands to agents and processes responses
+   - Implements the client side of the ZAMBOT protocol
+   - Located in `proto/host/host_controller.py`
+
+3. **Agent**
+   - Runs on target systems to collect security information
+   - Implements various security assessment modules
+   - Provides both socket and HTTP interfaces
+   - Can be run as Python module or standalone executable
+   - Located in `proto/agent/agent_listener.py`
+
+### Application Flow
+
+1. **User Interaction**
+   - User accesses the dashboard web interface
+   - Adds target systems (IP addresses where agents are running)
+   - Initiates scans or security assessments
+
+2. **Command Execution**
+   - Dashboard sends command to host controller
+   - Host controller formats command using ZAMBOT protocol
+   - Command is sent to the appropriate agent
+   - Agent processes command and returns results
+   - Results are displayed in the dashboard
+
+3. **Data Storage**
+   - Scan results are stored in the database
+   - Vulnerabilities and security issues are tracked
+   - Historical data is maintained for trend analysis
+
 ### Agent-Controller Protocol
 
 The system uses a custom binary protocol (ZAMBOT) for efficient and reliable communication between the controller and agents:
+
+#### Protocol Overview
+
+- **Name**: ZAMBOT Protocol
+- **Transport**: TCP (port 23033 by default)
+- **Format**: Binary with structured header and payload
+- **Features**: Command codes, compression, request IDs
 
 #### Packet Structure
 
@@ -454,32 +644,56 @@ Rex provides a RESTful API for integration with other security tools:
 ### Project Structure
 
 ```
-rex-security/
-├── agent/                  # Agent component
-│   ├── modules/            # Security assessment modules
-│   ├── core/               # Core agent functionality
-│   └── utils/              # Utility functions
-├── dashboard/              # Web dashboard
+vuln_scanner/
+├── dashboard/              # Web dashboard (Django project)
+│   ├── dashboard/          # Django project settings
+│   │   ├── settings.py     # Development settings
+│   │   ├── settings_prod.py # Production settings
+│   │   ├── urls.py         # Main URL routing
+│   │   ├── wsgi.py         # WSGI configuration
+│   │   └── asgi.py         # ASGI configuration
 │   ├── scanner/            # Main application
 │   │   ├── templates/      # HTML templates
-│   │   ├── static/         # Static assets
-│   │   ├── models.py       # Data models
-│   │   ├── views.py        # View controllers
-│   │   └── urls.py         # URL routing
-│   └── dashboard/          # Project settings
-├── proto/                  # Protocol definitions
-│   ├── host/               # Controller-side protocol
-│   └── agent/              # Agent-side protocol
+│   │   │   ├── scanner/    # Application templates
+│   │   │   └── ...         # Various page templates
+│   │   ├── static/         # Static assets (CSS, JS, images)
+│   │   ├── models.py       # Database models
+│   │   ├── views.py        # Main view controllers
+│   │   ├── views_monitoring.py # Network monitoring views
+│   │   ├── views_port_scanner.py # Port scanning views
+│   │   ├── views_software_vuln_scanner.py # Vulnerability scanning views
+│   │   ├── urls.py         # Application URL routing
+│   │   ├── network_monitor.py # Network monitoring functionality
+│   │   ├── software_vulnerability_scanner.py # Vulnerability scanning logic
+│   │   └── ...             # Other application files
+│   ├── manage.py           # Django management script
+│   └── requirements.txt    # Python dependencies for dashboard
+├── proto/                  # Protocol and agent implementation
+│   ├── pro/                # Protocol definitions
+│   │   └── protocol.py     # ZAMBOT protocol constants and structures
+│   ├── host/               # Host/controller side implementation
+│   │   ├── host_controller.py # Main controller implementation
+│   │   ├── utils.py        # Utility functions for host
+│   │   └── network_utils.py # Network utilities
+│   ├── agent/              # Agent implementation
+│   │   ├── agent_listener.py # Main agent listener implementation
+│   │   ├── handlers.py     # Command handlers for agent
+│   │   ├── http_handler.py # HTTP server implementation
+│   │   ├── utils.py        # Utility functions for agent
+│   │   ├── vulnerability_scanner.py # Vulnerability scanning functionality
+│   │   └── static/         # Static files for agent HTTP server
+│   └── run.md              # Instructions for running agent and host
 ├── docs/                   # Documentation
-│   ├── images/             # Documentation images
-│   ├── api/                # API documentation
-│   └── user-guide/         # User guides
-├── tests/                  # Test suite
-│   ├── unit/               # Unit tests
-│   └── integration/        # Integration tests
-├── requirements.txt        # Python dependencies
-├── setup.py                # Installation script
-└── README.md               # Project overview
+│   └── images/             # Documentation images
+├── scanner/                # Additional scanner functionality
+│   └── vulnerability_db/   # Vulnerability database files
+├── build_agent_exe.py      # Script to build agent executable
+├── build_agent.bat         # Batch file to run build script on Windows
+├── agent_listener.exe      # Compiled agent executable (after build)
+├── AGENT_README.md         # Documentation for agent executable
+├── docker-compose.yml      # Docker configuration for production
+├── .env.example            # Example environment variables
+└── README.md               # Project overview and documentation
 ```
 
 ### Contributing Guidelines
@@ -560,6 +774,41 @@ rex-security/
 
 3. **Scan Failures**
    - Ensure target system is accessible
+   - Verify agent has necessary permissions
+   - Check for antivirus/security software blocking scans
+   - Review scan timeout settings for complex scans
+
+4. **Agent Executable Issues**
+   - If the agent executable fails to start, check for missing dependencies
+   - Some antivirus software may flag the executable; add an exception
+   - Ensure the executable has appropriate permissions
+   - Try running as administrator if access issues occur
+   - If the executable crashes, check the logs for error messages
+
+### Diagnostic Steps
+
+1. **Checking Agent Status**
+   ```bash
+   # Check if agent is running
+   netstat -ano | findstr 23033
+
+   # View agent logs
+   # Logs are printed to console when running the executable
+   ```
+
+2. **Testing Dashboard-Agent Communication**
+   ```bash
+   # From the dashboard server
+   telnet <agent-ip> 23033
+
+   # Or use the test connection utility
+   python -m proto.host.host_controller --target <agent-ip> --command 1
+   ```
+
+3. **Debugging the Agent Executable**
+   - Run the executable from command prompt to see console output
+   - Look for error messages during startup
+   - Verify all required files are present in the executable directory
    - Verify agent has sufficient permissions
    - Check for resource constraints
    - Review scan logs for specific errors
@@ -582,5 +831,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Bootstrap](https://getbootstrap.com/) - Frontend component library
 - [Font Awesome](https://fontawesome.com/) - Icon set
 - [Scapy](https://scapy.net/) - Packet manipulation library
-- All contributors who have helped improve Rex Security Scanner
-
+- [PyInstaller](https://pyinstaller.org/) - Used for creating standalone executables
+- [WMI](https://pypi.org/project/WMI/) - Windows Management Instrumentation for Python
+- [mac-vendor-lookup](https://pypi.org/project/mac-vendor-lookup/) - MAC address vendor lookup
+- All contributors who have helped improve ShadowPulse Scanner
