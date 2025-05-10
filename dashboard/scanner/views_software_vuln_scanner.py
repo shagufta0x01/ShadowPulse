@@ -4,8 +4,9 @@ Views for software vulnerability scanning functionality.
 
 import logging
 import time
+import csv
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
@@ -503,3 +504,40 @@ def software_vulnerability_detail(request, vuln_id):
     }
 
     return render(request, 'scanner/software_vulnerability_detail.html', context)
+
+@login_required
+def export_installed_software_csv(request, target_id):
+    """
+    Export the installed software list as a CSV file.
+    """
+    # Get the target
+    target = get_object_or_404(Target, id=target_id)
+
+    # Get installed software
+    software = InstalledSoftware.objects.filter(target=target).order_by('name')
+
+    # Create the HttpResponse object with CSV header
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="installed_software_{target.ip_address}_{timezone.now().strftime("%Y%m%d_%H%M%S")}.csv"'
+
+    # Create CSV writer
+    writer = csv.writer(response)
+
+    # Write header row
+    writer.writerow(['Name', 'Version', 'Vendor', 'Install Date', 'Install Location', 'Last Checked', 'Vulnerable'])
+
+    # Write data rows
+    for sw in software:
+        writer.writerow([
+            sw.name,
+            sw.version or '',
+            sw.vendor or '',
+            sw.install_date.strftime('%Y-%m-%d') if sw.install_date else '',
+            sw.install_location or '',
+            sw.last_checked.strftime('%Y-%m-%d %H:%M:%S') if sw.last_checked else '',
+            'Yes' if sw.is_vulnerable else 'No'
+        ])
+
+    logger.info(f"Exported {software.count()} software items as CSV for target {target.ip_address}")
+
+    return response

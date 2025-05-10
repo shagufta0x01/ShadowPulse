@@ -7346,3 +7346,1227 @@ WARNING 2025-05-10 04:51:03,328 state_manager Process network_monitor_2025-05-09
 WARNING 2025-05-10 04:51:03,666 network_monitor Network alert: Possible port scan from 35.190.75.54: 47 ports in short period
 WARNING 2025-05-10 04:51:03,978 network_monitor Network alert: Large data transfer to external IP 35.190.75.54: 7.33 MB
 INFO 2025-05-10 04:51:39,463 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 04:53:16,295 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 04:53:16,955 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 04:53:33,187 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 04:53:33,730 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 79060
+INFO 2025-05-10 04:53:33,981 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 69
+INFO 2025-05-10 04:53:41,637 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 04:53:42,082 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 79060
+INFO 2025-05-10 04:53:42,335 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 69
+INFO 2025-05-10 04:53:46,159 basehttp "GET /scanner/vulnerabilities/checkup/9/ HTTP/1.1" 200 70153
+INFO 2025-05-10 04:54:43,830 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 04:55:44,687 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 04:56:44,545 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 04:57:46,764 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:32:13,398 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:32:20,953 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:32:29,173 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:32:31,884 basehttp "GET / HTTP/1.1" 302 0
+WARNING 2025-05-10 05:32:32,279 log Not Found: /scanner/installed-software/1/
+INFO 2025-05-10 05:32:32,363 basehttp - Broken pipe from ('127.0.0.1', 2345)
+INFO 2025-05-10 05:32:32,992 basehttp "GET /scanner/ HTTP/1.1" 200 91335
+INFO 2025-05-10 05:32:40,542 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 127238
+INFO 2025-05-10 05:32:45,588 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:32:46,333 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 05:32:48,084 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:32:48,085 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:32:48,085 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 05:32:48,291 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+INFO 2025-05-10 05:32:51,045 software_vulnerability_scanner Starting vulnerability scan for target 3
+INFO 2025-05-10 05:32:51,479 software_vulnerability_scanner Updated existing scan record with ID 9
+INFO 2025-05-10 05:32:51,479 software_vulnerability_scanner Registering process software_vuln_scan_9 with state manager
+INFO 2025-05-10 05:32:51,479 state_manager Registered process software_vuln_scan_9 of type software
+INFO 2025-05-10 05:32:51,480 software_vulnerability_scanner Stored scanner in registry with ID 9
+INFO 2025-05-10 05:32:51,480 software_vulnerability_scanner Getting installed software for target 3
+INFO 2025-05-10 05:32:51,480 software_vulnerability_scanner Started scan thread for scan ID 9
+INFO 2025-05-10 05:32:52,255 basehttp "POST /scanner/software-vulnerabilities/start/3/ HTTP/1.1" 200 152
+INFO 2025-05-10 05:32:52,378 software_vulnerability_scanner Found dedicated installed software scan (ID: 1096)
+INFO 2025-05-10 05:32:52,379 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:32:52,379 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:32:52,379 software_vulnerability_scanner Trying to parse table format
+WARNING 2025-05-10 05:32:52,380 software_vulnerability_scanner No installed software found for target 3
+INFO 2025-05-10 05:32:53,540 basehttp "GET /scanner/software-vulnerabilities/results/9/ HTTP/1.1" 200 61062
+INFO 2025-05-10 05:32:53,834 basehttp "GET /scanner/software-vulnerabilities/status/?process_id=software_vuln_scan_9&minimal=true HTTP/1.1" 200 179
+INFO 2025-05-10 05:32:54,462 basehttp "GET /scanner/software-vulnerabilities/results/9/ HTTP/1.1" 200 58323
+INFO 2025-05-10 05:33:01,755 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:33:53,276 state_manager Unregistered process software_vuln_scan_9
+INFO 2025-05-10 05:34:01,540 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:34:37,986 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\software_vulnerability_scanner.py changed, reloading.
+INFO 2025-05-10 05:34:39,331 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:34:40,185 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:34:58,178 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:35:01,522 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:35:21,658 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\software_vulnerability_scanner.py changed, reloading.
+INFO 2025-05-10 05:35:22,395 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:35:23,128 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:35:58,175 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:36:00,843 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 05:36:03,622 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\software_vulnerability_scanner.py changed, reloading.
+INFO 2025-05-10 05:36:04,363 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:36:05,173 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:36:20,173 state_manager Restored process port_scan_10 from session
+WARNING 2025-05-10 05:36:20,832 log Not Found: /scanner/installed-software/1/
+WARNING 2025-05-10 05:36:20,833 basehttp "GET /scanner/installed-software/1/ HTTP/1.1" 404 14260
+INFO 2025-05-10 05:36:46,332 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:36:47,238 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:36:50,879 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:36:51,457 basehttp "GET /scanner/software-vulnerabilities/results/9/ HTTP/1.1" 200 58323
+INFO 2025-05-10 05:36:57,137 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 127238
+INFO 2025-05-10 05:37:00,699 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:37:02,060 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 05:37:03,034 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:37:03,035 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:37:03,035 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 05:37:03,475 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+INFO 2025-05-10 05:37:04,004 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:37:05,006 software_vulnerability_scanner Starting vulnerability scan for target 3
+INFO 2025-05-10 05:37:05,532 software_vulnerability_scanner Updated existing scan record with ID 10
+INFO 2025-05-10 05:37:05,534 software_vulnerability_scanner Registering process software_vuln_scan_10 with state manager
+INFO 2025-05-10 05:37:05,534 state_manager Registered process software_vuln_scan_10 of type software
+INFO 2025-05-10 05:37:05,534 software_vulnerability_scanner Stored scanner in registry with ID 10
+INFO 2025-05-10 05:37:05,534 software_vulnerability_scanner Getting installed software for target 3
+INFO 2025-05-10 05:37:05,534 software_vulnerability_scanner Started scan thread for scan ID 10
+INFO 2025-05-10 05:37:06,038 basehttp "POST /scanner/software-vulnerabilities/start/3/ HTTP/1.1" 200 154
+INFO 2025-05-10 05:37:06,064 software_vulnerability_scanner Found dedicated installed software scan (ID: 1104)
+INFO 2025-05-10 05:37:06,064 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:37:06,065 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:37:06,065 software_vulnerability_scanner Trying to parse table format
+WARNING 2025-05-10 05:37:06,065 software_vulnerability_scanner No installed software found for target 3
+INFO 2025-05-10 05:37:06,329 basehttp "GET /scanner/software-vulnerabilities/results/10/ HTTP/1.1" 200 61063
+INFO 2025-05-10 05:37:06,888 basehttp "GET /scanner/software-vulnerabilities/status/?process_id=software_vuln_scan_10&minimal=true HTTP/1.1" 200 180
+INFO 2025-05-10 05:37:07,124 basehttp "GET /scanner/software-vulnerabilities/results/10/ HTTP/1.1" 200 58323
+INFO 2025-05-10 05:37:27,605 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 79060
+INFO 2025-05-10 05:37:27,832 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 69
+INFO 2025-05-10 05:37:31,809 state_manager Registered process vulnerability_scan_14 of type {'checkup_id': 14, 'target_id': '3', 'scan_type': 'standard'}
+ERROR 2025-05-10 05:37:31,810 vulnerability_scanner Error during vulnerability scan: 'str' object has no attribute 'update'
+INFO 2025-05-10 05:37:31,810 state_manager Registered thread for process vulnerability_scan_14
+INFO 2025-05-10 05:37:33,016 basehttp "POST /scanner/vulnerabilities/start-scan/ HTTP/1.1" 302 0
+INFO 2025-05-10 05:37:34,781 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 79194
+INFO 2025-05-10 05:37:35,064 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 152
+INFO 2025-05-10 05:38:01,534 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 05:38:06,598 state_manager Unregistered process software_vuln_scan_10
+INFO 2025-05-10 05:38:33,844 state_manager Unregistered process vulnerability_scan_14
+INFO 2025-05-10 05:38:36,593 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\state_manager.py changed, reloading.
+INFO 2025-05-10 05:38:37,433 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:38:38,337 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:38:52,065 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\state_manager.py changed, reloading.
+INFO 2025-05-10 05:38:52,835 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:38:53,572 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:38:58,175 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:39:00,657 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:39:28,571 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 78727
+INFO 2025-05-10 05:39:29,012 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 69
+INFO 2025-05-10 05:40:01,536 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:40:14,056 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 78727
+INFO 2025-05-10 05:40:14,732 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 69
+INFO 2025-05-10 05:40:20,577 state_manager Registered process vulnerability_scan_15 of type vulnerability_scan
+INFO 2025-05-10 05:40:20,577 state_manager Registered thread for process vulnerability_scan_15
+INFO 2025-05-10 05:40:20,730 vulnerability_scanner Sending vulnerability scan command to agent at 192.168.29.244
+INFO 2025-05-10 05:40:20,730 vulnerability_scanner Scan type: quick
+INFO 2025-05-10 05:40:20,730 vulnerability_scanner Command code: 80 (0x50)
+INFO 2025-05-10 05:40:21,150 basehttp "POST /scanner/vulnerabilities/start-scan/ HTTP/1.1" 302 0
+INFO 2025-05-10 05:40:21,649 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 79197
+INFO 2025-05-10 05:40:22,060 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:40:22,466 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:40:26,053 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:40:26,309 vulnerability_scanner Response received from agent (length: 1335)
+INFO 2025-05-10 05:40:26,309 vulnerability_scanner Response preview: {
+  "status": "completed",
+  "scan_type": "quick",
+  "start_time": "2025-05-10T05:40:20.735024",
+  "...
+INFO 2025-05-10 05:40:26,310 vulnerability_scanner Response was already a string
+INFO 2025-05-10 05:40:26,310 vulnerability_scanner Response preview for JSON parsing: {
+  "status": "completed",
+  "scan_type": "quick",
+  "start_time": "2025-05-10T05:40:20.735024",
+  "end_time": "2025-05-10T05:40:26.307769",
+  "duration": "0:00:05.572745",
+  "total_vulnerabilities": ...
+INFO 2025-05-10 05:40:26,310 vulnerability_scanner Successfully parsed JSON response
+INFO 2025-05-10 05:40:29,478 vulnerability_scanner Vulnerability scan completed successfully. Found 2 vulnerabilities.
+INFO 2025-05-10 05:40:30,250 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 131
+INFO 2025-05-10 05:40:31,121 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 79059
+INFO 2025-05-10 05:40:31,410 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 131
+INFO 2025-05-10 05:40:40,693 state_manager Registered process vulnerability_scan_16 of type vulnerability_scan
+INFO 2025-05-10 05:40:40,694 state_manager Registered thread for process vulnerability_scan_16
+INFO 2025-05-10 05:40:40,698 vulnerability_scanner Sending vulnerability scan command to agent at 192.168.29.244
+INFO 2025-05-10 05:40:40,698 vulnerability_scanner Scan type: standard
+INFO 2025-05-10 05:40:40,698 vulnerability_scanner Command code: 80 (0x50)
+INFO 2025-05-10 05:40:40,926 basehttp "POST /scanner/vulnerabilities/start-scan/ HTTP/1.1" 302 0
+INFO 2025-05-10 05:40:41,234 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 79526
+INFO 2025-05-10 05:40:41,453 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:40:41,679 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:40:45,492 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:40:48,064 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:40:50,757 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:40:54,365 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:40:57,246 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:40:59,964 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:41:01,581 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:41:02,895 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:41:05,767 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:41:08,799 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+ERROR 2025-05-10 05:41:10,704 vulnerability_scanner No response received from agent
+ERROR 2025-05-10 05:41:10,704 vulnerability_scanner No response received from agent at 192.168.29.244
+ERROR 2025-05-10 05:41:10,704 vulnerability_scanner Error during vulnerability scan: Failed to connect to agent at 192.168.29.244: No response received
+INFO 2025-05-10 05:41:12,138 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 181
+INFO 2025-05-10 05:41:12,667 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 79053
+INFO 2025-05-10 05:41:13,103 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 181
+INFO 2025-05-10 05:41:29,971 state_manager Unregistered process vulnerability_scan_15
+INFO 2025-05-10 05:41:55,113 state_manager Registered process vulnerability_scan_17 of type vulnerability_scan
+INFO 2025-05-10 05:41:55,114 state_manager Registered thread for process vulnerability_scan_17
+INFO 2025-05-10 05:41:55,115 vulnerability_scanner Sending vulnerability scan command to agent at 192.168.29.244
+INFO 2025-05-10 05:41:55,116 vulnerability_scanner Scan type: standard
+INFO 2025-05-10 05:41:55,116 vulnerability_scanner Command code: 80 (0x50)
+INFO 2025-05-10 05:41:55,576 basehttp "POST /scanner/vulnerabilities/start-scan/ HTTP/1.1" 302 0
+INFO 2025-05-10 05:41:55,905 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 79194
+INFO 2025-05-10 05:41:56,220 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:41:56,450 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:41:59,844 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:42:01,215 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:42:02,953 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:42:05,545 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:42:09,373 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:42:11,253 state_manager Unregistered process vulnerability_scan_16
+INFO 2025-05-10 05:42:11,540 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:42:14,983 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 05:42:15,841 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views_software_vuln_scanner.py changed, reloading.
+INFO 2025-05-10 05:42:16,764 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:42:17,530 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:42:17,742 state_manager Restored process vulnerability_scan_17 from session
+INFO 2025-05-10 05:42:17,742 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:42:18,035 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 69
+INFO 2025-05-10 05:42:32,262 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views_software_vuln_scanner.py changed, reloading.
+INFO 2025-05-10 05:42:33,035 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:42:33,936 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:42:57,446 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\urls.py changed, reloading.
+INFO 2025-05-10 05:42:58,350 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:42:59,130 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:42:59,450 state_manager Restored process vulnerability_scan_17 from session
+INFO 2025-05-10 05:42:59,450 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:43:03,088 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+WARNING 2025-05-10 05:43:43,653 log Not Found: /scanner/installed-software/1/
+WARNING 2025-05-10 05:43:43,654 basehttp "GET /scanner/installed-software/1/ HTTP/1.1" 404 14520
+ERROR 2025-05-10 05:44:15,146 log Internal Server Error: /scanner/target/3/section/system_overview/
+ERROR 2025-05-10 05:44:15,147 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 500 72
+WARNING 2025-05-10 05:44:21,729 log Not Found: /scanner/installed-software/1/
+WARNING 2025-05-10 05:44:21,729 basehttp "GET /scanner/installed-software/1/ HTTP/1.1" 404 14520
+INFO 2025-05-10 05:44:25,354 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 127238
+INFO 2025-05-10 05:44:28,652 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8186
+INFO 2025-05-10 05:44:30,741 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 05:44:31,436 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:44:31,436 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:44:31,436 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 05:44:31,743 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+INFO 2025-05-10 05:44:58,525 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:45:02,695 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:45:28,907 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:45:43,955 views_software_vuln_scanner Connection attempt 1 for 192.168.29.244
+INFO 2025-05-10 05:45:44,938 views_software_vuln_scanner Response is compressed. Expecting 10796 bytes of compressed data.
+INFO 2025-05-10 05:45:44,939 views_software_vuln_scanner Receiving 10796 bytes from 192.168.29.244 for installed software
+INFO 2025-05-10 05:45:44,960 views_software_vuln_scanner Progress: 37% - Received 4096 of 10796 bytes
+INFO 2025-05-10 05:45:45,001 views_software_vuln_scanner Progress: 75% - Received 8192 of 10796 bytes
+INFO 2025-05-10 05:45:45,042 views_software_vuln_scanner Progress: 100% - Received 10796 of 10796 bytes
+INFO 2025-05-10 05:45:45,042 views_software_vuln_scanner Decompressing 10796 bytes of data
+INFO 2025-05-10 05:45:45,043 views_software_vuln_scanner Decompressed to 245346 bytes
+INFO 2025-05-10 05:45:49,552 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:45:49,552 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:45:49,553 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 05:45:49,553 views_software_vuln_scanner Parsed 0 software items from scan result
+INFO 2025-05-10 05:45:49,553 views_software_vuln_scanner Successfully fetched installed software for target 3
+INFO 2025-05-10 05:45:49,554 views_software_vuln_scanner Found 0 software items in database
+INFO 2025-05-10 05:45:50,449 basehttp "GET /scanner/installed-software/3/ HTTP/1.1" 200 68227
+INFO 2025-05-10 05:45:55,659 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-10 05:45:56,577 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:45:57,544 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:45:57,724 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:45:59,050 basehttp "GET /scanner/target/3/ HTTP/1.1" 200 64435
+INFO 2025-05-10 05:46:01,765 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:46:04,405 basehttp "GET /scanner/port-scanner/ HTTP/1.1" 200 75808
+INFO 2025-05-10 05:46:06,212 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-10 05:46:08,281 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:46:09,056 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:46:13,558 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:46:14,789 basehttp "GET /scanner/ HTTP/1.1" 200 91353
+INFO 2025-05-10 05:46:19,545 basehttp "POST /scanner/target/add/ HTTP/1.1" 302 0
+INFO 2025-05-10 05:46:19,976 basehttp "GET /scanner/target/9/ HTTP/1.1" 200 61661
+INFO 2025-05-10 05:46:22,171 basehttp "GET /scanner/port-scanner/ HTTP/1.1" 200 75914
+INFO 2025-05-10 05:46:22,301 views_port_scanner Nmap found and working: D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:46:22,331 views_port_scanner python-nmap library found
+INFO 2025-05-10 05:46:22,918 basehttp "GET /scanner/port-scanner/check-nmap/ HTTP/1.1" 200 101
+INFO 2025-05-10 05:46:26,720 state_manager Registered process port_scan_11 of type port_scan
+INFO 2025-05-10 05:46:26,721 state_manager Registered thread for process port_scan_11
+INFO 2025-05-10 05:46:26,767 port_scanner Starting nmap scan of 192.168.29.1 with port range 1-1024
+ERROR 2025-05-10 05:46:26,769 port_scanner Error during nmap scan: Xml output can't be redirected from command line.
+You can access it after a scan using:
+nmap.nm.get_nmap_last_output()
+INFO 2025-05-10 05:46:27,631 basehttp "POST /scanner/port-scanner/start/ HTTP/1.1" 302 0
+INFO 2025-05-10 05:46:28,234 basehttp "GET /scanner/port-scanner/results/11/ HTTP/1.1" 200 77400
+INFO 2025-05-10 05:46:28,522 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 348
+INFO 2025-05-10 05:46:29,265 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:46:31,104 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 348
+INFO 2025-05-10 05:46:32,057 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:46:33,527 basehttp "GET /scanner/port-scanner/ HTTP/1.1" 200 75900
+INFO 2025-05-10 05:46:34,033 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 348
+INFO 2025-05-10 05:46:34,106 views_port_scanner Nmap found and working: D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:46:34,106 views_port_scanner python-nmap library found
+INFO 2025-05-10 05:46:34,696 basehttp "GET /scanner/port-scanner/check-nmap/ HTTP/1.1" 200 101
+INFO 2025-05-10 05:46:40,077 state_manager Registered process port_scan_12 of type port_scan
+INFO 2025-05-10 05:46:40,077 state_manager Registered thread for process port_scan_12
+INFO 2025-05-10 05:46:40,123 port_scanner Starting nmap scan of 192.168.29.1 with port range 1-65535
+ERROR 2025-05-10 05:46:40,125 port_scanner Error during nmap scan: Xml output can't be redirected from command line.
+You can access it after a scan using:
+nmap.nm.get_nmap_last_output()
+INFO 2025-05-10 05:46:40,695 basehttp "POST /scanner/port-scanner/start/ HTTP/1.1" 302 0
+INFO 2025-05-10 05:46:41,352 basehttp "GET /scanner/port-scanner/results/12/ HTTP/1.1" 200 77406
+INFO 2025-05-10 05:46:42,031 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 348
+INFO 2025-05-10 05:46:42,670 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:46:44,951 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 348
+INFO 2025-05-10 05:46:46,476 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:46:47,560 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 348
+INFO 2025-05-10 05:46:48,095 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:46:50,293 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:46:51,267 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:46:53,005 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:46:53,563 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:46:55,704 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:46:56,833 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:46:58,320 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:46:59,376 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:00,802 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:47:01,483 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:02,211 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:47:03,108 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:47:03,991 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:05,432 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:47:05,907 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:08,445 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:47:09,290 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:10,732 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:47:11,443 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:14,005 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:47:15,248 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:16,564 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:47:17,649 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:18,930 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:47:19,619 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:21,502 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:47:22,381 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:24,366 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 350
+INFO 2025-05-10 05:47:24,929 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:26,510 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-10 05:47:27,420 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:47:28,275 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:47:28,424 state_manager Restored process port_scan_11 from session
+INFO 2025-05-10 05:47:28,426 state_manager Restored process port_scan_12 from session
+INFO 2025-05-10 05:47:28,426 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:47:28,703 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 352
+INFO 2025-05-10 05:47:29,569 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:47:29,944 basehttp "GET /scanner/port-scanner/results/12/ajax/ HTTP/1.1" 200 307
+INFO 2025-05-10 05:47:38,856 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\urls.py changed, reloading.
+INFO 2025-05-10 05:47:39,601 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:47:40,596 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:47:58,177 state_manager Restored process port_scan_11 from session
+INFO 2025-05-10 05:47:58,177 state_manager Restored process port_scan_12 from session
+INFO 2025-05-10 05:47:58,178 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:48:01,169 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:48:51,572 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 128551
+INFO 2025-05-10 05:48:55,712 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:48:57,221 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 05:48:59,345 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:48:59,345 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:48:59,345 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 05:48:59,642 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+INFO 2025-05-10 05:49:01,567 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-10 05:49:03,550 views_software_vuln_scanner Connection attempt 1 for 192.168.29.244
+INFO 2025-05-10 05:49:04,483 views_software_vuln_scanner Response is compressed. Expecting 10796 bytes of compressed data.
+INFO 2025-05-10 05:49:04,483 views_software_vuln_scanner Receiving 10796 bytes from 192.168.29.244 for installed software
+INFO 2025-05-10 05:49:04,503 views_software_vuln_scanner Progress: 37% - Received 4096 of 10796 bytes
+INFO 2025-05-10 05:49:04,544 views_software_vuln_scanner Progress: 75% - Received 8192 of 10796 bytes
+INFO 2025-05-10 05:49:04,585 views_software_vuln_scanner Progress: 100% - Received 10796 of 10796 bytes
+INFO 2025-05-10 05:49:04,586 views_software_vuln_scanner Decompressing 10796 bytes of data
+INFO 2025-05-10 05:49:04,586 views_software_vuln_scanner Decompressed to 245346 bytes
+INFO 2025-05-10 05:49:06,016 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:49:06,088 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:49:06,088 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 05:49:06,089 views_software_vuln_scanner Parsed 0 software items from scan result
+INFO 2025-05-10 05:49:06,089 views_software_vuln_scanner Successfully fetched installed software for target 3
+INFO 2025-05-10 05:49:06,090 views_software_vuln_scanner Found 0 software items in database
+INFO 2025-05-10 05:49:06,481 basehttp "GET /scanner/installed-software/3/ HTTP/1.1" 200 68227
+INFO 2025-05-10 05:49:10,553 views_software_vuln_scanner Connection attempt 1 for 192.168.29.244
+INFO 2025-05-10 05:49:11,490 views_software_vuln_scanner Response is compressed. Expecting 10796 bytes of compressed data.
+INFO 2025-05-10 05:49:11,490 views_software_vuln_scanner Receiving 10796 bytes from 192.168.29.244 for installed software
+INFO 2025-05-10 05:49:11,511 views_software_vuln_scanner Progress: 37% - Received 4096 of 10796 bytes
+INFO 2025-05-10 05:49:11,552 views_software_vuln_scanner Progress: 75% - Received 8192 of 10796 bytes
+INFO 2025-05-10 05:49:11,593 views_software_vuln_scanner Progress: 100% - Received 10796 of 10796 bytes
+INFO 2025-05-10 05:49:11,594 views_software_vuln_scanner Decompressing 10796 bytes of data
+INFO 2025-05-10 05:49:11,594 views_software_vuln_scanner Decompressed to 245346 bytes
+INFO 2025-05-10 05:49:12,787 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:49:12,787 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:49:12,787 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 05:49:12,788 views_software_vuln_scanner Parsed 0 software items from scan result
+INFO 2025-05-10 05:49:12,788 views_software_vuln_scanner Successfully fetched installed software for target 3
+INFO 2025-05-10 05:49:12,789 views_software_vuln_scanner Found 0 software items in database
+INFO 2025-05-10 05:49:13,120 basehttp "GET /scanner/software-vulnerabilities/software/3/?refresh=true HTTP/1.1" 200 68233
+INFO 2025-05-10 05:49:16,332 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 78281
+INFO 2025-05-10 05:49:21,989 software_vulnerability_scanner Starting vulnerability scan for target 3
+INFO 2025-05-10 05:49:22,238 software_vulnerability_scanner Updated existing scan record with ID 11
+INFO 2025-05-10 05:49:22,239 software_vulnerability_scanner Registering process software_vuln_scan_11 with state manager
+WARNING 2025-05-10 05:49:22,239 state_manager Deprecated usage: data passed as second argument to register_process for software_vuln_scan_11
+INFO 2025-05-10 05:49:22,239 state_manager Registered process software_vuln_scan_11 of type software
+INFO 2025-05-10 05:49:22,239 software_vulnerability_scanner Stored scanner in registry with ID 11
+INFO 2025-05-10 05:49:22,241 software_vulnerability_scanner Getting installed software for target 3
+INFO 2025-05-10 05:49:22,241 software_vulnerability_scanner Started scan thread for scan ID 11
+INFO 2025-05-10 05:49:23,100 basehttp "POST /scanner/software-vulnerabilities/start/3/ HTTP/1.1" 200 154
+INFO 2025-05-10 05:49:23,344 basehttp "GET /scanner/software-vulnerabilities/status/?process_id=software_vuln_scan_11&minimal=false HTTP/1.1" 200 179
+INFO 2025-05-10 05:49:23,371 software_vulnerability_scanner Found dedicated installed software scan (ID: 1126)
+INFO 2025-05-10 05:49:23,371 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:49:23,372 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:49:23,372 software_vulnerability_scanner Trying to parse table format
+WARNING 2025-05-10 05:49:23,373 software_vulnerability_scanner No installed software found for target 3
+INFO 2025-05-10 05:49:25,821 basehttp "GET /scanner/software-vulnerabilities/status/?process_id=software_vuln_scan_11&minimal=false HTTP/1.1" 200 180
+INFO 2025-05-10 05:49:30,217 basehttp "GET /scanner/software-vulnerabilities/results/11/ HTTP/1.1" 200 58323
+INFO 2025-05-10 05:49:41,836 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:49:54,675 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:50:01,937 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:50:23,691 state_manager Unregistered process software_vuln_scan_11
+INFO 2025-05-10 05:50:23,729 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 78282
+INFO 2025-05-10 05:50:30,160 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:50:32,476 basehttp - Broken pipe from ('127.0.0.1', 5345)
+INFO 2025-05-10 05:50:33,721 basehttp "GET /scanner/port-scanner/ HTTP/1.1" 200 75892
+INFO 2025-05-10 05:50:36,715 views_port_scanner Nmap found and working: D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:50:36,724 views_port_scanner python-nmap library found
+INFO 2025-05-10 05:50:38,080 basehttp "GET /scanner/port-scanner/check-nmap/ HTTP/1.1" 200 101
+INFO 2025-05-10 05:50:39,824 basehttp "GET /scanner/port-scanner/results/12/ HTTP/1.1" 200 77406
+INFO 2025-05-10 05:50:41,225 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 352
+INFO 2025-05-10 05:50:43,486 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 05:50:44,199 basehttp "GET /scanner/port-scanner/results/12/ajax/ HTTP/1.1" 200 307
+INFO 2025-05-10 05:51:00,992 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:52:01,614 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 05:53:01,795 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:53:45,624 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 129209
+INFO 2025-05-10 05:54:03,825 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:54:03,825 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:54:03,825 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 05:54:07,053 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+ERROR 2025-05-10 05:54:07,686 log Internal Server Error: /scanner/target/3/section/system_overview/
+ERROR 2025-05-10 05:54:07,687 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 500 59
+INFO 2025-05-10 05:54:10,015 views Exported 0 software items as CSV for target 192.168.29.244 from OS Information
+WARNING 2025-05-10 05:54:10,348 log The request's session was deleted before the request completed. The user may have logged out in a concurrent request, for example.: /scanner/target/3/section/os_details/
+Traceback (most recent call last):
+  File "D:\installed\py\Lib\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\backends\sqlite3\base.py", line 328, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: database is locked
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\installed\py\Lib\site-packages\django\contrib\sessions\backends\db.py", line 86, in save
+    obj.save(
+  File "D:\installed\py\Lib\site-packages\django\db\models\base.py", line 814, in save
+    self.save_base(
+  File "D:\installed\py\Lib\site-packages\django\db\models\base.py", line 877, in save_base
+    updated = self._save_table(
+              ^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\models\base.py", line 990, in _save_table
+    updated = self._do_update(
+              ^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\models\base.py", line 1054, in _do_update
+    return filtered._update(values) > 0
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\models\query.py", line 1231, in _update
+    return query.get_compiler(self.db).execute_sql(CURSOR)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\models\sql\compiler.py", line 1982, in execute_sql
+    cursor = super().execute_sql(result_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\models\sql\compiler.py", line 1560, in execute_sql
+    cursor.execute(sql, params)
+  File "D:\installed\py\Lib\site-packages\django\db\backends\utils.py", line 102, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\backends\utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\backends\utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "D:\installed\py\Lib\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\db\backends\sqlite3\base.py", line 328, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: database is locked
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\installed\py\Lib\site-packages\django\contrib\sessions\middleware.py", line 59, in process_response
+    request.session.save()
+  File "D:\installed\py\Lib\site-packages\django\contrib\sessions\backends\db.py", line 95, in save
+    raise UpdateError
+django.contrib.sessions.backends.base.UpdateError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\installed\py\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\utils\deprecation.py", line 136, in __call__
+    response = self.process_response(request, response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\installed\py\Lib\site-packages\django\contrib\sessions\middleware.py", line 61, in process_response
+    raise SessionInterrupted(
+django.contrib.sessions.exceptions.SessionInterrupted: The request's session was deleted before the request completed. The user may have logged out in a concurrent request, for example.
+WARNING 2025-05-10 05:54:11,953 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 400 171916
+ERROR 2025-05-10 05:54:19,330 log Internal Server Error: /scanner/target/3/section/system_overview/
+ERROR 2025-05-10 05:54:19,331 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 500 59
+INFO 2025-05-10 05:54:20,813 basehttp "GET /scanner/os-info/installed-software/3/export-csv/ HTTP/1.1" 200 75
+INFO 2025-05-10 05:54:29,717 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:54:51,905 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:54:58,018 views Exported 0 software items as CSV for target 192.168.29.244 from OS Information
+INFO 2025-05-10 05:54:58,854 basehttp "GET /scanner/os-info/installed-software/3/export-csv/ HTTP/1.1" 200 75
+INFO 2025-05-10 05:55:13,120 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:55:32,799 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:55:49,633 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:56:04,606 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8185
+INFO 2025-05-10 05:56:21,122 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 05:56:49,934 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8187
+INFO 2025-05-10 05:57:02,533 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:57:19,113 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views_software_vuln_scanner.py changed, reloading.
+INFO 2025-05-10 05:57:20,002 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:57:20,863 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:57:21,220 state_manager Restored process port_scan_12 from session
+INFO 2025-05-10 05:57:21,220 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:57:23,750 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:57:39,761 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-10 05:57:40,644 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:57:41,407 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:57:45,803 state_manager Restored process port_scan_12 from session
+INFO 2025-05-10 05:57:45,804 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:57:50,390 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:57:54,543 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 129643
+INFO 2025-05-10 05:58:11,175 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+ERROR 2025-05-10 05:58:12,006 log Internal Server Error: /scanner/target/3/section/installed_software/
+INFO 2025-05-10 05:58:12,026 basehttp - Broken pipe from ('127.0.0.1', 6151)
+INFO 2025-05-10 05:58:12,579 basehttp - Broken pipe from ('127.0.0.1', 6145)
+INFO 2025-05-10 05:58:17,266 basehttp - Broken pipe from ('127.0.0.1', 6138)
+INFO 2025-05-10 05:58:20,215 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 129209
+INFO 2025-05-10 05:58:21,127 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:58:21,832 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:58:31,312 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:58:35,557 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 05:58:36,560 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 129209
+INFO 2025-05-10 05:58:39,023 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 05:58:39,023 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 05:58:39,023 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 05:58:39,666 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+INFO 2025-05-10 05:58:43,250 basehttp - Broken pipe from ('127.0.0.1', 6159)
+INFO 2025-05-10 05:58:43,270 views Found 0 software items to export for target 192.168.29.244 from OS Information
+INFO 2025-05-10 05:58:43,272 views Successfully exported 0 software items as CSV for target 192.168.29.244 from OS Information
+INFO 2025-05-10 05:58:43,517 basehttp "GET /scanner/os-info/installed-software/3/export-csv/ HTTP/1.1" 200 87
+INFO 2025-05-10 05:58:44,139 basehttp - Broken pipe from ('127.0.0.1', 6172)
+INFO 2025-05-10 05:58:55,120 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:59:01,787 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:59:06,191 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views_software_vuln_scanner.py changed, reloading.
+INFO 2025-05-10 05:59:07,025 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:59:07,897 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:59:20,434 state_manager Restored process port_scan_12 from session
+INFO 2025-05-10 05:59:20,434 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:59:25,850 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:59:35,575 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-10 05:59:36,355 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:59:37,169 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:59:48,796 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 05:59:49,504 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 05:59:50,438 state_manager Restored process port_scan_12 from session
+INFO 2025-05-10 05:59:50,438 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 05:59:53,651 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 05:59:56,610 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 129209
+INFO 2025-05-10 06:00:06,500 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+ERROR 2025-05-10 06:00:08,588 log Internal Server Error: /scanner/target/3/section/system_overview/
+ERROR 2025-05-10 06:00:08,589 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 500 59
+INFO 2025-05-10 06:00:11,932 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 06:00:28,147 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:00:34,941 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:00:38,905 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views_software_vuln_scanner.py changed, reloading.
+INFO 2025-05-10 06:00:39,738 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 06:00:40,565 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 06:00:51,178 state_manager Restored process port_scan_12 from session
+INFO 2025-05-10 06:00:51,178 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 06:01:00,017 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:01:05,067 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-10 06:01:06,571 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 06:01:07,394 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 06:01:15,204 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 06:01:15,922 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 06:01:20,356 state_manager Restored process port_scan_12 from session
+INFO 2025-05-10 06:01:20,357 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 06:01:21,683 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 129643
+INFO 2025-05-10 06:01:24,745 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:01:26,346 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 06:01:27,478 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 06:01:27,479 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 06:01:27,479 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 06:01:27,712 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+INFO 2025-05-10 06:01:28,673 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:01:30,086 views Found 0 software items to export for target 192.168.29.244 from OS Information
+INFO 2025-05-10 06:01:30,088 views Successfully exported 0 software items as CSV for target 192.168.29.244 from OS Information
+INFO 2025-05-10 06:01:30,317 basehttp "GET /scanner/os-info/installed-software/3/export-csv/ HTTP/1.1" 200 88
+INFO 2025-05-10 06:01:31,413 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 06:01:56,034 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:02:01,012 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:02:02,488 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8187
+INFO 2025-05-10 06:02:03,756 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8188
+INFO 2025-05-10 06:02:24,965 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:02:31,449 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:02:54,966 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:03:00,965 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:03:02,033 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:03:04,506 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:03:10,020 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 78282
+INFO 2025-05-10 06:03:14,665 basehttp "GET /scanner/port-scanner/ HTTP/1.1" 200 75892
+INFO 2025-05-10 06:03:17,084 views_port_scanner Nmap found and working: D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 06:03:17,091 views_port_scanner python-nmap library found
+INFO 2025-05-10 06:03:17,785 basehttp "GET /scanner/port-scanner/check-nmap/ HTTP/1.1" 200 101
+INFO 2025-05-10 06:03:21,902 basehttp "GET /scanner/port-scanner/results/12/ HTTP/1.1" 200 77406
+INFO 2025-05-10 06:03:23,030 basehttp "GET /scanner/port-scanner/status/9/ HTTP/1.1" 200 247
+INFO 2025-05-10 06:03:23,772 basehttp "GET /scanner/port-scanner/results/12/ajax/ HTTP/1.1" 200 307
+INFO 2025-05-10 06:04:01,421 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 06:04:02,278 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 06:04:05,182 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:04:45,370 autoreload D:\coding_stuff\py\vuln_scanner\proto\pro\protocol.py changed, reloading.
+INFO 2025-05-10 06:04:46,285 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 06:04:47,207 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 06:04:58,176 state_manager Restored process port_scan_12 from session
+INFO 2025-05-10 06:04:58,176 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 06:05:04,850 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:05:08,137 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:05:11,858 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:06:05,901 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:06:08,252 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:06:10,117 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:07:04,291 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:07:07,513 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:07:11,822 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:07:22,377 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views_software_vuln_scanner.py changed, reloading.
+INFO 2025-05-10 06:07:23,142 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 06:07:23,922 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 06:07:44,852 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\urls.py changed, reloading.
+INFO 2025-05-10 06:07:45,589 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 06:07:46,288 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 06:07:58,178 state_manager Restored process port_scan_12 from session
+INFO 2025-05-10 06:07:58,179 state_manager Restored process port_scan_10 from session
+INFO 2025-05-10 06:08:06,743 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:08:10,079 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 06:08:12,405 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:09:02,615 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:09:04,167 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:09:08,475 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:09:23,939 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 06:09:24,630 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 06:09:30,655 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 134053
+INFO 2025-05-10 06:10:02,771 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8186
+INFO 2025-05-10 06:10:05,136 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8186
+INFO 2025-05-10 06:10:05,940 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:11:01,952 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 06:11:03,023 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 06:11:06,223 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:12:01,780 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:12:04,037 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:12:08,353 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:13:02,076 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:13:02,947 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:13:07,933 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:14:08,320 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 06:14:10,216 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 134053
+ERROR 2025-05-10 06:14:10,900 log Internal Server Error: /scanner/target/3/section/system_overview/
+ERROR 2025-05-10 06:14:10,900 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 500 59
+INFO 2025-05-10 06:14:15,265 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 09:56:08,431 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 09:56:09,328 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 09:57:00,054 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:57:00,069 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:57:00,075 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:57:00,085 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 09:57:00,100 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 09:57:00,109 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 09:57:52,635 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:57:52,648 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 09:58:00,063 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:58:00,071 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:58:00,079 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 09:58:00,087 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 09:58:06,055 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:58:06,067 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 09:58:36,064 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:58:36,074 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 09:59:00,054 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:59:00,064 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:59:00,079 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 09:59:00,088 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 09:59:37,058 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 09:59:37,070 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 10:00:00,058 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:00:00,066 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 10:00:38,063 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:00:38,071 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 10:01:00,063 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:01:00,071 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 10:01:39,055 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:01:39,066 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 10:02:40,053 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:02:40,062 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 10:03:41,073 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:03:41,093 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 10:04:17,675 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:04:18,458 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:04:20,187 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-10 10:04:20,206 basehttp "GET /scanner/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:04:20,237 basehttp "GET /login/?next=/scanner/ HTTP/1.1" 200 9911
+INFO 2025-05-10 10:04:23,914 basehttp "POST /login/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:04:24,597 basehttp "GET /scanner/ HTTP/1.1" 200 94564
+INFO 2025-05-10 10:04:24,642 basehttp "GET /static/js/data-persistence.js HTTP/1.1" 304 0
+INFO 2025-05-10 10:04:32,777 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 134053
+INFO 2025-05-10 10:04:36,674 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 78282
+INFO 2025-05-10 10:04:39,591 views_software_vuln_scanner Connection attempt 1 for 192.168.29.244
+INFO 2025-05-10 10:04:40,592 views_software_vuln_scanner Response is compressed. Expecting 10793 bytes of compressed data.
+INFO 2025-05-10 10:04:40,593 views_software_vuln_scanner Receiving 10793 bytes from 192.168.29.244 for installed software
+INFO 2025-05-10 10:04:40,613 views_software_vuln_scanner Progress: 37% - Received 4096 of 10793 bytes
+INFO 2025-05-10 10:04:40,654 views_software_vuln_scanner Progress: 75% - Received 8192 of 10793 bytes
+INFO 2025-05-10 10:04:40,696 views_software_vuln_scanner Progress: 100% - Received 10793 of 10793 bytes
+INFO 2025-05-10 10:04:40,696 views_software_vuln_scanner Decompressing 10793 bytes of data
+INFO 2025-05-10 10:04:40,697 views_software_vuln_scanner Decompressed to 245346 bytes
+INFO 2025-05-10 10:04:40,712 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:04:40,712 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:04:40,712 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 10:04:40,713 views_software_vuln_scanner Parsed 0 software items from scan result
+INFO 2025-05-10 10:04:40,713 views_software_vuln_scanner Successfully fetched installed software for target 3
+INFO 2025-05-10 10:04:40,714 views_software_vuln_scanner Found 0 software items in database
+INFO 2025-05-10 10:04:40,726 basehttp "GET /scanner/software-vulnerabilities/software/3/ HTTP/1.1" 200 68233
+INFO 2025-05-10 10:04:44,184 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 10:04:46,408 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 78282
+INFO 2025-05-10 10:05:44,738 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:06:45,822 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 10:06:49,828 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 134053
+INFO 2025-05-10 10:07:30,719 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\urls.py changed, reloading.
+INFO 2025-05-10 10:07:31,631 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:07:32,459 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:07:44,901 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\urls.py changed, reloading.
+INFO 2025-05-10 10:07:45,743 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:07:46,516 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:07:48,497 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 134053
+INFO 2025-05-10 10:08:32,393 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 134053
+INFO 2025-05-10 10:08:38,335 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:08:39,018 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:08:40,201 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-10 10:08:40,778 basehttp "GET /scanner/ HTTP/1.1" 200 92898
+INFO 2025-05-10 10:08:44,907 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 134053
+INFO 2025-05-10 10:08:47,819 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:09:17,764 basehttp "GET /scanner/ HTTP/1.1" 200 92898
+INFO 2025-05-10 10:09:19,185 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 80136
+INFO 2025-05-10 10:09:24,442 basehttp "POST /scanner/scan-network/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:09:24,459 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 80577
+INFO 2025-05-10 10:09:32,574 basehttp "POST /scanner/clear-network-devices/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:09:32,589 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 71972
+INFO 2025-05-10 10:09:37,213 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 78282
+INFO 2025-05-10 10:09:40,260 software_vulnerability_scanner Starting vulnerability scan for target 3
+INFO 2025-05-10 10:09:40,266 software_vulnerability_scanner Updated existing scan record with ID 12
+INFO 2025-05-10 10:09:40,266 software_vulnerability_scanner Registering process software_vuln_scan_12 with state manager
+WARNING 2025-05-10 10:09:40,266 state_manager Deprecated usage: data passed as second argument to register_process for software_vuln_scan_12
+INFO 2025-05-10 10:09:40,267 state_manager Registered process software_vuln_scan_12 of type software
+INFO 2025-05-10 10:09:40,267 software_vulnerability_scanner Stored scanner in registry with ID 12
+INFO 2025-05-10 10:09:40,268 software_vulnerability_scanner Getting installed software for target 3
+INFO 2025-05-10 10:09:40,268 software_vulnerability_scanner Started scan thread for scan ID 12
+INFO 2025-05-10 10:09:40,276 basehttp "POST /scanner/software-vulnerabilities/start/3/ HTTP/1.1" 200 154
+INFO 2025-05-10 10:09:40,297 software_vulnerability_scanner Found dedicated installed software scan (ID: 1213)
+INFO 2025-05-10 10:09:40,298 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:09:40,298 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:09:40,298 software_vulnerability_scanner Trying to parse table format
+WARNING 2025-05-10 10:09:40,299 software_vulnerability_scanner No installed software found for target 3
+INFO 2025-05-10 10:09:40,312 basehttp "GET /scanner/software-vulnerabilities/status/?process_id=software_vuln_scan_12&minimal=false HTTP/1.1" 200 179
+INFO 2025-05-10 10:09:42,336 basehttp "GET /scanner/software-vulnerabilities/status/?process_id=software_vuln_scan_12&minimal=false HTTP/1.1" 200 180
+INFO 2025-05-10 10:09:44,183 basehttp "GET /scanner/software-vulnerabilities/results/12/ HTTP/1.1" 200 58322
+INFO 2025-05-10 10:09:46,242 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 79960
+INFO 2025-05-10 10:09:46,295 basehttp "GET /scanner/vulnerabilities/scan-status/9/ HTTP/1.1" 200 69
+INFO 2025-05-10 10:09:46,314 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 69
+INFO 2025-05-10 10:09:48,829 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:09:50,469 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 134053
+INFO 2025-05-10 10:10:08,143 basehttp "GET /scanner/ HTTP/1.1" 200 84897
+INFO 2025-05-10 10:10:12,562 basehttp "POST /scanner/target/9/delete/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:10:13,197 basehttp "GET /scanner/ HTTP/1.1" 200 83228
+INFO 2025-05-10 10:10:16,256 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 133928
+INFO 2025-05-10 10:10:40,329 state_manager Unregistered process software_vuln_scan_12
+INFO 2025-05-10 10:10:50,227 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:11:07,773 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 133928
+INFO 2025-05-10 10:11:25,297 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views_software_vuln_scanner.py changed, reloading.
+INFO 2025-05-10 10:11:26,316 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:11:27,192 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:11:37,588 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\urls.py changed, reloading.
+INFO 2025-05-10 10:11:38,331 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:11:39,070 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:11:47,711 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:11:48,383 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:11:51,464 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 10:11:52,641 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 133928
+INFO 2025-05-10 10:11:56,512 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 78727
+INFO 2025-05-10 10:11:56,784 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 69
+INFO 2025-05-10 10:11:59,087 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 133928
+INFO 2025-05-10 10:12:18,891 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-10 10:12:19,067 basehttp "GET /scanner/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:12:19,247 basehttp "GET /login/?next=/scanner/ HTTP/1.1" 200 9911
+INFO 2025-05-10 10:12:22,363 basehttp "POST /login/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:12:23,186 basehttp "GET /scanner/ HTTP/1.1" 200 83242
+INFO 2025-05-10 10:12:26,639 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 133928
+INFO 2025-05-10 10:12:52,107 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:14:38,371 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:14:39,112 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:14:42,371 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-10 10:14:42,927 basehttp "GET /scanner/ HTTP/1.1" 200 82777
+INFO 2025-05-10 10:14:48,574 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 76956
+INFO 2025-05-10 10:14:51,634 views_software_vuln_scanner Connection attempt 1 for 192.168.29.244
+INFO 2025-05-10 10:14:52,526 views_software_vuln_scanner Response is compressed. Expecting 10793 bytes of compressed data.
+INFO 2025-05-10 10:14:52,526 views_software_vuln_scanner Receiving 10793 bytes from 192.168.29.244 for installed software
+INFO 2025-05-10 10:14:52,547 views_software_vuln_scanner Progress: 37% - Received 4096 of 10793 bytes
+INFO 2025-05-10 10:14:52,588 views_software_vuln_scanner Progress: 75% - Received 8192 of 10793 bytes
+INFO 2025-05-10 10:14:52,629 views_software_vuln_scanner Progress: 100% - Received 10793 of 10793 bytes
+INFO 2025-05-10 10:14:52,629 views_software_vuln_scanner Decompressing 10793 bytes of data
+INFO 2025-05-10 10:14:52,630 views_software_vuln_scanner Decompressed to 245346 bytes
+INFO 2025-05-10 10:14:52,648 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:14:52,650 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:14:52,650 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 10:14:52,651 views_software_vuln_scanner Parsed 0 software items from scan result
+INFO 2025-05-10 10:14:52,651 views_software_vuln_scanner Successfully fetched installed software for target 3
+INFO 2025-05-10 10:14:52,652 views_software_vuln_scanner Found 0 software items in database
+INFO 2025-05-10 10:14:52,662 basehttp "GET /scanner/software-vulnerabilities/software/3/ HTTP/1.1" 200 68233
+INFO 2025-05-10 10:14:53,793 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 10:14:54,697 basehttp "GET /scanner/os-info/?target_id=3 HTTP/1.1" 200 128426
+INFO 2025-05-10 10:14:56,564 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:14:58,317 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 10:14:58,580 basehttp "GET /scanner/target/3/section/auto_run_executables/ HTTP/1.1" 200 39835
+INFO 2025-05-10 10:15:01,532 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:15:01,532 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:15:01,534 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 10:15:01,540 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+INFO 2025-05-10 10:15:23,569 basehttp "GET /scanner/os-info/?target_id=3 HTTP/1.1" 200 129084
+INFO 2025-05-10 10:15:25,529 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:15:26,528 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:15:26,528 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:15:26,528 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 10:15:26,534 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+INFO 2025-05-10 10:15:26,961 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 10:15:28,065 views Exported 0 software items as CSV for target 192.168.29.244 from OS Information
+INFO 2025-05-10 10:15:28,076 basehttp "GET /scanner/os-info/installed-software/3/export-csv/ HTTP/1.1" 200 75
+INFO 2025-05-10 10:15:54,862 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:15:55,332 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:16:06,148 basehttp "GET /scanner/os-info/?target_id=3 HTTP/1.1" 200 128426
+INFO 2025-05-10 10:16:08,087 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:16:09,312 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:16:09,312 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:16:09,312 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 10:16:09,319 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+INFO 2025-05-10 10:16:09,499 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 10:16:16,694 software_vulnerability_scanner Starting vulnerability scan for target 3
+INFO 2025-05-10 10:16:16,699 software_vulnerability_scanner Updated existing scan record with ID 13
+INFO 2025-05-10 10:16:16,699 software_vulnerability_scanner Registering process software_vuln_scan_13 with state manager
+WARNING 2025-05-10 10:16:16,699 state_manager Deprecated usage: data passed as second argument to register_process for software_vuln_scan_13
+INFO 2025-05-10 10:16:16,699 state_manager Registered process software_vuln_scan_13 of type software
+INFO 2025-05-10 10:16:16,699 software_vulnerability_scanner Stored scanner in registry with ID 13
+INFO 2025-05-10 10:16:16,700 software_vulnerability_scanner Getting installed software for target 3
+INFO 2025-05-10 10:16:16,700 software_vulnerability_scanner Started scan thread for scan ID 13
+INFO 2025-05-10 10:16:16,724 software_vulnerability_scanner Found dedicated installed software scan (ID: 1234)
+INFO 2025-05-10 10:16:16,724 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:16:16,724 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:16:16,724 software_vulnerability_scanner Trying to parse table format
+WARNING 2025-05-10 10:16:16,725 software_vulnerability_scanner No installed software found for target 3
+INFO 2025-05-10 10:16:16,742 basehttp "POST /scanner/software-vulnerabilities/start/3/ HTTP/1.1" 200 154
+INFO 2025-05-10 10:16:16,781 basehttp "GET /scanner/software-vulnerabilities/results/13/ HTTP/1.1" 200 58322
+INFO 2025-05-10 10:16:20,208 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 76957
+INFO 2025-05-10 10:16:31,785 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 128426
+INFO 2025-05-10 10:16:33,628 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 10:16:35,083 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 10:16:55,718 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:17:03,488 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:17:16,761 state_manager Unregistered process software_vuln_scan_13
+INFO 2025-05-10 10:17:33,498 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:17:56,773 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:18:03,559 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 10:18:33,531 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:18:57,833 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 10:19:03,507 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:19:33,517 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:19:58,753 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:20:03,547 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 10:20:33,004 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 78727
+INFO 2025-05-10 10:20:33,277 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 69
+INFO 2025-05-10 10:20:33,657 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:20:35,200 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:20:36,121 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:20:40,260 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 136301
+INFO 2025-05-10 10:20:58,269 basehttp "GET /logout/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:20:58,283 basehttp "GET /login/ HTTP/1.1" 200 9779
+INFO 2025-05-10 10:20:59,914 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 10:21:02,058 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:21:02,068 basehttp "GET /login/?next=/scanner/target/3/section/system_overview/ HTTP/1.1" 200 9944
+INFO 2025-05-10 10:21:04,588 basehttp "POST /login/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:21:04,598 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-10 10:21:05,249 basehttp "GET /scanner/ HTTP/1.1" 200 83242
+INFO 2025-05-10 10:21:23,438 basehttp "POST /scanner/scan-network/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:21:23,468 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 78698
+INFO 2025-05-10 10:21:29,361 basehttp "GET /scanner/ HTTP/1.1" 200 89465
+INFO 2025-05-10 10:21:33,820 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:21:35,073 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 78257
+INFO 2025-05-10 10:21:41,689 basehttp "GET /scanner/ HTTP/1.1" 200 89465
+INFO 2025-05-10 10:21:47,654 basehttp "POST /scanner/target/add/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:21:47,668 basehttp "GET /scanner/target/10/ HTTP/1.1" 200 61675
+INFO 2025-05-10 10:21:53,779 basehttp "GET /scanner/ HTTP/1.1" 200 91011
+INFO 2025-05-10 10:21:57,309 basehttp "POST /scanner/target/10/delete/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:21:57,849 basehttp "GET /scanner/ HTTP/1.1" 200 89918
+INFO 2025-05-10 10:22:00,826 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:22:05,893 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 136301
+INFO 2025-05-10 10:22:27,787 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-10 10:22:28,799 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:22:29,819 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:22:34,846 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 10:22:39,292 autoreload D:\coding_stuff\py\vuln_scanner\dashboard\scanner\views.py changed, reloading.
+INFO 2025-05-10 10:22:40,313 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:22:41,103 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:22:41,515 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 128426
+INFO 2025-05-10 10:22:43,385 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:22:45,138 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 10:22:48,302 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 10:22:55,294 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:22:59,312 basehttp "GET /scanner/target/3/section/environment_variables/ HTTP/1.1" 200 12237
+INFO 2025-05-10 10:23:01,829 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 10:23:01,855 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:23:03,969 basehttp "GET /scanner/target/3/section/auto_run_executables/ HTTP/1.1" 200 39835
+INFO 2025-05-10 10:23:13,351 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:23:25,204 basehttp "GET /scanner/target/3/section/certificates/ HTTP/1.1" 200 132959
+INFO 2025-05-10 10:23:33,210 basehttp "GET /scanner/network-info/ HTTP/1.1" 200 78257
+INFO 2025-05-10 10:23:35,853 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 10:23:46,056 basehttp "GET /scanner/target/3/command/3/ HTTP/1.1" 200 956
+INFO 2025-05-10 10:23:47,908 basehttp "GET /scanner/target/3/command/49/ HTTP/1.1" 200 60402
+INFO 2025-05-10 10:23:51,709 basehttp "GET /scanner/target/3/command/50/ HTTP/1.1" 200 18716
+INFO 2025-05-10 10:23:55,517 basehttp "GET /scanner/target/3/command/51/ HTTP/1.1" 200 1098
+INFO 2025-05-10 10:23:59,725 basehttp "GET /scanner/target/3/command/53/ HTTP/1.1" 200 641
+INFO 2025-05-10 10:24:01,805 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:24:04,706 basehttp "GET /scanner/target/3/command/52/ HTTP/1.1" 200 9164
+INFO 2025-05-10 10:24:18,087 basehttp "GET /scanner/target/3/command/54/ HTTP/1.1" 200 876
+INFO 2025-05-10 10:24:24,291 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 78727
+INFO 2025-05-10 10:24:24,610 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 69
+INFO 2025-05-10 10:24:31,311 state_manager Registered process vulnerability_scan_18 of type vulnerability_scan
+INFO 2025-05-10 10:24:31,312 state_manager Registered thread for process vulnerability_scan_18
+INFO 2025-05-10 10:24:31,405 vulnerability_scanner Sending vulnerability scan command to agent at 192.168.29.244
+INFO 2025-05-10 10:24:31,405 vulnerability_scanner Scan type: quick
+INFO 2025-05-10 10:24:31,405 vulnerability_scanner Command code: 80 (0x50)
+INFO 2025-05-10 10:24:31,606 basehttp "POST /scanner/vulnerabilities/start-scan/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:24:31,849 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 78865
+INFO 2025-05-10 10:24:32,120 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 10:24:32,312 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 10:24:35,386 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 147
+INFO 2025-05-10 10:24:37,089 vulnerability_scanner Response received from agent (length: 1335)
+INFO 2025-05-10 10:24:37,089 vulnerability_scanner Response preview: {
+  "status": "completed",
+  "scan_type": "quick",
+  "start_time": "2025-05-10T10:24:31.483136",
+  "...
+INFO 2025-05-10 10:24:37,089 vulnerability_scanner Response was already a string
+INFO 2025-05-10 10:24:37,089 vulnerability_scanner Response preview for JSON parsing: {
+  "status": "completed",
+  "scan_type": "quick",
+  "start_time": "2025-05-10T10:24:31.483136",
+  "end_time": "2025-05-10T10:24:37.087869",
+  "duration": "0:00:05.604733",
+  "total_vulnerabilities": ...
+INFO 2025-05-10 10:24:37,089 vulnerability_scanner Successfully parsed JSON response
+INFO 2025-05-10 10:24:37,518 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:24:38,188 vulnerability_scanner Vulnerability scan completed successfully. Found 2 vulnerabilities.
+INFO 2025-05-10 10:24:38,688 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 131
+INFO 2025-05-10 10:24:38,953 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 78727
+INFO 2025-05-10 10:24:39,169 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 131
+INFO 2025-05-10 10:24:42,163 basehttp "GET /scanner/vulnerabilities/checkup/18/ HTTP/1.1" 200 69751
+INFO 2025-05-10 10:24:51,723 basehttp "GET /scanner/port-scanner/ HTTP/1.1" 200 75808
+INFO 2025-05-10 10:24:51,892 views_port_scanner Nmap found and working: D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:24:51,914 views_port_scanner python-nmap library found
+INFO 2025-05-10 10:24:52,157 basehttp "GET /scanner/port-scanner/check-nmap/ HTTP/1.1" 200 101
+INFO 2025-05-10 10:25:02,514 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:25:02,841 state_manager Registered process port_scan_13 of type port_scan
+INFO 2025-05-10 10:25:02,841 state_manager Registered thread for process port_scan_13
+INFO 2025-05-10 10:25:02,886 port_scanner Starting nmap scan of 192.168.29.244 with port range 21-23,25,53,80,443,3389,8080
+ERROR 2025-05-10 10:25:02,888 port_scanner Error during nmap scan: Xml output can't be redirected from command line.
+You can access it after a scan using:
+nmap.nm.get_nmap_last_output()
+INFO 2025-05-10 10:25:03,095 basehttp "POST /scanner/port-scanner/start/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:25:03,421 basehttp "GET /scanner/port-scanner/results/13/ HTTP/1.1" 200 78052
+INFO 2025-05-10 10:25:03,709 basehttp "GET /scanner/port-scanner/status/3/ HTTP/1.1" 200 346
+INFO 2025-05-10 10:25:04,177 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 10:25:05,932 basehttp "GET /scanner/port-scanner/status/3/ HTTP/1.1" 200 346
+INFO 2025-05-10 10:25:06,318 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 10:25:08,150 basehttp "GET /scanner/port-scanner/status/3/ HTTP/1.1" 200 346
+INFO 2025-05-10 10:25:08,634 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 10:25:08,871 basehttp "GET /scanner/port-scanner/results/13/ajax/ HTTP/1.1" 200 306
+INFO 2025-05-10 10:25:10,391 basehttp "GET /scanner/port-scanner/status/3/ HTTP/1.1" 200 348
+INFO 2025-05-10 10:25:10,840 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 10:25:11,087 basehttp "GET /scanner/port-scanner/results/13/ajax/ HTTP/1.1" 200 306
+INFO 2025-05-10 10:25:12,663 basehttp "GET /scanner/port-scanner/status/3/ HTTP/1.1" 200 394
+INFO 2025-05-10 10:25:13,121 basehttp "GET /scanner/port-scanner/results/13/ajax/ HTTP/1.1" 200 299
+INFO 2025-05-10 10:25:13,347 basehttp "POST /scanner/port-scanner/update-notes/ HTTP/1.1" 200 21
+INFO 2025-05-10 10:25:30,322 basehttp "GET /scanner/help-support/ HTTP/1.1" 200 72342
+INFO 2025-05-10 10:25:38,309 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+INFO 2025-05-10 10:25:38,435 state_manager Unregistered process vulnerability_scan_18
+INFO 2025-05-10 10:25:45,605 basehttp "GET /scanner/help-support/? HTTP/1.1" 200 72342
+INFO 2025-05-10 10:25:54,248 basehttp "GET /scanner/network-monitor/ HTTP/1.1" 200 71753
+INFO 2025-05-10 10:25:55,538 state_manager Registered process network_monitor_2025-05-10T04:55:55.538619+00:00 of type network_monitor
+INFO 2025-05-10 10:25:55,538 state_manager Registered thread for process network_monitor_2025-05-10T04:55:55.538619+00:00
+INFO 2025-05-10 10:25:56,012 basehttp "POST /scanner/network-monitor/start/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:25:56,206 basehttp "GET /scanner/network-monitor/ HTTP/1.1" 200 72294
+INFO 2025-05-10 10:25:56,475 basehttp "GET /scanner/network-monitor/stats/ HTTP/1.1" 200 615
+INFO 2025-05-10 10:26:01,494 basehttp "GET /scanner/network-monitor/stats/ HTTP/1.1" 200 853
+INFO 2025-05-10 10:26:02,465 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+ERROR 2025-05-10 10:26:05,782 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:26:06,498 basehttp "GET /scanner/network-monitor/stats/ HTTP/1.1" 200 868
+INFO 2025-05-10 10:26:11,482 basehttp "GET /scanner/network-monitor/stats/ HTTP/1.1" 200 870
+INFO 2025-05-10 10:26:12,184 state_manager Unregistered process port_scan_13
+INFO 2025-05-10 10:26:12,915 state_manager Restored process port_scan_13 from session
+INFO 2025-05-10 10:26:13,134 basehttp "GET /scanner/network-alerts/ HTTP/1.1" 200 71112
+ERROR 2025-05-10 10:26:16,272 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:26:21,824 basehttp "POST /scanner/network-alerts/4/resolve/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:26:22,077 basehttp "GET /scanner/network-alerts/ HTTP/1.1" 200 70524
+ERROR 2025-05-10 10:26:26,763 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:26:30,529 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 76957
+ERROR 2025-05-10 10:26:37,247 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:26:39,916 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:26:45,417 software_vulnerability_scanner Starting vulnerability scan for target 3
+INFO 2025-05-10 10:26:45,590 software_vulnerability_scanner Updated existing scan record with ID 14
+INFO 2025-05-10 10:26:45,590 software_vulnerability_scanner Registering process software_vuln_scan_14 with state manager
+WARNING 2025-05-10 10:26:45,590 state_manager Deprecated usage: data passed as second argument to register_process for software_vuln_scan_14
+INFO 2025-05-10 10:26:45,591 state_manager Registered process software_vuln_scan_14 of type software
+INFO 2025-05-10 10:26:45,591 software_vulnerability_scanner Stored scanner in registry with ID 14
+INFO 2025-05-10 10:26:45,591 software_vulnerability_scanner Getting installed software for target 3
+INFO 2025-05-10 10:26:45,591 software_vulnerability_scanner Started scan thread for scan ID 14
+INFO 2025-05-10 10:26:45,808 basehttp "POST /scanner/software-vulnerabilities/start/3/ HTTP/1.1" 200 154
+INFO 2025-05-10 10:26:45,832 software_vulnerability_scanner Found dedicated installed software scan (ID: 1234)
+INFO 2025-05-10 10:26:45,832 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:26:45,832 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:26:45,832 software_vulnerability_scanner Trying to parse table format
+WARNING 2025-05-10 10:26:45,834 software_vulnerability_scanner No installed software found for target 3
+INFO 2025-05-10 10:26:46,057 basehttp "GET /scanner/software-vulnerabilities/status/?process_id=software_vuln_scan_14&minimal=false HTTP/1.1" 200 179
+ERROR 2025-05-10 10:26:47,659 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:26:48,240 basehttp "GET /scanner/software-vulnerabilities/status/?process_id=software_vuln_scan_14&minimal=false HTTP/1.1" 200 180
+INFO 2025-05-10 10:26:48,251 views_software_vuln_scanner Connection attempt 1 for 192.168.29.244
+INFO 2025-05-10 10:26:49,159 views_software_vuln_scanner Response is compressed. Expecting 10793 bytes of compressed data.
+INFO 2025-05-10 10:26:49,160 views_software_vuln_scanner Receiving 10793 bytes from 192.168.29.244 for installed software
+INFO 2025-05-10 10:26:49,179 views_software_vuln_scanner Progress: 37% - Received 4096 of 10793 bytes
+INFO 2025-05-10 10:26:49,221 views_software_vuln_scanner Progress: 75% - Received 8192 of 10793 bytes
+INFO 2025-05-10 10:26:49,262 views_software_vuln_scanner Progress: 100% - Received 10793 of 10793 bytes
+INFO 2025-05-10 10:26:49,262 views_software_vuln_scanner Decompressing 10793 bytes of data
+INFO 2025-05-10 10:26:49,263 views_software_vuln_scanner Decompressed to 245346 bytes
+INFO 2025-05-10 10:26:49,796 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:26:49,797 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:26:49,797 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 10:26:49,799 views_software_vuln_scanner Parsed 0 software items from scan result
+INFO 2025-05-10 10:26:49,800 views_software_vuln_scanner Successfully fetched installed software for target 3
+INFO 2025-05-10 10:26:49,800 views_software_vuln_scanner Found 0 software items in database
+INFO 2025-05-10 10:26:50,112 basehttp "GET /scanner/software-vulnerabilities/software/3/ HTTP/1.1" 200 68233
+INFO 2025-05-10 10:26:52,256 views_software_vuln_scanner Connection attempt 1 for 192.168.29.244
+INFO 2025-05-10 10:26:53,171 views_software_vuln_scanner Response is compressed. Expecting 10793 bytes of compressed data.
+INFO 2025-05-10 10:26:53,172 views_software_vuln_scanner Receiving 10793 bytes from 192.168.29.244 for installed software
+INFO 2025-05-10 10:26:53,191 views_software_vuln_scanner Progress: 37% - Received 4096 of 10793 bytes
+INFO 2025-05-10 10:26:53,233 views_software_vuln_scanner Progress: 75% - Received 8192 of 10793 bytes
+INFO 2025-05-10 10:26:53,274 views_software_vuln_scanner Progress: 100% - Received 10793 of 10793 bytes
+INFO 2025-05-10 10:26:53,274 views_software_vuln_scanner Decompressing 10793 bytes of data
+INFO 2025-05-10 10:26:53,274 views_software_vuln_scanner Decompressed to 245346 bytes
+INFO 2025-05-10 10:26:53,807 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:26:53,807 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:26:53,808 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 10:26:53,808 views_software_vuln_scanner Parsed 0 software items from scan result
+INFO 2025-05-10 10:26:53,808 views_software_vuln_scanner Successfully fetched installed software for target 3
+INFO 2025-05-10 10:26:53,813 views_software_vuln_scanner Found 0 software items in database
+INFO 2025-05-10 10:26:54,045 basehttp "GET /scanner/software-vulnerabilities/software/3/?refresh=true HTTP/1.1" 200 68233
+INFO 2025-05-10 10:26:57,947 basehttp "GET /scanner/target/3/ HTTP/1.1" 200 64409
+ERROR 2025-05-10 10:26:58,159 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:27:00,560 views_software_vuln_scanner Connection attempt 1 for 192.168.29.244
+INFO 2025-05-10 10:27:01,448 views_software_vuln_scanner Response is compressed. Expecting 10793 bytes of compressed data.
+INFO 2025-05-10 10:27:01,448 views_software_vuln_scanner Receiving 10793 bytes from 192.168.29.244 for installed software
+INFO 2025-05-10 10:27:01,470 views_software_vuln_scanner Progress: 37% - Received 4096 of 10793 bytes
+INFO 2025-05-10 10:27:01,511 views_software_vuln_scanner Progress: 75% - Received 8192 of 10793 bytes
+INFO 2025-05-10 10:27:01,552 views_software_vuln_scanner Progress: 100% - Received 10793 of 10793 bytes
+INFO 2025-05-10 10:27:01,552 views_software_vuln_scanner Decompressing 10793 bytes of data
+INFO 2025-05-10 10:27:01,553 views_software_vuln_scanner Decompressed to 245346 bytes
+INFO 2025-05-10 10:27:02,086 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:27:02,087 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:27:02,087 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 10:27:02,087 views_software_vuln_scanner Parsed 0 software items from scan result
+INFO 2025-05-10 10:27:02,087 views_software_vuln_scanner Successfully fetched installed software for target 3
+INFO 2025-05-10 10:27:02,089 views_software_vuln_scanner Found 0 software items in database
+INFO 2025-05-10 10:27:02,308 basehttp "GET /scanner/software-vulnerabilities/software/3/ HTTP/1.1" 200 68233
+INFO 2025-05-10 10:27:02,999 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:27:04,361 basehttp "GET /scanner/os-info/?target_id=3 HTTP/1.1" 200 128426
+INFO 2025-05-10 10:27:06,968 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:27:08,688 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+ERROR 2025-05-10 10:27:08,976 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:27:09,789 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:27:09,789 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:27:09,789 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 10:27:10,088 basehttp "GET /scanner/target/3/section/installed_software/ HTTP/1.1" 200 251527
+INFO 2025-05-10 10:27:13,594 software_vulnerability_scanner Starting vulnerability scan for target 3
+INFO 2025-05-10 10:27:13,819 software_vulnerability_scanner Updated existing scan record with ID 15
+INFO 2025-05-10 10:27:13,819 software_vulnerability_scanner Registering process software_vuln_scan_15 with state manager
+WARNING 2025-05-10 10:27:13,819 state_manager Deprecated usage: data passed as second argument to register_process for software_vuln_scan_15
+INFO 2025-05-10 10:27:13,819 state_manager Registered process software_vuln_scan_15 of type software
+INFO 2025-05-10 10:27:13,819 software_vulnerability_scanner Stored scanner in registry with ID 15
+INFO 2025-05-10 10:27:13,820 software_vulnerability_scanner Getting installed software for target 3
+INFO 2025-05-10 10:27:13,820 software_vulnerability_scanner Started scan thread for scan ID 15
+INFO 2025-05-10 10:27:13,850 software_vulnerability_scanner Found dedicated installed software scan (ID: 1284)
+INFO 2025-05-10 10:27:13,851 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:27:13,851 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:27:13,851 software_vulnerability_scanner Trying to parse table format
+WARNING 2025-05-10 10:27:13,852 software_vulnerability_scanner No installed software found for target 3
+INFO 2025-05-10 10:27:14,084 basehttp "POST /scanner/software-vulnerabilities/start/3/ HTTP/1.1" 200 154
+INFO 2025-05-10 10:27:14,555 basehttp "GET /scanner/software-vulnerabilities/results/15/ HTTP/1.1" 200 58322
+ERROR 2025-05-10 10:27:19,422 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:27:29,846 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:27:40,260 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+ERROR 2025-05-10 10:27:40,464 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:27:46,291 state_manager Unregistered process software_vuln_scan_14
+ERROR 2025-05-10 10:27:50,908 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:28:01,396 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:28:02,415 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:28:05,498 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:28:09,208 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 76959
+ERROR 2025-05-10 10:28:11,867 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:28:14,301 state_manager Unregistered process software_vuln_scan_15
+INFO 2025-05-10 10:28:20,530 basehttp "GET /scanner/ HTTP/1.1" 200 89555
+ERROR 2025-05-10 10:28:22,345 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:28:25,478 basehttp "GET /scanner/vulnerabilities/ HTTP/1.1" 200 78727
+INFO 2025-05-10 10:28:25,725 basehttp "GET /scanner/vulnerabilities/scan-status/3/ HTTP/1.1" 200 131
+ERROR 2025-05-10 10:28:32,854 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:28:39,666 basehttp "GET /scanner/port-scanner/ HTTP/1.1" 200 75826
+INFO 2025-05-10 10:28:39,773 views_port_scanner Nmap found and working: D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:28:39,774 views_port_scanner python-nmap library found
+INFO 2025-05-10 10:28:40,001 basehttp "GET /scanner/port-scanner/check-nmap/ HTTP/1.1" 200 101
+ERROR 2025-05-10 10:28:43,386 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:28:48,578 basehttp "GET /scanner/network-monitor/ HTTP/1.1" 200 71845
+INFO 2025-05-10 10:28:48,847 basehttp "GET /scanner/network-monitor/stats/ HTTP/1.1" 200 930
+ERROR 2025-05-10 10:28:53,814 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:28:54,309 basehttp "GET /scanner/network-monitor/stats/ HTTP/1.1" 200 930
+INFO 2025-05-10 10:28:56,139 basehttp "GET /scanner/network-alerts/ HTTP/1.1" 200 70088
+INFO 2025-05-10 10:29:02,401 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+ERROR 2025-05-10 10:29:04,308 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:29:14,758 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:29:25,230 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:29:35,726 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:29:46,194 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:29:56,664 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:30:02,319 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+ERROR 2025-05-10 10:30:07,163 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:30:17,672 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:30:28,183 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:30:38,594 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:30:48,972 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:30:59,364 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:31:02,435 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+ERROR 2025-05-10 10:31:09,812 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:31:20,179 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:31:30,592 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:31:41,256 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:31:51,629 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:32:02,228 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:32:02,946 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+ERROR 2025-05-10 10:32:13,425 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:32:23,805 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:32:34,232 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:32:44,691 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:32:55,091 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:33:02,539 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8191
+ERROR 2025-05-10 10:33:05,535 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:33:16,007 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:33:26,492 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:33:36,949 network_monitor Error in traffic analysis: deque mutated during iteration
+ERROR 2025-05-10 10:33:47,476 network_monitor Error in traffic analysis: deque mutated during iteration
+INFO 2025-05-10 10:34:20,206 autoreload Watching for file changes with StatReloader
+INFO 2025-05-10 10:34:20,890 port_scanner nmap binary found at D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:34:23,486 state_manager Restored process network_monitor_2025-05-10T04:55:55.538619+00:00 from session
+INFO 2025-05-10 10:34:23,488 state_manager Restored process port_scan_13 from session
+INFO 2025-05-10 10:34:23,946 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-10 10:34:24,996 basehttp "GET /scanner/ HTTP/1.1" 200 89555
+INFO 2025-05-10 10:34:31,428 basehttp "GET /scanner/target/3/ HTTP/1.1" 200 64432
+INFO 2025-05-10 10:34:39,277 basehttp "GET /scanner/target/3/command/3/ HTTP/1.1" 200 1169
+INFO 2025-05-10 10:35:02,791 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+ERROR 2025-05-10 10:35:11,585 log Internal Server Error: /scanner/target/3/command/5/
+ERROR 2025-05-10 10:35:11,586 basehttp "GET /scanner/target/3/command/5/ HTTP/1.1" 500 72
+ERROR 2025-05-10 10:35:56,920 log Internal Server Error: /scanner/target/3/command/5/
+ERROR 2025-05-10 10:35:56,921 basehttp "GET /scanner/target/3/command/5/ HTTP/1.1" 500 72
+INFO 2025-05-10 10:36:02,741 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:36:09,121 views_software_vuln_scanner Connection attempt 1 for 192.168.29.244
+INFO 2025-05-10 10:36:10,051 views_software_vuln_scanner Response is compressed. Expecting 10793 bytes of compressed data.
+INFO 2025-05-10 10:36:10,051 views_software_vuln_scanner Receiving 10793 bytes from 192.168.29.244 for installed software
+INFO 2025-05-10 10:36:10,072 views_software_vuln_scanner Progress: 37% - Received 4096 of 10793 bytes
+INFO 2025-05-10 10:36:10,113 views_software_vuln_scanner Progress: 75% - Received 8192 of 10793 bytes
+INFO 2025-05-10 10:36:10,155 views_software_vuln_scanner Progress: 100% - Received 10793 of 10793 bytes
+INFO 2025-05-10 10:36:10,155 views_software_vuln_scanner Decompressing 10793 bytes of data
+INFO 2025-05-10 10:36:10,156 views_software_vuln_scanner Decompressed to 245346 bytes
+INFO 2025-05-10 10:36:10,847 software_vulnerability_scanner Parsing Windows installed software
+WARNING 2025-05-10 10:36:10,847 software_vulnerability_scanner No 'Installed Programs:' section found in OS info
+INFO 2025-05-10 10:36:10,847 software_vulnerability_scanner Trying to parse table format
+INFO 2025-05-10 10:36:10,849 views_software_vuln_scanner Parsed 0 software items from scan result
+INFO 2025-05-10 10:36:10,849 views_software_vuln_scanner Successfully fetched installed software for target 3
+INFO 2025-05-10 10:36:10,849 views_software_vuln_scanner Found 0 software items in database
+INFO 2025-05-10 10:36:11,154 basehttp "GET /scanner/software-vulnerabilities/software/3/ HTTP/1.1" 200 69089
+INFO 2025-05-10 10:36:23,355 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 76959
+INFO 2025-05-10 10:36:25,055 basehttp "GET /scanner/port-scanner/ HTTP/1.1" 200 75826
+INFO 2025-05-10 10:36:25,151 views_port_scanner Nmap found and working: D:\installed\nmap\nmap.EXE
+INFO 2025-05-10 10:36:25,160 views_port_scanner python-nmap library found
+INFO 2025-05-10 10:36:25,518 basehttp "GET /scanner/port-scanner/check-nmap/ HTTP/1.1" 200 101
+INFO 2025-05-10 10:36:28,529 basehttp "GET /scanner/network-monitor/ HTTP/1.1" 200 71753
+INFO 2025-05-10 10:36:30,031 basehttp "GET /scanner/network-alerts/ HTTP/1.1" 200 70088
+INFO 2025-05-10 10:36:30,389 basehttp - Broken pipe from ('127.0.0.1', 12219)
+INFO 2025-05-10 10:36:37,562 basehttp "GET /scanner/network-monitor/ HTTP/1.1" 200 71753
+INFO 2025-05-10 10:36:41,154 basehttp "GET /scanner/network-alerts/ HTTP/1.1" 200 70088
+INFO 2025-05-10 10:36:47,466 basehttp "GET /password_change/ HTTP/1.1" 200 55218
+INFO 2025-05-10 10:36:51,391 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 76959
+INFO 2025-05-10 10:36:55,481 basehttp "GET /logout/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:36:55,924 basehttp "GET /login/ HTTP/1.1" 200 9779
+INFO 2025-05-10 10:36:59,094 basehttp "POST /login/ HTTP/1.1" 302 0
+INFO 2025-05-10 10:36:59,473 basehttp "GET / HTTP/1.1" 302 0
+INFO 2025-05-10 10:37:00,527 basehttp "GET /scanner/ HTTP/1.1" 200 90020
+INFO 2025-05-10 10:37:02,712 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:37:46,054 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 128426
+INFO 2025-05-10 10:37:54,710 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 10:37:55,026 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:37:56,195 basehttp "GET /scanner/target/3/section/antivirus_info/ HTTP/1.1" 200 987
+INFO 2025-05-10 10:38:00,574 basehttp "GET /scanner/software-vulnerabilities/ HTTP/1.1" 200 76959
+INFO 2025-05-10 10:38:02,587 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:38:03,766 basehttp "GET /scanner/os-info/ HTTP/1.1" 200 128426
+INFO 2025-05-10 10:38:06,696 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:38:08,059 basehttp "GET /scanner/target/3/section/os_details/ HTTP/1.1" 200 1577
+INFO 2025-05-10 10:38:12,529 basehttp "GET /scanner/target/3/section/certificates/ HTTP/1.1" 200 132959
+INFO 2025-05-10 10:38:43,669 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8189
+INFO 2025-05-10 10:38:44,353 basehttp "GET /scanner/target/3/section/firewall_rules/ HTTP/1.1" 200 43930
+INFO 2025-05-10 10:39:02,561 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:39:06,510 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8190
+INFO 2025-05-10 10:39:21,771 basehttp "GET /scanner/target/3/section/audit_policy/ HTTP/1.1" 200 6774
+INFO 2025-05-10 10:39:36,153 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:39:38,912 basehttp "GET /scanner/target/3/section/ntlm_settings/ HTTP/1.1" 200 3433
+INFO 2025-05-10 10:39:44,997 basehttp "GET /scanner/target/3/section/rdp_connections/ HTTP/1.1" 200 3255
+INFO 2025-05-10 10:40:02,671 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+INFO 2025-05-10 10:40:06,339 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 200 8192
+ERROR 2025-05-10 10:40:44,208 log Internal Server Error: /scanner/target/3/section/system_overview/
+ERROR 2025-05-10 10:40:44,209 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 500 103
+ERROR 2025-05-10 10:41:10,145 log Internal Server Error: /scanner/target/3/section/system_overview/
+ERROR 2025-05-10 10:41:10,145 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 500 103
+ERROR 2025-05-10 10:41:14,174 log Internal Server Error: /scanner/target/3/section/system_overview/
+ERROR 2025-05-10 10:41:14,174 basehttp "GET /scanner/target/3/section/system_overview/ HTTP/1.1" 500 103

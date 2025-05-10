@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -8,6 +8,7 @@ from django.contrib.auth import login, authenticate
 from django.db.models import Count, Sum
 import logging
 import html
+import csv
 
 # Get a logger for this file
 logger = logging.getLogger('scanner')
@@ -1310,3 +1311,49 @@ def clear_network_devices(request):
         messages.success(request, f'Successfully cleared {count} network devices')
 
     return redirect('scanner:network_info')
+
+@login_required
+def help_support(request):
+    """Help and support page"""
+    context = {
+        'page_title': 'Help & Support',
+    }
+    return render(request, 'scanner/help_support.html', context)
+
+@login_required
+def export_os_info_installed_software_csv(request, target_id):
+    """
+    Export the installed software list from OS Information as a CSV file.
+    """
+    # Get the target
+    target = get_object_or_404(Target, pk=target_id)
+
+    # Get installed software
+    from .models import InstalledSoftware
+    software = InstalledSoftware.objects.filter(target=target).order_by('name')
+
+    # Create the HttpResponse object with CSV header
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="installed_software_{target.ip_address}_{timezone.now().strftime("%Y%m%d_%H%M%S")}.csv"'
+
+    # Create CSV writer
+    writer = csv.writer(response)
+
+    # Write header row
+    writer.writerow(['Name', 'Version', 'Vendor', 'Install Date', 'Install Location', 'Last Checked', 'Vulnerable'])
+
+    # Write data rows
+    for sw in software:
+        writer.writerow([
+            sw.name,
+            sw.version or '',
+            sw.vendor or '',
+            sw.install_date.strftime('%Y-%m-%d') if sw.install_date else '',
+            sw.install_location or '',
+            sw.last_checked.strftime('%Y-%m-%d %H:%M:%S') if sw.last_checked else '',
+            'Yes' if sw.is_vulnerable else 'No'
+        ])
+
+    logger.info(f"Exported {software.count()} software items as CSV for target {target.ip_address} from OS Information")
+
+    return response

@@ -22,14 +22,14 @@ active_processes = {}
 # Lock for thread-safe operations on the active_processes dictionary
 process_lock = threading.Lock()
 
-def register_process(process_id, data=None, process_type=None):
+def register_process(process_id, process_type=None, data=None):
     """
     Register a new background process.
 
     Args:
         process_id (str): Unique identifier for the process
-        data (dict): Data to store with the process
         process_type (str, optional): Type of process (e.g., 'port_scan', 'vulnerability_scan')
+        data (dict): Data to store with the process
 
     Returns:
         bool: True if registration was successful, False otherwise
@@ -38,6 +38,12 @@ def register_process(process_id, data=None, process_type=None):
         if process_id in active_processes:
             logger.warning(f"Process {process_id} already registered")
             return False
+
+        # Handle case where data is passed as second argument (backward compatibility)
+        if isinstance(process_type, dict) and data is None:
+            data = process_type
+            process_type = None
+            logger.warning(f"Deprecated usage: data passed as second argument to register_process for {process_id}")
 
         # If data is a dict and contains a 'type' key, use that as process_type
         if isinstance(data, dict) and 'type' in data and process_type is None:
@@ -50,6 +56,11 @@ def register_process(process_id, data=None, process_type=None):
                 process_type = parts[0]
             else:
                 process_type = 'unknown'
+
+        # Ensure data is a dictionary
+        if data is not None and not isinstance(data, dict):
+            logger.warning(f"Non-dict data passed to register_process for {process_id}, converting to dict")
+            data = {'value': data}
 
         active_processes[process_id] = {
             'type': process_type,
@@ -165,6 +176,16 @@ def update_process_data(process_id, data):
         if process_id not in active_processes:
             logger.warning(f"Process {process_id} not found for data update")
             return False
+
+        # Check if the existing data is a dictionary
+        if not isinstance(active_processes[process_id]['data'], dict):
+            logger.warning(f"Existing data for process {process_id} is not a dictionary, replacing with new data")
+            active_processes[process_id]['data'] = {}
+
+        # Check if the new data is a dictionary
+        if not isinstance(data, dict):
+            logger.warning(f"Non-dict data passed to update_process_data for {process_id}, converting to dict")
+            data = {'value': data}
 
         # Merge new data with existing data
         active_processes[process_id]['data'].update(data)

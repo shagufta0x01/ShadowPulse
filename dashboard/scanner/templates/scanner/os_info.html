@@ -1208,7 +1208,13 @@
                                     // It's already formatted HTML, wrap it in a container
                                     resultContainer.innerHTML = `
                                         <div class="p-3 border rounded" style="background-color: var(--secondary-bg-color);">
-                                            <h5 class="mb-3" style="color: var(--accent-color);"><i class="fas fa-file-alt me-2"></i>${sectionName}</h5>
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h5 style="color: var(--accent-color); margin-bottom: 0;"><i class="fas fa-file-alt me-2"></i>${sectionName}</h5>
+                                                ${sectionId === 'installed_software' ?
+                                                    `<a href="/scanner/os-info/installed-software/${selectedTargetId}/export-csv/" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-file-csv me-1"></i> Export to CSV
+                                                    </a>` : ''}
+                                            </div>
                                             <div class="result-content" style="max-height: 500px; overflow-y: auto; color: var(--text-color);">
                                                 ${data.result_data}
                                             </div>
@@ -1217,7 +1223,13 @@
                                     // It's plain text, wrap in pre tags with styling
                                     resultContainer.innerHTML = `
                                         <div class="p-3 border rounded" style="background-color: var(--secondary-bg-color);">
-                                            <h5 class="mb-3" style="color: var(--accent-color);"><i class="fas fa-file-alt me-2"></i>${sectionName}</h5>
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h5 style="color: var(--accent-color); margin-bottom: 0;"><i class="fas fa-file-alt me-2"></i>${sectionName}</h5>
+                                                ${sectionId === 'installed_software' ?
+                                                    `<a href="/scanner/os-info/installed-software/${selectedTargetId}/export-csv/" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-file-csv me-1"></i> Export to CSV
+                                                    </a>` : ''}
+                                            </div>
                                             <pre class="mb-0" style="max-height: 500px; overflow-y: auto; color: var(--text-color);">${data.result_data}</pre>
                                         </div>`;
                                 }

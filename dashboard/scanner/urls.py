@@ -10,6 +10,7 @@ urlpatterns = [
     # Main pages
     path('', views.index, name='index'),
     path('os-info/', views.os_info, name='os_info'),
+    path('os-info/installed-software/<int:target_id>/export-csv/', views.export_os_info_installed_software_csv, name='export_os_info_installed_software_csv'),
     path('network-info/', views.network_info, name='network_info'),
     path('processes/', views.processes, name='processes'),
     path('processes/data/', views.get_processes_data, name='get_processes_data'),
@@ -60,7 +61,9 @@ urlpatterns = [
     path('software-vulnerabilities/results/<int:scan_id>/', views_software_vuln_scanner.software_vuln_scan_results, name='software_vuln_scan_results'),
     path('software-vulnerabilities/detail/<int:vuln_id>/', views_software_vuln_scanner.software_vulnerability_detail, name='software_vulnerability_detail'),
     path('software-vulnerabilities/software/<int:target_id>/', views_software_vuln_scanner.installed_software_list, name='installed_software_list'),
+    path('software-vulnerabilities/software/<int:target_id>/export-csv/', views_software_vuln_scanner.export_installed_software_csv, name='export_installed_software_csv'),
 
     # Add the URL pattern that matches the hardcoded URLs in the templates
     path('installed-software/<int:target_id>/', views_software_vuln_scanner.installed_software_list, name='installed_software_list_alt'),
+    path('installed-software/<int:target_id>/export-csv/', views_software_vuln_scanner.export_installed_software_csv, name='export_installed_software_csv_alt'),
 ]
