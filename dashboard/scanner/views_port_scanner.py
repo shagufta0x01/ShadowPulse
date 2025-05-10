@@ -473,6 +473,28 @@ def update_scan_notes(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
 @login_required
+def vanish_port_scanner_data(request):
+    """
+    Clear all port scanner data.
+    """
+    if request.method == 'POST':
+        try:
+            # Delete all port info
+            PortInfo.objects.all().delete()
+
+            # Delete all port scan results
+            PortScanResult.objects.all().delete()
+
+            # Return success message
+            return JsonResponse({'status': 'success', 'message': 'Port scanner data has been cleared successfully.'})
+        except Exception as e:
+            logger.error(f"Error clearing port scanner data: {str(e)}")
+            return JsonResponse({'status': 'error', 'message': f'Error clearing port scanner data: {str(e)}'})
+
+    # If not POST, redirect to home
+    return redirect('scanner:port_scanner_home')
+
+@login_required
 def check_nmap_availability(request):
     """
     Check if nmap is available on the system.

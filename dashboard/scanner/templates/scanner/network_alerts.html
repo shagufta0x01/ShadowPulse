@@ -89,6 +89,12 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Network Security Alerts</h5>
                 <div>
+                    <form method="post" action="{% url 'scanner:vanish_network_alerts_data' %}" class="d-inline me-2" onsubmit="return confirm('Are you sure you want to clear all network security alerts? This action cannot be undone.')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-trash-alt me-1"></i> Vanish Data
+                        </button>
+                    </form>
                     <a href="{% url 'scanner:network_monitor_dashboard' %}" class="btn btn-sm btn-outline-primary">
                         <i class="fas fa-chart-line me-1"></i> Monitoring Dashboard
                     </a>
@@ -126,7 +132,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 {% if page_obj %}
                 <div class="alert-list">
                     {% for alert in page_obj %}
@@ -150,7 +156,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ alert.alert_type }}</h5>
                             <p class="card-text">{{ alert.description }}</p>
-                            
+
                             <div class="alert-details mt-3">
                                 {% if alert.source_ip or alert.destination_ip %}
                                 <div class="row mb-3">
@@ -163,7 +169,7 @@
                                                 <span class="alert-source">{{ alert.source_ip }}</span>
                                             </div>
                                             {% endif %}
-                                            
+
                                             {% if alert.destination_ip %}
                                             <div>
                                                 <strong>Destination IP:</strong>
@@ -174,7 +180,7 @@
                                     </div>
                                 </div>
                                 {% endif %}
-                                
+
                                 {% if alert.packet_info %}
                                 <div class="row mb-3">
                                     <div class="col-md-12">
@@ -183,7 +189,7 @@
                                     </div>
                                 </div>
                                 {% endif %}
-                                
+
                                 {% if not alert.resolved %}
                                 <div class="row">
                                     <div class="col-md-12">
@@ -217,7 +223,7 @@
                     </div>
                     {% endfor %}
                 </div>
-                
+
                 <div class="pagination-container">
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
@@ -233,7 +239,7 @@
                                 </a>
                             </li>
                             {% endif %}
-                            
+
                             {% for num in page_obj.paginator.page_range %}
                                 {% if page_obj.number == num %}
                                 <li class="page-item active">
@@ -245,7 +251,7 @@
                                 </li>
                                 {% endif %}
                             {% endfor %}
-                            
+
                             {% if page_obj.has_next %}
                             <li class="page-item">
                                 <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_filters.severity %}&severity={{ current_filters.severity }}{% endif %}{% if current_filters.type %}&type={{ current_filters.type }}{% endif %}{% if current_filters.resolved %}&resolved={{ current_filters.resolved }}{% endif %}" aria-label="Next">

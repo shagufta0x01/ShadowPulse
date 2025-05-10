@@ -42,6 +42,9 @@ urlpatterns = [
     # Update scan notes
     path('port-scanner/update-notes/', views_port_scanner.update_scan_notes, name='update_scan_notes'),
 
+    # Vanish port scanner data
+    path('port-scanner/vanish/', views_port_scanner.vanish_port_scanner_data, name='vanish_port_scanner_data'),
+
     # Port vulnerability scanner
     path('port-scanner/vuln-scan/<int:scan_id>/start/', views_port_vuln_scanner.start_port_vuln_scan, name='start_port_vuln_scan'),
     path('port-scanner/vuln-scan/status/', views_port_vuln_scanner.port_vuln_scan_status, name='port_vuln_scan_status'),

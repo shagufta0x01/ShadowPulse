@@ -570,7 +570,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'scanner:index' %}">
-                <span style="color: var(--accent-color); font-weight: 700;">Rex</span>
+                <img src="{% static 'scanner/images/rex-logo.svg' %}" alt="Rex Security" height="40" class="me-2">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -649,16 +649,15 @@
                 <div class="py-4 px-3 mb-2">
                     <div class="text-center mb-3">
                         <div class="logo-container d-inline-block position-relative">
-                            <div class="logo-bg rounded-circle mb-2" style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent-color) 0%, #6a3fc9 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                                <span style="font-size: 32px; font-weight: 700; color: white; text-transform: uppercase;">R</span>
-                            </div>
+                            <img src="{% static 'scanner/images/rex-logo.svg' %}" alt="Rex Security" width="80" height="80" class="mb-2">
                             <div class="logo-glow position-absolute" style="top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(138,86,255,0.3) 0%, rgba(138,86,255,0) 70%); filter: blur(8px); z-index: -1;"></div>
                         </div>
+                        <!-- Text Logo -->
+                        <h3 class="mb-1" style="color: var(--accent-color); font-weight: 700; text-transform: lowercase;">rex</h3>
                     </div>
 
                     <!-- Welcome Message -->
                     <div class="text-center mb-3">
-                        <h6 class="mb-1 fw-bold" style="color: var(--text-color);">{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</h6>
                         <p class="small mb-0" style="color: var(--text-secondary); font-style: italic;">Security is a process, not a product.</p>
                     </div>
                 </div>

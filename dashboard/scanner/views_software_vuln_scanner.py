@@ -506,6 +506,40 @@ def software_vulnerability_detail(request, vuln_id):
     return render(request, 'scanner/software_vulnerability_detail.html', context)
 
 @login_required
+def vanish_software_vuln_data(request):
+    """
+    Clear all software vulnerability data.
+    """
+    if request.method == 'POST':
+        try:
+            # Delete all software vulnerabilities
+            SoftwareVulnerability.objects.all().delete()
+
+            # Delete all software vulnerability scans
+            SoftwareVulnerabilityScan.objects.all().delete()
+
+            # Reset vulnerability flags on installed software
+            InstalledSoftware.objects.filter(is_vulnerable=True).update(is_vulnerable=False)
+
+            # Return success message
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Software vulnerability data has been cleared successfully.'
+            })
+        except Exception as e:
+            logger.error(f"Error clearing software vulnerability data: {str(e)}")
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Error clearing software vulnerability data: {str(e)}'
+            })
+
+    # If not POST, redirect to home
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Only POST method is allowed'
+    })
+
+@login_required
 def export_installed_software_csv(request, target_id):
     """
     Export the installed software list as a CSV file.

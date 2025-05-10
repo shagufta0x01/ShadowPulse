@@ -25,13 +25,13 @@ def network_monitor_dashboard(request):
     """Network monitoring dashboard view."""
     # Get monitor instance
     monitor = get_monitor()
-    
+
     # Get latest traffic stats
     latest_stats = NetworkTrafficStats.objects.order_by('-timestamp').first()
-    
+
     # Get recent alerts
     recent_alerts = NetworkAlert.objects.order_by('-timestamp')[:10]
-    
+
     # Get alert counts by severity
     alert_counts = {
         'critical': NetworkAlert.objects.filter(severity='critical').count(),
@@ -39,14 +39,14 @@ def network_monitor_dashboard(request):
         'medium': NetworkAlert.objects.filter(severity='medium').count(),
         'low': NetworkAlert.objects.filter(severity='low').count(),
     }
-    
+
     # Get monitor status
     monitor_status = {
         'running': monitor.running if monitor else False,
         'start_time': monitor.stats.get('start_time') if monitor and monitor.running else None,
         'packets_captured': monitor.stats.get('packets_captured', 0) if monitor else 0,
     }
-    
+
     context = {
         'page_title': 'Network Monitoring',
         'monitor_status': monitor_status,
@@ -54,7 +54,7 @@ def network_monitor_dashboard(request):
         'recent_alerts': recent_alerts,
         'alert_counts': alert_counts,
     }
-    
+
     return render(request, 'scanner/network_monitor.html', context)
 
 
@@ -63,23 +63,23 @@ def start_network_monitor(request):
     """Start the network monitoring process."""
     if request.method == 'POST':
         monitor = get_monitor()
-        
+
         if monitor:
             # Get interface from request if provided
             interface = request.POST.get('interface')
             if interface:
                 monitor.interface = interface
-            
+
             # Start monitoring
             success = monitor.start_monitoring()
-            
+
             if success:
                 messages.success(request, 'Network monitoring started successfully.')
             else:
                 messages.error(request, 'Failed to start network monitoring. It may already be running.')
         else:
             messages.error(request, 'Failed to initialize network monitor.')
-    
+
     return redirect('scanner:network_monitor_dashboard')
 
 
@@ -88,18 +88,18 @@ def stop_network_monitor(request):
     """Stop the network monitoring process."""
     if request.method == 'POST':
         monitor = get_monitor()
-        
+
         if monitor:
             # Stop monitoring
             success = monitor.stop_monitoring()
-            
+
             if success:
                 messages.success(request, 'Network monitoring stopped successfully.')
             else:
                 messages.error(request, 'Failed to stop network monitoring. It may not be running.')
         else:
             messages.error(request, 'Failed to access network monitor.')
-    
+
     return redirect('scanner:network_monitor_dashboard')
 
 
@@ -107,7 +107,7 @@ def stop_network_monitor(request):
 def network_monitor_stats(request):
     """Get current network monitoring statistics."""
     monitor = get_monitor()
-    
+
     if monitor:
         stats = monitor.get_statistics()
         return JsonResponse(stats)
@@ -122,29 +122,29 @@ def network_alerts(request):
     severity = request.GET.get('severity')
     resolved = request.GET.get('resolved')
     alert_type = request.GET.get('type')
-    
+
     # Base queryset
     alerts = NetworkAlert.objects.order_by('-timestamp')
-    
+
     # Apply filters
     if severity:
         alerts = alerts.filter(severity=severity)
-    
+
     if resolved is not None:
         is_resolved = resolved.lower() == 'true'
         alerts = alerts.filter(resolved=is_resolved)
-    
+
     if alert_type:
         alerts = alerts.filter(alert_type=alert_type)
-    
+
     # Paginate results
     paginator = Paginator(alerts, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
+
     # Get alert types for filter
     alert_types = NetworkAlert.objects.values('alert_type').annotate(count=Count('id')).order_by('alert_type')
-    
+
     context = {
         'page_title': 'Network Security Alerts',
         'page_obj': page_obj,
@@ -155,7 +155,7 @@ def network_alerts(request):
             'type': alert_type,
         }
     }
-    
+
     return render(request, 'scanner/network_alerts.html', context)
 
 
@@ -164,17 +164,17 @@ def resolve_alert(request, alert_id):
     """Mark an alert as resolved."""
     if request.method == 'POST':
         alert = get_object_or_404(NetworkAlert, id=alert_id)
-        
+
         # Get resolution notes
         resolution_notes = request.POST.get('resolution_notes', '')
-        
+
         # Update alert
         alert.resolved = True
         alert.resolution_notes = resolution_notes
         alert.save()
-        
+
         messages.success(request, 'Alert marked as resolved.')
-    
+
     return redirect('scanner:network_alerts')
 
 
@@ -183,7 +183,7 @@ def vulnerability_dashboard(request):
     """Vulnerability management dashboard view."""
     # Get recent vulnerability checkups
     recent_checkups = VulnerabilityCheckup.objects.order_by('-timestamp')[:5]
-    
+
     # Get vulnerability counts by severity
     vuln_counts = {
         'critical': Vulnerability.objects.filter(severity='critical').count(),
@@ -191,7 +191,7 @@ def vulnerability_dashboard(request):
         'medium': Vulnerability.objects.filter(severity='medium').count(),
         'low': Vulnerability.objects.filter(severity='low').count(),
     }
-    
+
     # Get vulnerability counts by status
     status_counts = {
         'open': Vulnerability.objects.filter(status='open').count(),
@@ -199,10 +199,10 @@ def vulnerability_dashboard(request):
         'resolved': Vulnerability.objects.filter(status='resolved').count(),
         'false_positive': Vulnerability.objects.filter(status='false_positive').count(),
     }
-    
+
     # Get targets
     targets = Target.objects.filter(is_active=True).order_by('-last_scan')
-    
+
     context = {
         'page_title': 'Vulnerability Management',
         'recent_checkups': recent_checkups,
@@ -210,7 +210,7 @@ def vulnerability_dashboard(request):
         'status_counts': status_counts,
         'targets': targets,
     }
-    
+
     return render(request, 'scanner/vulnerability_dashboard.html', context)
 
 
@@ -220,25 +220,25 @@ def start_vulnerability_scan(request):
     if request.method == 'POST':
         target_id = request.POST.get('target_id')
         scan_type = request.POST.get('scan_type', 'standard')
-        
+
         if not target_id:
             messages.error(request, 'No target selected.')
             return redirect('scanner:vulnerability_dashboard')
-        
+
         # Get target
         target = get_object_or_404(Target, id=target_id)
-        
+
         # Create scanner
         scanner = create_scanner(target, scan_type)
-        
+
         # Start scan
         success = scanner.start_scan()
-        
+
         if success:
             messages.success(request, f'Vulnerability scan started for {target}.')
         else:
             messages.error(request, f'Failed to start vulnerability scan for {target}.')
-    
+
     return redirect('scanner:vulnerability_dashboard')
 
 
@@ -247,28 +247,28 @@ def stop_vulnerability_scan(request):
     """Stop a vulnerability scan for a target."""
     if request.method == 'POST':
         target_id = request.POST.get('target_id')
-        
+
         if not target_id:
             messages.error(request, 'No target specified.')
             return redirect('scanner:vulnerability_dashboard')
-        
+
         # Get scanner
         scanner = get_scanner(target_id)
-        
+
         if scanner:
             # Stop scan
             success = scanner.stop_scan()
-            
+
             if success:
                 messages.success(request, 'Vulnerability scan stopped.')
             else:
                 messages.error(request, 'Failed to stop vulnerability scan.')
-            
+
             # Remove scanner
             remove_scanner(target_id)
         else:
             messages.error(request, 'No active scan found for this target.')
-    
+
     return redirect('scanner:vulnerability_dashboard')
 
 
@@ -276,7 +276,7 @@ def stop_vulnerability_scan(request):
 def vulnerability_scan_status(request, target_id):
     """Get the status of a vulnerability scan."""
     scanner = get_scanner(target_id)
-    
+
     if scanner:
         status = scanner.get_status()
         return JsonResponse(status)
@@ -288,16 +288,16 @@ def vulnerability_scan_status(request, target_id):
 def vulnerability_checkup_detail(request, checkup_id):
     """View details of a vulnerability checkup."""
     checkup = get_object_or_404(VulnerabilityCheckup, id=checkup_id)
-    
+
     # Get vulnerabilities for this checkup
     vulnerabilities = Vulnerability.objects.filter(checkup=checkup).order_by('-severity', 'title')
-    
+
     context = {
         'page_title': f'Vulnerability Checkup: {checkup.target}',
         'checkup': checkup,
         'vulnerabilities': vulnerabilities,
     }
-    
+
     return render(request, 'scanner/vulnerability_checkup_detail.html', context)
 
 
@@ -308,28 +308,28 @@ def vulnerabilities_list(request):
     severity = request.GET.get('severity')
     status = request.GET.get('status')
     target_id = request.GET.get('target')
-    
+
     # Base queryset
     vulnerabilities = Vulnerability.objects.order_by('-severity', '-discovered_at')
-    
+
     # Apply filters
     if severity:
         vulnerabilities = vulnerabilities.filter(severity=severity)
-    
+
     if status:
         vulnerabilities = vulnerabilities.filter(status=status)
-    
+
     if target_id:
         vulnerabilities = vulnerabilities.filter(target_id=target_id)
-    
+
     # Paginate results
     paginator = Paginator(vulnerabilities, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
+
     # Get targets for filter
     targets = Target.objects.filter(is_active=True).order_by('ip_address')
-    
+
     context = {
         'page_title': 'Vulnerabilities',
         'page_obj': page_obj,
@@ -340,7 +340,7 @@ def vulnerabilities_list(request):
             'target': target_id,
         }
     }
-    
+
     return render(request, 'scanner/vulnerabilities_list.html', context)
 
 
@@ -349,23 +349,79 @@ def update_vulnerability_status(request, vuln_id):
     """Update the status of a vulnerability."""
     if request.method == 'POST':
         vulnerability = get_object_or_404(Vulnerability, id=vuln_id)
-        
+
         # Get new status and notes
         new_status = request.POST.get('status')
         notes = request.POST.get('notes', '')
-        
+
         if new_status in dict(Vulnerability.STATUS_CHOICES).keys():
             # Update vulnerability
             vulnerability.status = new_status
             vulnerability.save()
-            
+
             messages.success(request, f'Vulnerability status updated to {new_status}.')
         else:
             messages.error(request, 'Invalid status value.')
-    
+
     # Redirect back to referring page or vulnerabilities list
     referer = request.META.get('HTTP_REFERER')
     if referer:
         return redirect(referer)
     else:
         return redirect('scanner:vulnerabilities_list')
+
+
+@login_required
+def vanish_network_monitor_data(request):
+    """Clear all network monitoring data."""
+    if request.method == 'POST':
+        try:
+            # Clear network traffic stats
+            NetworkTrafficStats.objects.all().delete()
+
+            # Clear network monitor logs
+            NetworkMonitorLog.objects.all().delete()
+
+            # Reset monitor stats if running
+            monitor = get_monitor()
+            if monitor:
+                monitor.reset_stats()
+
+            messages.success(request, 'Network monitoring data has been cleared successfully.')
+        except Exception as e:
+            messages.error(request, f'Error clearing network monitoring data: {str(e)}')
+
+    return redirect('scanner:network_monitor_dashboard')
+
+
+@login_required
+def vanish_network_alerts_data(request):
+    """Clear all network security alerts."""
+    if request.method == 'POST':
+        try:
+            # Delete all network alerts
+            NetworkAlert.objects.all().delete()
+
+            messages.success(request, 'Network security alerts have been cleared successfully.')
+        except Exception as e:
+            messages.error(request, f'Error clearing network alerts: {str(e)}')
+
+    return redirect('scanner:network_alerts')
+
+
+@login_required
+def vanish_vulnerability_data(request):
+    """Clear all vulnerability data."""
+    if request.method == 'POST':
+        try:
+            # Delete all vulnerabilities
+            Vulnerability.objects.all().delete()
+
+            # Delete all vulnerability checkups
+            VulnerabilityCheckup.objects.all().delete()
+
+            messages.success(request, 'Vulnerability data has been cleared successfully.')
+        except Exception as e:
+            messages.error(request, f'Error clearing vulnerability data: {str(e)}')
+
+    return redirect('scanner:vulnerability_dashboard')
