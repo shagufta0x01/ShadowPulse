@@ -1900,157 +1900,256 @@ Windows Defender is typically the default antivirus on Windows systems.
         table = "Audit Policy:\n"
         table += "-" * 70 + "\n"
         command = """
-        # Create a function to format output as a table
-        function Format-TableOutput {
-            param (
-                [string]$Title,
-                [string]$Subtitle = "",
-                [scriptblock]$ContentBlock
-            )
+        # Simplified approach without nested script blocks
+        Write-Output "Windows Audit Policy"
+        Write-Output "Success"
+        Write-Output ("-" * 70)
 
-            Write-Output $Title
-            Write-Output ("-" * 70)
+        # Method 1: Get detailed audit policy using auditpol.exe
+        Write-Output "`n1. Detailed Audit Policy Categories"
+        Write-Output ("-" * 50)
 
-            if ($Subtitle) {
-                Write-Output $Subtitle
-                Write-Output ("-" * 50)
+        try {
+            # Use Invoke-Expression instead of & operator
+            $auditpolOutput = Invoke-Expression "auditpol.exe /get /category:* /r"
+            if ($auditpolOutput) {
+                $auditpol = $auditpolOutput | ConvertFrom-Csv
+                if ($auditpol) {
+                    $categories = $auditpol | Group-Object -Property "Category/Subcategory"
+
+                    foreach ($category in $categories) {
+                        Write-Output "`n$($category.Name)"
+                        Write-Output ("-" * 50)
+
+                        foreach ($item in $category.Group) {
+                            $setting = $item."Inclusion Setting"
+                            $settingDisplay = if ($setting -eq "No Auditing") { "Disabled" } else { $setting }
+                            "{0,-40} : {1}" -f $item."Subcategory", $settingDisplay
+                        }
+                    }
+                } else {
+                    Write-Output "Unable to parse audit policy output"
+                }
+            } else {
+                Write-Output "Unable to retrieve detailed audit policy (requires elevation)"
             }
-
-            try {
-                & $ContentBlock
-            }
-            catch {
-                Write-Output "Error: $($_.Exception.Message)"
-            }
-
-            Write-Output ""
+        } catch {
+            Write-Output "Error retrieving detailed audit policy: $($_.Exception.Message)"
         }
 
-        # Windows Audit Policy Settings
-        Format-TableOutput -Title "Windows Audit Policy Settings" {
-            # Method 1: Get detailed audit policy using auditpol.exe
-            Format-TableOutput -Title "1. Detailed Audit Policy Categories" {
-                try {
-                    $auditpol = & auditpol.exe /get /category:* /r | ConvertFrom-Csv
-                    if ($auditpol) {
-                        $categories = $auditpol | Group-Object -Property "Category/Subcategory"
+        # Method 2: Registry Audit Settings
+        Write-Output "`n2. Registry Audit Settings"
+        Write-Output ("-" * 50)
 
-                        foreach ($category in $categories) {
-                            Write-Output "`n$($category.Name)"
-                            Write-Output "-" * 50
+        $regPaths = @(
+            @{
+                Path = 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\Audit'
+                Description = 'System Audit Policies'
+            },
+            @{
+                Path = 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa'
+                Description = 'LSA Audit Settings'
+            },
+            @{
+                Path = 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\EventLog\\Security'
+                Description = 'Security Event Log Configuration'
+            }
+        )
 
-                            foreach ($item in $category.Group) {
-                                $setting = $item."Inclusion Setting"
-                                $settingDisplay = if ($setting -eq "No Auditing") { "Disabled" } else { $setting }
-                                "{0,-40} : {1}" -f $item."Subcategory", $settingDisplay
-                            }
+        foreach ($pathInfo in $regPaths) {
+            $path = $pathInfo.Path
+            if (Test-Path $path) {
+                Write-Output "`n$($pathInfo.Description) ($path)"
+                Write-Output ("-" * 50)
+
+                $props = Get-ItemProperty -Path $path -ErrorAction SilentlyContinue
+                if ($props) {
+                    $auditProps = $props.PSObject.Properties | Where-Object {
+                        $_.Name -match 'audit|Audit|log|Log' -and
+                        $_.Name -notmatch '^PS'
+                    }
+
+                    if ($auditProps) {
+                        foreach ($prop in $auditProps) {
+                            "{0,-30} : {1}" -f $prop.Name, $prop.Value
                         }
                     } else {
-                        "Unable to retrieve detailed audit policy (requires elevation)"
+                        Write-Output "No audit-related properties found"
                     }
-                } catch {
-                    "Error retrieving detailed audit policy: $($_.Exception.Message)"
+                } else {
+                    Write-Output "Unable to read properties"
                 }
             }
+        }
 
-            # Method 2: Registry Audit Settings
-            Format-TableOutput -Title "2. Registry Audit Settings" {
-                $regPaths = @(
-                    @{
-                        Path = 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\Audit'
-                        Description = 'System Audit Policies'
-                    },
-                    @{
-                        Path = 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa'
-                        Description = 'LSA Audit Settings'
-                    },
-                    @{
-                        Path = 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\EventLog\\Security'
-                        Description = 'Security Event Log Configuration'
-                    }
-                )
+        # Method 3: Process Command Line Auditing
+        Write-Output "`n3. Process Command Line Auditing"
+        Write-Output ("-" * 50)
 
-                foreach ($pathInfo in $regPaths) {
-                    $path = $pathInfo.Path
-                    if (Test-Path $path) {
-                        Write-Output "`n$($pathInfo.Description) ($path)"
-                        Write-Output "-" * 50
-
-                        $props = Get-ItemProperty -Path $path -ErrorAction SilentlyContinue
-                        if ($props) {
-                            $auditProps = $props.PSObject.Properties | Where-Object {
-                                $_.Name -match 'audit|Audit|log|Log' -and
-                                $_.Name -notmatch '^PS'
-                            }
-
-                            if ($auditProps) {
-                                foreach ($prop in $auditProps) {
-                                    "{0,-30} : {1}" -f $prop.Name, $prop.Value
-                                }
-                            } else {
-                                "No audit-related properties found"
-                            }
-                        } else {
-                            "Unable to read properties"
-                        }
-                    }
-                }
+        try {
+            $processPath = 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\Audit\\ProcessCreationIncludeCmdLine_Enabled'
+            if (Test-Path $processPath) {
+                $value = Get-ItemProperty -Path $processPath -ErrorAction SilentlyContinue
+                $enabled = if ($value.'(default)' -eq 1) { "Enabled" } else { "Disabled" }
+                Write-Output "Command line auditing: $enabled"
+            } else {
+                Write-Output "Command line auditing registry key not found (default: Disabled)"
             }
 
-            # Method 3: Process Command Line Auditing
-            Format-TableOutput -Title "3. Process Command Line Auditing" {
-                try {
-                    $processPath = 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\Audit\\ProcessCreationIncludeCmdLine_Enabled'
-                    if (Test-Path $processPath) {
-                        $value = Get-ItemProperty -Path $processPath -ErrorAction SilentlyContinue
-                        $enabled = if ($value.'(default)' -eq 1) { "Enabled" } else { "Disabled" }
-                        "Command line auditing: $enabled"
-                    } else {
-                        "Command line auditing registry key not found (default: Disabled)"
-                    }
-
-                    # Check if process creation events are being audited
-                    $processAudit = & auditpol.exe /get /subcategory:"Process Creation" /r | ConvertFrom-Csv
-                    if ($processAudit) {
-                        $setting = $processAudit."Inclusion Setting"
-                        "Process creation auditing: $setting"
-                    }
-                } catch {
-                    "Unable to determine process auditing settings: $($_.Exception.Message)"
+            # Check if process creation events are being audited
+            # Use Invoke-Expression instead of & operator
+            $processAuditOutput = Invoke-Expression "auditpol.exe /get /subcategory:`"Process Creation`" /r"
+            if ($processAuditOutput) {
+                $processAudit = $processAuditOutput | ConvertFrom-Csv
+                if ($processAudit) {
+                    $setting = $processAudit."Inclusion Setting"
+                    Write-Output "Process creation auditing: $setting"
                 }
             }
+        } catch {
+            Write-Output "Unable to determine process auditing settings: $($_.Exception.Message)"
+        }
 
-            # Method 4: Security Event Log Configuration
-            Format-TableOutput -Title "4. Security Event Log Configuration" {
-                try {
-                    $logConfig = Get-WinEvent -ListLog Security -ErrorAction SilentlyContinue
-                    if ($logConfig) {
-                        "Log Enabled        : $($logConfig.IsEnabled)"
-                        "Log Full Behavior  : $($logConfig.LogMode)"
-                        "Maximum Size (MB)  : $([math]::Round($logConfig.MaximumSizeInBytes / 1MB, 2))"
-                        "Current Size (MB)  : $([math]::Round($logConfig.FileSize / 1MB, 2))"
-                        "Records Count      : $($logConfig.RecordCount)"
-                        "Retention Days     : $($logConfig.LogFilePath)"
-                    } else {
-                        "Unable to access Security event log configuration (requires elevation)"
-                    }
-                } catch {
-                    "Unable to read security event log settings: $($_.Exception.Message)"
-                }
+        # Method 4: Security Event Log Configuration
+        Write-Output "`n4. Security Event Log Configuration"
+        Write-Output ("-" * 50)
+
+        try {
+            $logConfig = Get-WinEvent -ListLog Security -ErrorAction SilentlyContinue
+            if ($logConfig) {
+                Write-Output "Log Enabled        : $($logConfig.IsEnabled)"
+                Write-Output "Log Full Behavior  : $($logConfig.LogMode)"
+                Write-Output "Maximum Size (MB)  : $([math]::Round($logConfig.MaximumSizeInBytes / 1MB, 2))"
+                Write-Output "Current Size (MB)  : $([math]::Round($logConfig.FileSize / 1MB, 2))"
+                Write-Output "Records Count      : $($logConfig.RecordCount)"
+                Write-Output "Retention Days     : $($logConfig.LogFilePath)"
+            } else {
+                Write-Output "Unable to access Security event log configuration (requires elevation)"
             }
+        } catch {
+            Write-Output "Unable to read security event log settings: $($_.Exception.Message)"
         }
         """
         output = run_powershell_command(command, timeout=60)  # Increase timeout for this command
         if not output:
             output = "No audit policy information available (requires elevated privileges)"
 
-        # Create HTML output for web display
+        # Create HTML output for web display with better formatting
+        # Parse the output to create a more structured HTML display
+        lines = output.strip().split('\n')
+        formatted_html = []
+
+        current_section = None
+        in_subsection = False
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
+            # Check if this is a main section header
+            if line.startswith('Windows Audit Policy') or line.startswith('Success'):
+                formatted_html.append(f'<h3 class="section-title">{html.escape(line)}</h3>')
+            # Check if this is a numbered section
+            elif line.startswith('1.') or line.startswith('2.') or line.startswith('3.') or line.startswith('4.'):
+                current_section = line
+                formatted_html.append(f'<h4 class="subsection-title">{html.escape(line)}</h4>')
+                formatted_html.append('<div class="audit-section">')
+                in_subsection = False
+            # Check if this is a separator line
+            elif line.startswith('---'):
+                continue
+            # Check if this is a subsection header
+            elif line.startswith('System Audit Policies') or line.startswith('LSA Audit Settings') or line.startswith('Security Event Log Configuration'):
+                if in_subsection:
+                    formatted_html.append('</table>')
+                formatted_html.append(f'<h5 class="subsection-header">{html.escape(line)}</h5>')
+                formatted_html.append('<table class="audit-table"><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody>')
+                in_subsection = True
+            # Check if this is a key-value pair
+            elif ':' in line:
+                key, value = line.split(':', 1)
+                formatted_html.append(f'<tr><td>{html.escape(key.strip())}</td><td>{html.escape(value.strip())}</td></tr>')
+            # Otherwise, it's just a regular line
+            else:
+                if in_subsection:
+                    formatted_html.append(f'<tr><td colspan="2">{html.escape(line)}</td></tr>')
+                else:
+                    formatted_html.append(f'<p>{html.escape(line)}</p>')
+
+        # Close any open tags
+        if in_subsection:
+            formatted_html.append('</table>')
+        if current_section:
+            formatted_html.append('</div>')
+
+        # Add CSS styles for the audit policy display
         html_output = f"""
         <div class="audit-policy-container">
-            <h3 class="section-title">Windows Audit Policy</h3>
-            <div class="audit-content">
-                <pre class="audit-output">{html.escape(output)}</pre>
-            </div>
+            <style>
+                /* Override any parent styles that might be causing the white background */
+                .audit-policy-container,
+                .audit-policy-container * {{
+                    background-color: #1e1e2e !important;
+                }}
+
+                .audit-policy-container {{
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    color: #e0e0e0 !important;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    padding: 20px;
+                    margin-bottom: 20px;
+                }}
+                .section-title {{
+                    color: #cba6f7 !important;
+                    border-bottom: 2px solid #89b4fa !important;
+                    padding-bottom: 10px;
+                    margin-bottom: 20px;
+                }}
+                .subsection-title {{
+                    color: #89b4fa !important;
+                    margin-top: 25px;
+                    margin-bottom: 15px;
+                    font-weight: 600;
+                }}
+                .subsection-header {{
+                    color: #a6e3a1 !important;
+                    margin-top: 15px;
+                    margin-bottom: 10px;
+                    font-weight: 500;
+                }}
+                .audit-section {{
+                    margin-bottom: 20px;
+                    padding-left: 15px;
+                    border-left: 3px solid #45475a !important;
+                }}
+                .audit-table {{
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 15px;
+                }}
+                .audit-table th, .audit-table td {{
+                    padding: 8px 12px;
+                    text-align: left;
+                    border-bottom: 1px solid #313244 !important;
+                }}
+                .audit-table th {{
+                    background-color: #313244 !important;
+                    font-weight: 600;
+                    color: #cdd6f4 !important;
+                }}
+                .audit-table td {{
+                    color: #cdd6f4 !important;
+                }}
+                .audit-table tr:hover {{
+                    background-color: #313244 !important;
+                }}
+                .audit-policy-container p {{
+                    color: #cdd6f4 !important;
+                }}
+            </style>
+            {''.join(formatted_html)}
         </div>
         """
 

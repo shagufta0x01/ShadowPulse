@@ -1287,6 +1287,151 @@ def get_scan_result(request, result_id):
         'result_data': formatted_data
     })
 
+
+@login_required
+def get_full_os_report(request, target_id):
+    """Get a full OS report for a target"""
+    target = get_object_or_404(Target, pk=target_id)
+
+    # Define timeout values for this complex command
+    connection_timeout = 30  # seconds
+    receive_timeout = 180    # 3 minutes for full report
+    max_retries = 2
+
+    try:
+        # Connect to the agent
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(connection_timeout)
+
+        # Try to connect with retries
+        connected = False
+        # Use default agent port (23033)
+        agent_port = 23033
+
+        for attempt in range(max_retries):
+            try:
+                print(f"Connection attempt {attempt + 1} for {target.ip_address}")
+                s.connect((target.ip_address, agent_port))
+                connected = True
+                break
+            except socket.error as e:
+                if attempt < max_retries - 1:
+                    print(f"Connection attempt {attempt + 1} failed: {str(e)}. Retrying...")
+                    time.sleep(1)
+                else:
+                    raise
+
+        if not connected:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Could not connect to agent at {target.ip_address}:{agent_port}'
+            })
+
+        # Send the command for full OS info
+        req_id = 1
+        header = struct.pack(
+            HEADER_FORMAT,
+            MAGIC_HEADER,
+            0x01,  # version
+            0,     # flags
+            req_id,
+            CMD_FULL_OS_INFO,  # Command for full OS info
+            0,     # No payload
+            0      # reserved
+        )
+
+        # Send header
+        s.sendall(header)
+
+        # Receive the response header
+        s.settimeout(receive_timeout)  # Longer timeout for receiving data
+        response_header = s.recv(HEADER_SIZE)
+
+        # Parse header to get flags and payload_len
+        _, _, flags, _, _, payload_len, _ = struct.unpack(HEADER_FORMAT, response_header)
+
+        # Check if the response is compressed
+        is_compressed = (flags & FLAG_COMPRESSED) != 0
+        if is_compressed:
+            print(f"Response is compressed. Expecting {payload_len} bytes of compressed data.")
+
+        # Receive the payload
+        payload = b''
+        bytes_received = 0
+
+        while bytes_received < payload_len:
+            # Receive in chunks of 4KB
+            chunk_size = min(4096, payload_len - bytes_received)
+            chunk = s.recv(chunk_size)
+
+            if not chunk:
+                break
+
+            payload += chunk
+            bytes_received += len(chunk)
+
+            # Log progress for large payloads
+            if payload_len > 10000:
+                progress = (bytes_received / payload_len) * 100
+                print(f"Progress: {progress:.0f}% - Received {bytes_received} of {payload_len} bytes")
+
+        # Decompress if needed
+        if is_compressed:
+            try:
+                payload = zlib.decompress(payload)
+                print(f"Decompressed payload from {bytes_received} to {len(payload)} bytes")
+            except zlib.error as e:
+                print(f"Error decompressing payload: {str(e)}")
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'Error decompressing response: {str(e)}'
+                })
+
+        # Decode the payload
+        try:
+            result_data = payload.decode('utf-8')
+        except UnicodeDecodeError:
+            # If it's not valid UTF-8, try with latin-1
+            result_data = payload.decode('latin-1')
+
+        # Store the result in the database
+        scan_result = ScanResult.objects.create(
+            target=target,
+            scan_type='Full OS Report',
+            result_data=result_data
+        )
+
+        # Update the target's last scan time
+        target.last_scan = timezone.now()
+        target.save()
+
+        return JsonResponse({
+            'status': 'success',
+            'result_id': scan_result.id,
+            'result_data': result_data
+        })
+
+    except socket.timeout:
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Connection timed out after {receive_timeout} seconds'
+        })
+    except socket.error as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Socket error: {str(e)}'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Error: {str(e)}'
+        })
+    finally:
+        try:
+            s.close()
+        except:
+            pass
+
 @login_required
 def delete_target(request, target_id):
     """Delete a target"""

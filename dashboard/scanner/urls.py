@@ -24,6 +24,7 @@ urlpatterns = [
     # Command execution
     path('target/<int:target_id>/command/<int:command_code>/', views.send_command, name='send_command'),
     path('target/<int:target_id>/section/<str:section_id>/', views.get_os_info_section, name='get_os_info_section'),
+    path('target/<int:target_id>/full-report/', views.get_full_os_report, name='get_full_os_report'),
     path('result/<int:result_id>/', views.get_scan_result, name='get_scan_result'),
 
     # Network scanning
