@@ -1,7 +1,7 @@
 # 🔍 ShadowPulse Scanner 
 
 <div align="center">
-  <img src="docs/images/rex-logo.png" alt="ShadowPulse Scanner Logo" width="180" height="180">
+  <img src="docs/images/rex-logo.svg" alt="ShadowPulse Scanner Logo" width="180" height="180">
   <h3>Advanced Security Assessment & Vulnerability Management Platform</h3>
 
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
