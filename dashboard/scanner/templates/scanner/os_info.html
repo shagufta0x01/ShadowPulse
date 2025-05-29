@@ -284,41 +284,7 @@
             </div>
         </div>
 
-        <!-- Security Status Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    Security Status
-                </div>
-                <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                    <div class="circular-progress mb-3">
-                        <svg width="120" height="120" viewBox="0 0 120 120">
-                            <circle class="bg" cx="60" cy="60" r="54" stroke-dasharray="339.292" stroke-dashoffset="0"></circle>
-                            <circle class="progress-circle" cx="60" cy="60" r="54" stroke-dasharray="339.292" stroke-dashoffset="27.143"></circle>
-                        </svg>
-                        <div class="percentage">{{ security_status.score }}%</div>
-                    </div>
-                    <div class="status-item text-center">
-                        <div class="status-label">Critical Issues</div>
-                        <div class="status-value">{{ security_status.critical_issues }}</div>
-                    </div>
-                    <div class="status-item text-center">
-                        <div class="status-label">Warnings</div>
-                        <div class="status-value">{{ security_status.warnings }}</div>
-                    </div>
-                    <div class="status-item text-center">
-                        <div class="status-label">Firewall</div>
-                        <div class="status-value">
-                            {% if security_status.firewall_active %}
-                                <span class="status-badge badge-active">Active</span>
-                            {% else %}
-                                <span class="status-badge" style="background-color: var(--danger-color);">Inactive</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
         <!-- System Resources Card -->
         <div class="col-md-4 mb-4">
@@ -891,19 +857,7 @@
             `);
         }
 
-        // Initialize circular progress
-        const circle = document.querySelector('.progress-circle');
-        if (circle) {
-            const radius = circle.r.baseVal.value;
-            const circumference = radius * 2 * Math.PI;
-
-            circle.style.strokeDasharray = `${circumference} ${circumference}`;
-
-            // Set progress based on security score
-            const securityScore = {{ security_status.score }};
-            const offset = circumference - (securityScore / 100) * circumference;
-            circle.style.strokeDashoffset = offset;
-        }
+        // No longer using circular progress since security_status was removed
 
         // Function to load real-time system resources
         function loadSystemResources() {

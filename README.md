@@ -208,25 +208,47 @@ The ShadowPulse Scanner web application is built with Django and provides a comp
 
 1. **Configure Production Settings**
    - Copy `.env.example` to `.env` and configure settings
-   - Set `DJANGO_SETTINGS_MODULE=dashboard.settings_prod`
-   - Configure database and other production settings
+   - Set secure passwords and a proper secret key
+   - Configure allowed hosts for your domain
 
 2. **Using Docker Compose (Recommended)**
    ```bash
+   # Development mode
    docker-compose up -d
-   ```
-   This will start the web server, database, and Redis cache
 
-3. **Manual Production Deployment**
+   # Production mode
+   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+   ```
+
+   This will:
+   - Start the web application, PostgreSQL database, Redis cache, and Nginx
+   - Apply database migrations automatically
+   - Collect static files
+   - Configure proper networking between services
+
+3. **Docker Deployment Features**
+   - Automatic database initialization and migration
+   - Health checks for all services
+   - Resource limits for production deployment
+   - Nginx configuration for static files and proxying
+   - Separate development and production configurations
+   - SSL support (requires certificates)
+
+4. **Accessing the Application**
+   - Development: http://localhost:8000/ (direct Django access)
+   - Production: http://localhost/ (through Nginx)
+   - Admin interface: http://localhost/admin/
+
+5. **Manual Production Deployment (Alternative)**
    ```bash
    cd dashboard
    python manage.py collectstatic
    gunicorn dashboard.wsgi_prod:application
    ```
 
-4. **Accessing Production Instance**
-   - Configure your web server (Nginx, Apache) to proxy to the Gunicorn instance
-   - Access the application through your configured domain
+6. **Docker Deployment Documentation**
+   - See `DOCKER_README.md` for detailed Docker deployment instructions
+   - Includes configuration, management, and troubleshooting information
 
 ## 🤖 Agent Deployment
 

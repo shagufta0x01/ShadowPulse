@@ -8,15 +8,26 @@ ENV DJANGO_SETTINGS_MODULE=dashboard.settings_prod
 # Set work directory
 WORKDIR /app
 
-# Install dependencies
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    netcat-openbsd \
+    postgresql-client \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project
 COPY . /app/
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
+# Make entrypoint script executable
+COPY docker-entrypoint.sh /app/
+RUN chmod +x /app/docker-entrypoint.sh
 
-# Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "dashboard.wsgi_prod:application"]
+# Create necessary directories
+RUN mkdir -p /app/staticfiles /app/media
+
+# Entrypoint
+ENTRYPOINT ["/app/docker-entrypoint.sh"]

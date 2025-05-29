@@ -201,17 +201,7 @@ def os_info(request):
         'cpu': 40,
         'memory': 70,
         'disk': 50
-    }
-
-    # Security status data (placeholder values)
-    security_status = {
-        'score': 92,
-        'critical_issues': 0,
-        'warnings': 2,
-        'firewall_active': True
-    }
-
-    # System overview data
+    }    # System overview data
     system_overview = {
         'hostname': selected_target.hostname if selected_target else 'Unknown hostname',
         'ip_address': selected_target.ip_address if selected_target else '192.168.29.244',
@@ -242,9 +232,7 @@ def os_info(request):
         'selected_target': selected_target,
         'sections': OS_INFO_SECTIONS,
         'sections_by_category': sections_by_category,
-        'page_title': 'OS Information',
-        'system_resources': system_resources,
-        'security_status': security_status,
+        'page_title': 'OS Information',        'system_resources': system_resources,
         'system_overview': system_overview,
         'os_details': os_details
     }
