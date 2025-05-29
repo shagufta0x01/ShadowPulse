@@ -1,4 +1,4 @@
-# 🔍 ShadowPulse Scanner (ZAMBOT)
+# 🔍 ShadowPulse Scanner 
 
 <div align="center">
   <img src="docs/images/rex-logo.png" alt="ShadowPulse Scanner Logo" width="180" height="180">
